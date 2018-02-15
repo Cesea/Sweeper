@@ -36,8 +36,11 @@ public class GameStateManager : MonoBehaviour
         _currentBoard = FindObjectOfType<Board>();
     }
 
-    private void Update()
+    public void LoadNewBoard()
     {
-        
+        if (_currentBoard != null)
+        {
+
+        }
     }
 }
