@@ -34,14 +34,10 @@ public class Board : MonoBehaviour
             {
                 int index = x + _width * z;
                 _cells[index] = new Cell(x, z, Cell.CellType.Empty);
-                //if (Random.Range(0.0f, 1.0f) > 0.8f)
-                //{
-                //    _cells[index] = true;
-                //}
-                //else
-                //{
-                //    _cells[index] = false;
-                //}
+                if (Random.Range(0.0f, 1.0f) > 0.85f)
+                {
+                    _cells[index].Type = Cell.CellType.Mine;
+                }
             }
         }
 
@@ -56,14 +52,6 @@ public class Board : MonoBehaviour
                 GameObject go = Instantiate(prefab, new Vector3(x, 0, z), Quaternion.identity);
                 go.name = "cube_" + x + "_" + z;
                 go.transform.SetParent(transform);
-                //if (!GetValueAt(x, z))
-                //{
-                //    Text text = go.GetComponentInChildren<Text>();
-                //    if (text != null)
-                //    {
-                //        text.text = GetAdjacentSum(x, z).ToString();
-                //    }
-                //}
             }
         }
 	}
@@ -95,6 +83,16 @@ public class Board : MonoBehaviour
                 {
                     result = _exitPrefab;
                 } break;
+        }
+        return result;
+    }
+
+    public bool CanMoveTo(int x, int z)
+    {
+        bool result = true;
+        if (x < 0 || z < 0 || x > _width - 1 || z > _height - 1)
+        {
+            result = false;
         }
         return result;
     }

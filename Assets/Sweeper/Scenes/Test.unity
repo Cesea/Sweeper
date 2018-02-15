@@ -178,10 +178,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 900049747}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 159a45e392de7074288e51df407f1eae, type: 3}
+  m_Script: {fileID: 11500000, guid: 9ae3b150eb1543644a04fd63f3a2b1bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cubePrefab: {fileID: 1724201237527520, guid: 4087cf834f0abaa4893c37e041a9a9a7,
+  _emptyPrefab: {fileID: 1724201237527520, guid: 4087cf834f0abaa4893c37e041a9a9a7,
+    type: 2}
+  _minePrefab: {fileID: 1295389127078594, guid: 896dc561c844bdd40ab347801f65e1f4,
+    type: 2}
+  _startPrefab: {fileID: 1057948074825072, guid: 1d5a8ae7e8933ef438f3222e02123759,
+    type: 2}
+  _exitPrefab: {fileID: 1320539352580424, guid: 80d762d670f963c4aa5ae18dcf7393e2,
     type: 2}
   _width: 10
   _height: 10

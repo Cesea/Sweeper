@@ -2,33 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameStateManager : MonoBehaviour
-{
-    private static GameStateManager _instance;
-    public static GameStateManager Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = FindObjectOfType<GameStateManager>();
-                if (_instance == null)
-                {
-                    Debug.Log("GamestateManager doesn't exist");
-                }
-            }
-            return _instance;
-        }
-    }
+using Foundation;
 
+public class GameStateManager : SingletonBase<GameStateManager>
+{
     private Board _currentBoard;
     public Board CurrentBoard { get { return _currentBoard; } }
-
-    private void Awake()
-    {
-        _instance = this;
-        
-    }
 
     private void Start()
     {
@@ -40,7 +19,7 @@ public class GameStateManager : MonoBehaviour
     {
         if (_currentBoard != null)
         {
-
+            LevelManager.Instance.LoadNextLevel();
         }
     }
 }
