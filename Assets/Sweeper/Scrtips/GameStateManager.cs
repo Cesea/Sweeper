@@ -15,11 +15,32 @@ public class GameStateManager : SingletonBase<GameStateManager>
         _currentBoard = FindObjectOfType<Board>();
     }
 
-    public void LoadNewBoard()
+    public void LoadNextLevel()
     {
-        if (_currentBoard != null)
-        {
-            LevelManager.Instance.LoadNextLevel();
-        }
+        LevelManager.Instance.LoadNextLevel();
     }
+
+    public void CheckMovement(int x, int z)
+    {
+        Cell.CellType currentCell = GameStateManager.Instance.CurrentBoard.GetTypeAt( x, z);
+        switch (currentCell)
+        {
+            case Cell.CellType.Empty:
+                {
+                } break;
+            case Cell.CellType.Mine:
+                {
+                    Debug.Log("Mine");
+                } break;
+            case Cell.CellType.Start:
+                {
+                } break;
+            case Cell.CellType.Exit:
+                {
+                    LoadNextLevel(); 
+                } break;
+        }
+
+    }
+
 }

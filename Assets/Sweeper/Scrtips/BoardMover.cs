@@ -88,24 +88,8 @@ public class BoardMover : MonoBehaviour
                 _t = 0.0f;
 
                 //Check board
+                GameStateManager.Instance.CheckMovement((int)_targetPosition.x, (int)_targetPosition.z);
 
-                Cell.CellType currentCell = GameStateManager.Instance.CurrentBoard.GetTypeAt(
-                    (int)_targetPosition.x, (int)_targetPosition.z);
-                switch (currentCell)
-                {
-                    case Cell.CellType.Empty:
-                        {
-                        } break;
-                    case Cell.CellType.Mine:
-                        {
-                        } break;
-                    case Cell.CellType.Start:
-                        {
-                        } break;
-                    case Cell.CellType.Exit:
-                        {
-                        } break;
-                }
             }
             transform.position = currentPosition;
         }

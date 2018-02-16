@@ -8,9 +8,7 @@ public class LevelManager : SingletonBase<LevelManager>
 {
     public void LoadNextLevel()
     {
-
     }
-
 
 
 }

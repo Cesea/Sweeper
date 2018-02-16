@@ -23,6 +23,21 @@ public class Board : MonoBehaviour
     [SerializeField]
     private int _height;
 
+
+    Vector2Int _startCell;
+    Vector2Int _exitCell;
+
+    public Vector2Int StartCell
+    {
+        get { return _startCell; }
+        set { _startCell = value; }
+    }
+    public Vector2Int ExitCell
+    {
+        get { return _exitCell; }
+        set { _exitCell = value; }
+    }
+
     Cell[] _cells;
 
 	void Start ()
@@ -41,8 +56,12 @@ public class Board : MonoBehaviour
             }
         }
 
-        _cells[0].Type = Cell.CellType.Start;
-        _cells[6 + 6 * _width].Type = Cell.CellType.Exit;
+        _startCell = new Vector2Int(0, 0);
+        _exitCell = new Vector2Int(6, 6);
+
+        _cells[_startCell.x + _startCell.y * _width].Type = Cell.CellType.Start;
+        _cells[_exitCell.x + _exitCell.y * _width].Type = Cell.CellType.Exit;
+
 
         for (int z = 0; z < _height; ++z)
         {
@@ -93,6 +112,7 @@ public class Board : MonoBehaviour
         if (x < 0 || z < 0 || x > _width - 1 || z > _height - 1)
         {
             result = false;
+            Debug.Log("movement out of range");
         }
         return result;
     }
@@ -107,9 +127,7 @@ public class Board : MonoBehaviour
     //    minZ = Mathf.Clamp(minZ, 0, _height - 1);
     //    maxX = Mathf.Clamp(maxX, 0, _width - 1);
     //    maxZ = Mathf.Clamp(maxZ, 0, _height - 1);
-
     //    int result = 0;
-
     //    for (int iz = minZ; iz <= maxZ; ++iz)
     //    {
     //        for (int ix = minX; ix <= maxX; ++ix)
