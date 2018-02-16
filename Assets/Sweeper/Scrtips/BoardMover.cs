@@ -14,7 +14,7 @@ public class BoardMover : MonoBehaviour
 
     public void MoveToCell(int x, int z)
     {
-        if (_moving || !GameStateManager.Instance.CurrentBoard.CanMoveTo(x, z))
+        if (_moving || !GameStateManager.Instance.BoardManager.CurrentBoard.CanMoveTo(x, z))
         {
             return;
         }

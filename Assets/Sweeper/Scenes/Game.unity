@@ -191,6 +191,8 @@ MonoBehaviour:
     type: 2}
   _width: 10
   _height: 10
+  _startCell: {x: 0, y: 0}
+  _exitCell: {x: 0, y: 0}
 --- !u!4 &900049749
 Transform:
   m_ObjectHideFlags: 0
@@ -420,6 +422,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1933234231}
   - component: {fileID: 1933234230}
+  - component: {fileID: 1933234232}
   m_Layer: 0
   m_Name: GameStateManager
   m_TagString: Untagged
@@ -451,3 +454,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1933234232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1933234229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bc6e3ca7f3bbb544a0f8afe91e0c087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _emptyPrefab: {fileID: 1724201237527520, guid: 4087cf834f0abaa4893c37e041a9a9a7,
+    type: 2}
+  _minePrefab: {fileID: 1295389127078594, guid: 896dc561c844bdd40ab347801f65e1f4,
+    type: 2}
+  _startPrefab: {fileID: 1057948074825072, guid: 1d5a8ae7e8933ef438f3222e02123759,
+    type: 2}
+  _exitPrefab: {fileID: 1320539352580424, guid: 80d762d670f963c4aa5ae18dcf7393e2,
+    type: 2}
+  _width: 10
+  _height: 10

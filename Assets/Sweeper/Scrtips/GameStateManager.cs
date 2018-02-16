@@ -6,23 +6,22 @@ using Foundation;
 
 public class GameStateManager : SingletonBase<GameStateManager>
 {
-    private Board _currentBoard;
-    public Board CurrentBoard { get { return _currentBoard; } }
+    private BoardManager _boardManager;
+    public BoardManager BoardManager { get { return _boardManager; } }
 
     private void Start()
     {
-
-        _currentBoard = FindObjectOfType<Board>();
+        _boardManager = GetComponent<BoardManager>();
     }
 
     public void LoadNextLevel()
     {
-        LevelManager.Instance.LoadNextLevel();
+        _boardManager.LoadNextLevel();
     }
 
     public void CheckMovement(int x, int z)
     {
-        Cell.CellType currentCell = GameStateManager.Instance.CurrentBoard.GetTypeAt( x, z);
+        Cell.CellType currentCell = _boardManager.CurrentBoard.GetTypeAt( x, z);
         switch (currentCell)
         {
             case Cell.CellType.Empty:
@@ -40,7 +39,5 @@ public class GameStateManager : SingletonBase<GameStateManager>
                     LoadNextLevel(); 
                 } break;
         }
-
     }
-
 }

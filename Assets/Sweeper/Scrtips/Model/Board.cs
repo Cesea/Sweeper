@@ -2,30 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using UnityEngine.UI;
-
-public class Board : MonoBehaviour
+[System.Serializable]
+public class Board 
 {
-    [Header ("Cube Prefabs")]
-    [SerializeField]
-    GameObject _emptyPrefab;
-    [SerializeField]
-    GameObject _minePrefab;
-    [SerializeField]
-    GameObject _startPrefab;
-    [SerializeField]
-    GameObject _exitPrefab;
-
-
-    [Header("Board Size")]
-    [SerializeField]
-    private int _width;
-    [SerializeField]
-    private int _height;
-
-
-    Vector2Int _startCell;
-    Vector2Int _exitCell;
+    private Vector2Int _startCell;
+    private Vector2Int _exitCell;
 
     public Vector2Int StartCell
     {
@@ -38,10 +19,25 @@ public class Board : MonoBehaviour
         set { _exitCell = value; }
     }
 
+    private int _width; 
+    private int _height; 
+    public int Width
+    {
+        get { return _width; }
+        set { _width = value; }
+    }
+    public int Height
+    {
+        get { return _height; }
+        set { _height = value; }
+    }
+
     Cell[] _cells;
 
-	void Start ()
+    public Board(int width, int height)
     {
+        _width = width;
+        _height = height;
         _cells = new Cell[_width * _height];
         for (int z = 0; z < _height; ++z)
         {
@@ -56,55 +52,23 @@ public class Board : MonoBehaviour
             }
         }
 
-        _startCell = new Vector2Int(0, 0);
-        _exitCell = new Vector2Int(6, 6);
+        _startCell = GetRandomCellCoord();
+        _exitCell = GetRandomCellCoord();
 
         _cells[_startCell.x + _startCell.y * _width].Type = Cell.CellType.Start;
         _cells[_exitCell.x + _exitCell.y * _width].Type = Cell.CellType.Exit;
+    }
 
-
-        for (int z = 0; z < _height; ++z)
-        {
-            for (int x = 0; x < _width; ++x)
-            {
-                GameObject prefab = GetPrefabByType(_cells[x + _width * z].Type);
-                GameObject go = Instantiate(prefab, new Vector3(x, 0, z), Quaternion.identity);
-                go.name = "cube_" + x + "_" + z;
-                go.transform.SetParent(transform);
-            }
-        }
-	}
+    public Cell GetCellAt(int x, int z)
+    {
+        return _cells[x + _width * z];
+    }
 
     public Cell.CellType GetTypeAt(int x, int z)
     {
         return _cells[x + _width * z].Type;
     }
 
-    private GameObject GetPrefabByType(Cell.CellType type)
-    {
-        GameObject result = null;
-        switch (type)
-        {
-            case Cell.CellType.Empty:
-                {
-                    result = _emptyPrefab;
-                }
-                break;
-            case Cell.CellType.Mine :
-                {
-                    result = _minePrefab;
-                } break;
-            case Cell.CellType.Start :
-                {
-                    result = _startPrefab;
-                } break;
-            case Cell.CellType.Exit :
-                {
-                    result = _exitPrefab;
-                } break;
-        }
-        return result;
-    }
 
     public bool CanMoveTo(int x, int z)
     {
@@ -116,6 +80,11 @@ public class Board : MonoBehaviour
         }
         return result;
     }
+
+    public Vector2Int GetRandomCellCoord()
+    {
+        return new Vector2Int((int)Random.Range(0, _width), (int)Random.Range(0, _height));
+    } 
 
     //public int GetAdjacentSum(int x, int z)
     //{
