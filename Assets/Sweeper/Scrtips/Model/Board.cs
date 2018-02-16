@@ -84,7 +84,13 @@ public class Board
     public Vector2Int GetRandomCellCoord()
     {
         return new Vector2Int((int)Random.Range(0, _width), (int)Random.Range(0, _height));
-    } 
+    }
+
+    public Cell[] GetAdjacentCells(int x, int z)
+    {
+
+    }
+
 
     //public int GetAdjacentSum(int x, int z)
     //{
