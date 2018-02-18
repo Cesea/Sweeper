@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Foundation
 {
-    public class SingletonBase<T> : MonoBehaviour where T : MonoBehaviour
+    public class SingletonBase<T> : MonoBehaviour where T : SingletonBase<T>
     {
         protected static T _instance;
         public static T Instance
@@ -19,12 +19,21 @@ namespace Foundation
             }
         }
 
-        protected void Awake()
-        {
+        protected virtual void Awake()
+        {   
             if (_instance != null)
             {
                 Destroy(gameObject);
             }
+            else
+            {
+                _instance = (T)this;
+            }
+        }
+
+        protected virtual void OnDestory()
+        {
+            _instance = null;
         }
     }
 }

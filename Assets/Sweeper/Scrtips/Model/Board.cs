@@ -8,12 +8,12 @@ public class Board
     private Vector2Int _startCell;
     private Vector2Int _exitCell;
 
-    public Vector2Int StartCell
+    public Vector2Int StartCellCoord
     {
         get { return _startCell; }
         set { _startCell = value; }
     }
-    public Vector2Int ExitCell
+    public Vector2Int ExitCellCoord
     {
         get { return _exitCell; }
         set { _exitCell = value; }
@@ -54,18 +54,36 @@ public class Board
 
         _startCell = GetRandomCellCoord();
         _exitCell = GetRandomCellCoord();
+        if (_startCell == _exitCell)
+        {
+            while (_startCell == _exitCell)
+            {
+                _exitCell = GetRandomCellCoord();
+            }
+        }
 
         _cells[_startCell.x + _startCell.y * _width].Type = Cell.CellType.Start;
         _cells[_exitCell.x + _exitCell.y * _width].Type = Cell.CellType.Exit;
+
+        SetAdjacentCells(_startCell.x, _startCell.y, Cell.CellType.Empty);
     }
+
 
     public Cell GetCellAt(int x, int z)
     {
+        if (!IsInBound(x, z))
+        {
+            return null;
+        }
         return _cells[x + _width * z];
     }
 
     public Cell.CellType GetTypeAt(int x, int z)
     {
+        if (!IsInBound(x, z))
+        {
+            return Cell.CellType.Count;
+        }
         return _cells[x + _width * z].Type;
     }
 
@@ -73,7 +91,7 @@ public class Board
     public bool CanMoveTo(int x, int z)
     {
         bool result = true;
-        if (x < 0 || z < 0 || x > _width - 1 || z > _height - 1)
+        if (!IsInBound(x, z))
         {
             result = false;
             Debug.Log("movement out of range");
@@ -86,11 +104,55 @@ public class Board
         return new Vector2Int((int)Random.Range(0, _width), (int)Random.Range(0, _height));
     }
 
-    public Cell[] GetAdjacentCells(int x, int z)
+    public bool IsInBound(int x, int z)
     {
-
+        if (x < 0 || z < 0 || x > _width - 1 || z > _height - 1)
+        {
+            return false;
+        }
+        return true;
     }
 
+    public void GetAdjacentCells(int x, int z, ref Cell[] cells)
+    {
+        int count = 0;
+        for (int iz = z - 1; iz <= z + 1; ++iz)
+        {
+            for (int ix = x - 1; ix <= x + 1; ++ix)
+            {
+                int index = ix + _width * iz;
+                if (ix == x && iz == z)
+                {
+                    cells[count] = null;
+                    continue;
+                }
+                if (IsInBound(ix, iz))
+                {
+                    cells[count] = _cells[index];
+                }
+                count++;
+            }
+        }
+    }
+
+    private void SetAdjacentCells(int x, int z, Cell.CellType type)
+    {
+        for (int iz = z - 1; iz <= z + 1; ++iz)
+        {
+            for (int ix = x - 1; ix <= x + 1; ++ix)
+            {
+                int index = ix + _width * iz;
+                if (ix == x && iz == z)
+                {
+                    continue;
+                }
+                if (IsInBound(ix, iz))
+                {
+                    _cells[index].Type = type;
+                }
+            }
+        }
+    }
 
     //public int GetAdjacentSum(int x, int z)
     //{

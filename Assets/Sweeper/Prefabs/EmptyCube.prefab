@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 224908743332025150}
   - component: {fileID: 222799212062062536}
   - component: {fileID: 114712743253755674}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39,7 +39,7 @@ GameObject:
   - component: {fileID: 33895606703183304}
   - component: {fileID: 65794149126788282}
   - component: {fileID: 23074253468567256}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,7 +54,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4290706399517872}
-  m_Layer: 0
+  - component: {fileID: 114221161972473494}
+  m_Layer: 8
   m_Name: EmptyCube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72,7 +73,7 @@ GameObject:
   - component: {fileID: 223522460092869304}
   - component: {fileID: 114281253653921620}
   - component: {fileID: 114177805048325868}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -176,6 +177,17 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &114221161972473494
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1724201237527520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b6e9f8d3d630a3429776600103caed1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114281253653921620
 MonoBehaviour:
   m_ObjectHideFlags: 1

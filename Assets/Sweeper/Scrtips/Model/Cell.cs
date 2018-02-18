@@ -9,22 +9,23 @@ public class Cell
         Empty,
         Mine,
         Start,
-        Exit
+        Exit,
+        Count
     }
 
     private CellType _type;
     private int _x;
-    private int _y;
+    private int _z;
 
     public int X
     {
         get { return _x; }
         set { _x = value; }
     }
-    public int Y
+    public int Z
     {
-        get { return _y; }
-        set { _y = value; }
+        get { return _z; }
+        set { _z = value; }
     }
 
     public CellType Type
@@ -33,10 +34,10 @@ public class Cell
         set { _type = value; }
     }
 
-    public Cell(int x, int y, CellType type)
+    public Cell(int x, int z, CellType type)
     {
         _x = x;
-        _y = y;
+        _z = z;
         _type = type;
     }
 

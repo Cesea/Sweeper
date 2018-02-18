@@ -28,19 +28,28 @@ public class BoardManager : SingletonBase<BoardManager>
 
     private List<GameObject> _instantiatedCubes = new List<GameObject>();
 
-    private void Start()
+    public void BuildNewBoard(int width, int height)
     {
-        BuildBoard(_width, _height);
+        BuildBoard(width, height);
         BuildObjects();
     }
 
-    public void BuildBoard(int width, int height)
+    private void BuildBoard(int width, int height)
     {
         _currentBoard = new Board(width, height);
     }
 
     private void BuildObjects()
     {
+        if (_instantiatedCubes.Count > 0)
+        {
+            for (int i = _instantiatedCubes.Count - 1; i >= 0; --i)
+            {
+                Destroy(_instantiatedCubes[i]);
+            }
+            _instantiatedCubes.Clear();
+        }
+
         for (int z = 0; z < _currentBoard.Height; ++z)
         {
             for (int x = 0; x < _currentBoard.Width; ++x)
@@ -83,10 +92,6 @@ public class BoardManager : SingletonBase<BoardManager>
                 break;
         }
         return result;
-    }
-
-    public void LoadNextLevel()
-    {
     }
 
 }
