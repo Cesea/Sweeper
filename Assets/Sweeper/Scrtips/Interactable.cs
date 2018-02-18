@@ -20,7 +20,8 @@ public class Interactable : MonoBehaviour
 
     public Command[] GetAvailableCommands()
     {
-        _commandBuffer.AddRange(CommandBuilder.BuildCommands(gameObject));
+        Debug.Log("Getting Commands");
+        _commandBuffer = CommandBuilder.BuildCommands(gameObject);
         return _commandBuffer.ToArray();
     }
 

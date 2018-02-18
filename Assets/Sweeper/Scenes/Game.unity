@@ -319,6 +319,12 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 114112273224066182, guid: 6b8eb76aa715c2b4b9fc9f1eb6f241de,
+        type: 2}
+      propertyPath: _dangerSignPrefab
+      value: 
+      objectReference: {fileID: 1370135647862746, guid: 9bc58b373f143584486a02ef679ad757,
+        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6b8eb76aa715c2b4b9fc9f1eb6f241de, type: 2}
   m_IsPrefabParent: 0
@@ -677,7 +683,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _exclamationPrefab: {fileID: 1841396864758918, guid: d54e92942f1cc0049a69dc6d6354b9b4,
     type: 2}
-  _dangerSignPrefab: {fileID: 0}
+  _dangerSignPrefab: {fileID: 1370135647862746, guid: 9bc58b373f143584486a02ef679ad757,
+    type: 2}
   Player: {fileID: 51820683}
   _cellMask:
     serializedVersion: 2

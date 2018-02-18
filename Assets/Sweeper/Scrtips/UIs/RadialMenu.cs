@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 using Foundation;
 
@@ -37,6 +38,16 @@ public class RadialMenu : Menu<RadialMenu>
         }
     }
 
+    public void CallCommand(int index)
+    {
+        Debug.Log(index);
+        if (_menuItems.Count > 1)
+        {
+            Interactable interactable = GameStateManager.Instance.SelectingObject.GetComponent<Interactable>();
+            interactable.DoCommand(index);
+        }
+    } 
+
     void ShowRadialMenu(GameObject instance)
     {
         GameObject centerRadialObject = Instantiate(_centerCirclePrefab, transform);
@@ -64,24 +75,14 @@ public class RadialMenu : Menu<RadialMenu>
                 //RadialMenuItem item = radialItem.GetComponent<RadialMenuItem>();
                 //item.CommandIndex = i;
 
-                if (currentCommand.GetType() == typeof(MoveCommand)) 
-                {
-                    radialItem.GetComponent<Button>().onClick.AddListener( delegate { CallCommand(i); } );
-                }
+                int localCount = i;
+
+                radialItem.GetComponent<Button>().onClick.AddListener(() => CallCommand(localCount));
                 _menuItems.Add(radialItem);
             }
         }
         _menuItems.Add(centerRadialObject);
     }
-
-    public void CallCommand(int index)
-    {
-        if (_menuItems.Count > 1)
-        {
-            Interactable interactable = GameStateManager.Instance.SelectingObject.GetComponent<Interactable>();
-            interactable.DoCommand(index - 1);
-        }
-    } 
 
     void CloseRadialMenu()
     {
