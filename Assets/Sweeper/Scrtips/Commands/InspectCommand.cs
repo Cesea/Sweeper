@@ -2,15 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InspectCommand : MonoBehaviour
+using Foundation;
+
+public class InspectCommand : Command
 {
-	void Start ()
-    {
-		
-	}
-	
-	void Update ()
-    {
-		
-	}
+    public string _name;
 }

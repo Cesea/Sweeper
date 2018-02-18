@@ -34,7 +34,7 @@ public class RadialMenu : MonoBehaviour
                     _downTime += Time.deltaTime;
                     if (_downTime > _menuTriggerTime)
                     {
-                        ShowRadialMenu(underneathObject.transform.parent.gameObject);
+                        ShowRadialMenu(underneathObject);
                     }
                 }
             }
@@ -59,15 +59,20 @@ public class RadialMenu : MonoBehaviour
             RaycastHit hitInfo;
             if (Physics.Raycast(camRay, out hitInfo, _objectMask))
             {
-                return hitInfo.collider.gameObject;
+                if (hitInfo.collider.gameObject.GetComponent<Interactable>() != null)
+                {
+                    return hitInfo.collider.gameObject;
+                }
             }
         }
-
         {
             RaycastHit hitInfo;
             if (Physics.Raycast(camRay, out hitInfo, _cellMask))
             {
-                return hitInfo.collider.gameObject;
+                if (hitInfo.collider.gameObject.GetComponent<Interactable>() != null)
+                {
+                    return hitInfo.collider.gameObject;
+                }
             }
         }
         return null;
@@ -81,8 +86,8 @@ public class RadialMenu : MonoBehaviour
         go.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f);
         go.GetComponentInChildren<Text>().text = instance.name;
 
-        CommandBuilder commandBuilder = instance.GetComponent<CommandBuilder>();
-        Command[] availableCommands = commandBuilder.BuildCommands();
+        Interactable interaction = instance.GetComponent<Interactable>();
+        Command[] availableCommands = interaction.GetAvailableCommands();
 
         if (availableCommands.Length > 0)
         {

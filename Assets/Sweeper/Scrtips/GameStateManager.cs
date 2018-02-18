@@ -9,11 +9,20 @@ public class GameStateManager : SingletonBase<GameStateManager>
     private BoardManager _boardManager;
     public BoardManager BoardManager { get { return _boardManager; } }
 
+    [Header("Prefabs")]
     public GameObject _exclamationPrefab;
+    public GameObject _dangerSignPrefab;
 
     private List<GameObject> _exclamations;
     private List<GameObject> _dangerSigns;
 
+    //마우스 우클릭시 정보를 보여줄 오브젝트이다.
+    private GameObject _selectingObject;
+    public GameObject SelectingObject
+    {
+        get { return _selectingObject; }
+        private set { _selectingObject = value; }
+    }
 
     public Board CurrentBoard
     {
@@ -32,6 +41,8 @@ public class GameStateManager : SingletonBase<GameStateManager>
         _exclamations = new List<GameObject>();
         _dangerSigns = new List<GameObject>();
     }
+
+    public void
 
     public void SetupNextBoard()
     {

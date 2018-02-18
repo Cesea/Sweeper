@@ -4,13 +4,15 @@ using UnityEngine;
 
 using Foundation;
 
-public class CommandBuilder : MonoBehaviour
+public static class CommandBuilder 
 {
-    public Command[] BuildCommands()
+    public static Command[] BuildCommands(GameObject obj)
     {
         List<Command> result = new List<Command>();
 
-        Vector3 deltaToPlayer = GameStateManager.Instance.Player.transform.position - transform.position;
+        result.Add(new InspectCommand());
+
+        Vector3 deltaToPlayer = GameStateManager.Instance.Player.transform.position - obj.transform.position;
         Vector2Int deltaGridToPlayer = new Vector2Int((int)deltaToPlayer.x, (int)deltaToPlayer.z);
         if ((deltaGridToPlayer.x == 0 && Mathf.Abs(deltaGridToPlayer.y) == 1) ||
             (Mathf.Abs(deltaGridToPlayer.x) == 1 && deltaGridToPlayer.y == 0))
