@@ -4,13 +4,6 @@ using UnityEngine;
 
 public class RadialMenuItem : MonoBehaviour
 {
-	void Start ()
-    {
-		
-	}
-	
-	void Update ()
-    {
-		
-	}
+    public int CommandIndex { get;set; }
+
 }

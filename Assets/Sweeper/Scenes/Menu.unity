@@ -143,6 +143,8 @@ MonoBehaviour:
     type: 2}
   _optionMenuPrefab: {fileID: 114116976930638702, guid: f1936c512ab179f4cbcdfec633774185,
     type: 2}
+  _radialMenuPrefab: {fileID: 114816404430377404, guid: 3caf7aca11f831e43a7397d8dcb57e11,
+    type: 2}
 --- !u!4 &60216687
 Transform:
   m_ObjectHideFlags: 0

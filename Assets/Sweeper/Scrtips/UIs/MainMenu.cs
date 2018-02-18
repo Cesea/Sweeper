@@ -12,6 +12,7 @@ public class MainMenu : SimpleMenu<MainMenu>
 
     public void OnStartButtonPressed()
     {
+        MainMenu.Shut();
         SceneLoader.Instance.LoadScene(1);
     }
 

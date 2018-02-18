@@ -19,7 +19,7 @@ public class InstallObjectCommand : Command
         Z = Z;
     }
 
-    public override void Execute(CommandInterpreter target)
+    public override void Execute(GameObject target)
     {
         GameObject instantiaedObject = GameObject.Instantiate(_objectPrefab);
         instantiaedObject.name = _objectPrefab.name;

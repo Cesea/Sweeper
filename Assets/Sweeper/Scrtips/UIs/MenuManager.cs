@@ -12,11 +12,13 @@ public class MenuManager : SingletonBase<MenuManager>
 
     public MainMenu _mainMenuPrefab;
     public OptionMenu _optionMenuPrefab;
+    public RadialMenu _radialMenuPrefab;
 
     private void Start()
     {
         _menuStack = new Stack<MenuBase>();
-        MainMenu.Show();
+        DontDestroyOnLoad(gameObject);
+        //MainMenu.Show();
     }
 
     public void CreateInstance<T>() where T : MenuBase

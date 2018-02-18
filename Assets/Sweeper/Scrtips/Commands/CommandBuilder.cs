@@ -17,7 +17,7 @@ public static class CommandBuilder
         if ((deltaGridToPlayer.x == 0 && Mathf.Abs(deltaGridToPlayer.y) == 1) ||
             (Mathf.Abs(deltaGridToPlayer.x) == 1 && deltaGridToPlayer.y == 0))
         {
-            result.Add(new MoveCommand(deltaGridToPlayer.x, deltaGridToPlayer.y));
+            result.Add(new MoveCommand(-deltaGridToPlayer.x, -deltaGridToPlayer.y));
         }
         return result.ToArray();
     }

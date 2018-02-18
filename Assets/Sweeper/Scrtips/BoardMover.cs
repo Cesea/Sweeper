@@ -35,6 +35,22 @@ public class BoardMover : MonoBehaviour
         }
     }
 
+    public void MoveBy(int x, int z)
+    {
+        Vector3 tmpTarget = transform.position + new Vector3(x, 0, z);
+        if ((x == 0 && z == 0) || _moving || !GameStateManager.Instance.BoardManager.CurrentBoard.CanMoveTo((int)tmpTarget.x, (int)tmpTarget.z))
+        {
+            return;
+        }
+        _targetPosition = tmpTarget;
+        GameStateManager.Instance.RemoveExclamations();
+
+        if (_targetPosition != _startPosition)
+        {
+            _moving = true;
+        }
+    }
+
     public void SetPosition(Vector2 v)
     {
         transform.position = new Vector3(v.x, 0, v.y);

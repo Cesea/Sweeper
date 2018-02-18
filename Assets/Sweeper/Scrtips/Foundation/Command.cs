@@ -7,7 +7,7 @@ namespace Foundation
     [System.Serializable]
     public class Command
     {
-        public virtual void Execute(CommandInterpreter target)
+        public virtual void Execute(GameObject target)
         {
         }
     }

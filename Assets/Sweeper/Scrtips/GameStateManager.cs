@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Foundation;
+using Utils;
 
 public class GameStateManager : SingletonBase<GameStateManager>
 {
+
     private BoardManager _boardManager;
     public BoardManager BoardManager { get { return _boardManager; } }
 
@@ -21,8 +23,9 @@ public class GameStateManager : SingletonBase<GameStateManager>
     public GameObject SelectingObject
     {
         get { return _selectingObject; }
-        private set { _selectingObject = value; }
+        set { _selectingObject = value; }
     }
+    private Timer _rightMouseClickTimer;    
 
     public Board CurrentBoard
     {
@@ -30,6 +33,9 @@ public class GameStateManager : SingletonBase<GameStateManager>
     }
 
     public BoardMover Player;
+
+    public LayerMask _cellMask;
+    public LayerMask _objectMask;
 
     private void Start()
     {
@@ -40,9 +46,24 @@ public class GameStateManager : SingletonBase<GameStateManager>
 
         _exclamations = new List<GameObject>();
         _dangerSigns = new List<GameObject>();
+
+        _rightMouseClickTimer = new Timer(0.5f);
     }
 
-    public void
+    public void Update()
+    {
+        if (_selectingObject == null)
+        {
+            if (Input.GetMouseButton(1) && _rightMouseClickTimer.Tick(Time.deltaTime))
+            {
+                _selectingObject = GetObjectUnderneathMouse();
+                if (_selectingObject != null)
+                {
+                    RadialMenu.Show(Input.mousePosition, _selectingObject);
+                }
+            }
+        }
+    }
 
     public void SetupNextBoard()
     {
@@ -113,4 +134,31 @@ public class GameStateManager : SingletonBase<GameStateManager>
         }
         return result;
     }
+
+    //일단 오브젝트가 있는 땅이면 못간다....
+    private GameObject GetObjectUnderneathMouse()
+    {
+        Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        {
+            RaycastHit hitInfo;
+            if (Physics.Raycast(camRay, out hitInfo, _objectMask))
+            {
+                if (hitInfo.collider.gameObject.GetComponent<Interactable>() != null)
+                {
+                    return hitInfo.collider.gameObject;
+                }
+            }
+        }
+        //{
+        //    RaycastHit hitInfo;
+        //    if (Physics.Raycast(camRay, out hitInfo, _cellMask))
+        //    {
+        //        if (hitInfo.collider.gameObject.GetComponent<Interactable>() != null)
+        //        {
+        //            return hitInfo.collider.gameObject;
+        //        }
+        //    }
+        //}
+        return null;
+    } 
 }

@@ -17,7 +17,7 @@ public class RadarCommand : Command
         Z = z;
     } 
 
-    public override void Execute(CommandInterpreter target)
+    public override void Execute(GameObject target)
     {
         //Instantiate particle prefab;
     }

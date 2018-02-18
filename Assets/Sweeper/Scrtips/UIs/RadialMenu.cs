@@ -6,125 +6,90 @@ using UnityEngine.UI;
 
 using Foundation;
 
-public class RadialMenu : MonoBehaviour
+public class RadialMenu : Menu<RadialMenu>
 {
     public GameObject _centerCirclePrefab;
-    public GameObject _radialItemPrefab;
-
-    public LayerMask _cellMask;
-    public LayerMask _objectMask;
+    public GameObject _radialMenuItemPrefab;
 
     public List<GameObject> _menuItems = new List<GameObject>();
 
-    private float _downTime = 0.0f;
-    private float _menuTriggerTime = 0.5f;
+    int _itemCount = 0;
 
-    private bool _prevShowing = false;
-    private bool _showing = false;
+    public static void Show(Vector3 mousePosition, GameObject selectingObject)
+    {
+        Open();
+        Instance.ShowRadialMenu(selectingObject); 
+    }
+
+    public static void Shut()
+    {
+        GameStateManager.Instance.SelectingObject = null;
+        Close();
+    }
 
     private void Update()
     {
-        if (!_showing)
+        if (Input.GetMouseButtonUp(1))
         {
-            if (Input.GetMouseButton(1))
-            {
-                GameObject underneathObject = GetObjectUnderneathMouse();
-                if (underneathObject != null)
-                {
-                    _downTime += Time.deltaTime;
-                    if (_downTime > _menuTriggerTime)
-                    {
-                        ShowRadialMenu(underneathObject);
-                    }
-                }
-            }
+            CloseRadialMenu();
+            RadialMenu.Shut();
+            EventManager.Instance.TriggerEvent(new Events.RadialShutEvent());
         }
-
-        if (_showing)
-        {
-            if (Input.GetMouseButtonUp(1))
-            {
-                CloseRadialMenu();
-            }
-        }
-
-        _prevShowing = _showing;
     }
-
-    //일단 오브젝트가 있는 땅이면 못간다....
-    private GameObject GetObjectUnderneathMouse()
-    {
-        Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-        {
-            RaycastHit hitInfo;
-            if (Physics.Raycast(camRay, out hitInfo, _objectMask))
-            {
-                if (hitInfo.collider.gameObject.GetComponent<Interactable>() != null)
-                {
-                    return hitInfo.collider.gameObject;
-                }
-            }
-        }
-        {
-            RaycastHit hitInfo;
-            if (Physics.Raycast(camRay, out hitInfo, _cellMask))
-            {
-                if (hitInfo.collider.gameObject.GetComponent<Interactable>() != null)
-                {
-                    return hitInfo.collider.gameObject;
-                }
-            }
-        }
-        return null;
-    } 
 
     void ShowRadialMenu(GameObject instance)
     {
-        _showing = true;
-        _downTime = 0.0f;
-        GameObject go = Instantiate(_centerCirclePrefab, transform);
-        go.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f);
-        go.GetComponentInChildren<Text>().text = instance.name;
+        GameObject centerRadialObject = Instantiate(_centerCirclePrefab, transform);
+        centerRadialObject.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f);
+        centerRadialObject.GetComponentInChildren<Text>().text = instance.name;
 
-        Interactable interaction = instance.GetComponent<Interactable>();
-        Command[] availableCommands = interaction.GetAvailableCommands();
+        Interactable interactable = instance.GetComponent<Interactable>();
+        Command[] availableCommands = interactable.GetAvailableCommands();
 
         if (availableCommands.Length > 0)
         {
-            float radius = 100;
+            float radius = 80;
             float angleGap = (Mathf.PI * 2) / availableCommands.Length;
 
             for (int i = 0; i < availableCommands.Length; ++i)
             {
                 Command currentCommand = availableCommands[i];
-                GameObject radialItem = Instantiate(_radialItemPrefab);
-                radialItem.transform.SetParent(go.transform);
+                GameObject radialItem = Instantiate(_radialMenuItemPrefab);
+                radialItem.transform.SetParent(centerRadialObject.transform);
                 Text text = radialItem.GetComponentInChildren<Text>();
                 text.text = currentCommand.GetType().Name;
-                radialItem.transform.position = go.transform.position;
+                radialItem.transform.position = centerRadialObject.transform.position;
                 radialItem.transform.position += new Vector3(Mathf.Cos(angleGap * i) * radius, Mathf.Sin(angleGap * i) * radius, 0.0f);
                 radialItem.transform.localScale = Vector3.one;
+                //RadialMenuItem item = radialItem.GetComponent<RadialMenuItem>();
+                //item.CommandIndex = i;
 
                 if (currentCommand.GetType() == typeof(MoveCommand)) 
                 {
-                    radialItem.GetComponent<Button>().onClick.AddListener(GameStateManager.Instance.Player.MoveRight);
+                    radialItem.GetComponent<Button>().onClick.AddListener( delegate { CallCommand(i); } );
                 }
                 _menuItems.Add(radialItem);
             }
         }
-
-        _menuItems.Add(go);
+        _menuItems.Add(centerRadialObject);
     }
+
+    public void CallCommand(int index)
+    {
+        if (_menuItems.Count > 1)
+        {
+            Interactable interactable = GameStateManager.Instance.SelectingObject.GetComponent<Interactable>();
+            interactable.DoCommand(index - 1);
+        }
+    } 
 
     void CloseRadialMenu()
     {
-        _showing = false;
         for (int i = _menuItems.Count - 1; i >= 0; --i)
         {
             Destroy(_menuItems[i]);
         }
         _menuItems.Clear();
     }
-
 
 }
