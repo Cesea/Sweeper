@@ -50,6 +50,16 @@ public class GameStateManager : SingletonBase<GameStateManager>
         _rightMouseClickTimer = new Timer(0.5f);
     }
 
+    private void OnEnable()
+    {
+        EventManager.Instance.AddListener<Events.RadarSkillEvent>(OnRadarSkillEvent);
+    }
+
+    private void OnDisable()
+    {
+        EventManager.Instance.AddListener<Events.RadarSkillEvent>(OnRadarSkillEvent);
+    }
+
     public void Update()
     {
         if (_selectingObject == null)
@@ -79,7 +89,7 @@ public class GameStateManager : SingletonBase<GameStateManager>
 
     public void SpawnExclamation(int x, int z)
     {
-        GameObject go = Instantiate(_exclamationPrefab, new Vector3(x, 0, z), Quaternion.identity);
+        GameObject go = Instantiate(_exclamationPrefab, new Vector3(x, 1, z), Quaternion.identity);
         go.transform.SetParent(transform);
         _exclamations.Add(go);
     }
@@ -160,5 +170,31 @@ public class GameStateManager : SingletonBase<GameStateManager>
         //    }
         //}
         return null;
-    } 
+    }
+
+    public void OnRadarSkillEvent(Events.RadarSkillEvent e)
+    {
+        Cell[] playerAdjacentCells = Player.AdjacentCells;
+
+        int count = 0;
+        for (int z = 0; z < 3; ++z)
+        {
+            for (int x = 0; x < 3; ++x)
+            {
+                if (x == 1 && z == 1)
+                {
+                    continue;
+                }
+                Cell currentCell = playerAdjacentCells[count];
+                if (currentCell != null)
+                {
+                    if (currentCell.Type == Cell.CellType.Mine)
+                    {
+                        SpawnExclamation(currentCell.X, currentCell.Z);
+                    }
+                }
+                count++;
+            }
+        }
+    }
 }

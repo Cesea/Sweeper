@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Cell 
 {
+    public GameObject InstalledObject { get; set; }
+    public GameObject SittingObject { get; set; }
+
     public enum CellType
     {
         Empty,

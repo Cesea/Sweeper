@@ -12,5 +12,13 @@ namespace Events
     {
     }
 
+    public class RadarSkillEvent : GameEvent
+    {
+        public Vector3 Origin { get; set; }
+        public RadarSkillEvent(Vector3 origin)
+        {
+            Origin = origin;
+        }
+    }
 }
 

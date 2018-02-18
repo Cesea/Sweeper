@@ -12,12 +12,19 @@ public class BoardMover : MonoBehaviour
     private float _t;
     public float _speed = 1.0f;
 
-    Cell[] _adjacentCells;
+    public GameObject _dangerSignPrefab;
+
+    private Cell[] _adjacentCells;
+    public Cell[] AdjacentCells
+    {
+        get { return _adjacentCells; }
+    }
 
     private void Start()
     {
         _adjacentCells = new Cell[8];
     }
+
 
     public void MoveToCell(int x, int z)
     {
@@ -114,7 +121,30 @@ public class BoardMover : MonoBehaviour
         {
             MoveRight();
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            BuildDangerSign((int)transform.position.x, (int)transform.position.z);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Keypad1))
+        {
+            UseRadarSkill();
+        }
     }
+
+    //Temp
+    public void UseRadarSkill()
+    {
+        EventManager.Instance.TriggerEvent(new Events.RadarSkillEvent(transform.position));
+    }
+
+    public void BuildDangerSign(int x, int z)
+    {
+        GameObject go = Instantiate(_dangerSignPrefab);
+        go.transform.position = new Vector3(x, 0, z);
+    }
+    //
 
     private void Move()
     {
@@ -145,6 +175,7 @@ public class BoardMover : MonoBehaviour
 
     private void CheckAdjacentCells()
     {
+        bool isHazardExist = false;
         int count = 0;
         for (int z = 0; z < 3; ++z)
         {
@@ -159,11 +190,16 @@ public class BoardMover : MonoBehaviour
                 {
                     if (currentCell.Type == Cell.CellType.Mine)
                     {
-                        GameStateManager.Instance.SpawnExclamation(currentCell.X, currentCell.Z);
+                        isHazardExist = true;
                     }
                 }
                 count++;
             }
+        }
+
+        if (isHazardExist)
+        {
+            GameStateManager.Instance.SpawnExclamation((int)_startPosition.x, (int)_startPosition.z);
         }
     }
 

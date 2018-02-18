@@ -12,13 +12,22 @@ public static class CommandBuilder
 
         result.Add(new InspectCommand());
 
+        bool isInBuildRange = false;
+
         Vector3 deltaToPlayer = GameStateManager.Instance.Player.transform.position - obj.transform.position;
         Vector2Int deltaGridToPlayer = new Vector2Int((int)deltaToPlayer.x, (int)deltaToPlayer.z);
         if ((deltaGridToPlayer.x == 0 && Mathf.Abs(deltaGridToPlayer.y) == 1) ||
             (Mathf.Abs(deltaGridToPlayer.x) == 1 && deltaGridToPlayer.y == 0))
         {
             result.Add(new MoveCommand(-deltaGridToPlayer.x, -deltaGridToPlayer.y));
+            isInBuildRange = true;
         }
+
+        if (isInBuildRange)
+        {
+
+        }
+
         return result.ToArray();
     }
 }

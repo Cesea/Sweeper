@@ -16,7 +16,6 @@ public class BoardManager : SingletonBase<BoardManager>
     [SerializeField]
     GameObject _exitPrefab;
 
-
     [Header("Board Size")]
     [SerializeField]
     private int _width;
@@ -33,6 +32,27 @@ public class BoardManager : SingletonBase<BoardManager>
         BuildBoard(width, height);
         BuildObjects();
     }
+
+    public GameObject GetObjectAt(int x, int z)
+    {
+        GameObject result = null;
+        int index = x + _width * z;
+        if (index < _instantiatedCubes.Count)
+        {
+            result = _instantiatedCubes[index];
+        }
+        return result;
+    }
+
+    public void SetObjectAt(int x, int z, GameObject obj)
+    {
+        int index = x + _width * z;
+        if (index < _instantiatedCubes.Count)
+        {
+            _instantiatedCubes[index] = obj;
+        }
+    }
+
 
     private void BuildBoard(int width, int height)
     {
