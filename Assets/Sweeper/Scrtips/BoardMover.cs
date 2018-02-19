@@ -9,7 +9,7 @@ public class BoardMover : MonoBehaviour
     Vector3 _targetPosition = Vector3.zero;
     Vector3 _startPosition = Vector3.zero;
 
-    private float _t;
+    private Utils.Timer _timer = new Utils.Timer(1.0f);
     public float _speed = 1.0f;
 
     public GameObject _dangerSignPrefab;
@@ -137,21 +137,19 @@ public class BoardMover : MonoBehaviour
         GameObject go = Instantiate(_dangerSignPrefab);
         go.transform.position = new Vector3(x, 0, z);
     }
-    //
 
     private void Move()
     {
         if (_moving)
         {
-            _t += _speed * Time.deltaTime;
-
-            Vector3 currentPosition = Vector3.Lerp(_startPosition, _targetPosition, _t);
-            if (_t >= 0.99f)
+            bool isTick = _timer.Tick(Time.deltaTime * _speed);
+            Vector3 currentPosition = Vector3.Lerp(_startPosition, _targetPosition, _timer.Percent);
+            if (isTick)
             {
                 currentPosition = _targetPosition;
                 _startPosition = _targetPosition;
                 _moving = false;
-                _t = 0.0f;
+                _timer.Reset();
 
                 UpdateAdjacentCells();
                 CheckAdjacentCells();

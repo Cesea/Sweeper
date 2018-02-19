@@ -11,6 +11,11 @@ namespace Utils
         public float TargetTime { get; set; }
         private float _currentTime = 0.0f;
 
+        public float Percent
+        {
+            get { return _currentTime / TargetTime; }
+        }
+
         public Timer(float targetTime)
         {
             TargetTime = targetTime;
@@ -30,7 +35,7 @@ namespace Utils
             return false;
         }
 
-        public void ResetTimer()
+        public void Reset()
         {
             _currentTime = 0.0f;
         }
