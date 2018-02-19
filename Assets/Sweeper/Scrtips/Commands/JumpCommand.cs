@@ -7,8 +7,18 @@ using Foundation;
 [System.Serializable]
 public class JumpCommand : Command
 {
+    public int DeltaX { get; set; }
+    public int DeltaZ { get; set; }
+
+    public JumpCommand(int deltaX, int deltaZ)
+    {
+        DeltaX = deltaX;
+        DeltaZ = deltaZ;
+    } 
+
     public override void Execute(GameObject target)
     {
-        SkillManager skillManager = target.GetComponent<SkillManager>();
+        BoardJump jump = target.GetComponent<BoardJump>();
+        jump.MoveBy(DeltaX, DeltaZ);
     }
 }

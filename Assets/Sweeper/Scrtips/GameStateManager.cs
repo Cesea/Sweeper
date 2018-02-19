@@ -7,7 +7,6 @@ using Utils;
 
 public class GameStateManager : SingletonBase<GameStateManager>
 {
-
     private BoardManager _boardManager;
     public BoardManager BoardManager { get { return _boardManager; } }
 
@@ -32,7 +31,7 @@ public class GameStateManager : SingletonBase<GameStateManager>
         get { return BoardManager.Instance.CurrentBoard; }
     }
 
-    public BoardMover Player;
+    public BoardObject Player;
 
     public LayerMask _cellMask;
     public LayerMask _objectMask;
@@ -80,6 +79,7 @@ public class GameStateManager : SingletonBase<GameStateManager>
         _boardManager.BuildNewBoard(10, 10);
         Player.SetPosition(_boardManager.CurrentBoard.StartCellCoord);
         RemoveExclamations();
+        RemoveDangerSigns();
     }
 
     public void RespawnPlayer()
@@ -90,6 +90,13 @@ public class GameStateManager : SingletonBase<GameStateManager>
     public void SpawnExclamation(int x, int z)
     {
         GameObject go = Instantiate(_exclamationPrefab, new Vector3(x, 1, z), Quaternion.identity);
+        go.transform.SetParent(transform);
+        _exclamations.Add(go);
+    }
+
+    public void SpaenDangerSign(int x, int z)
+    {
+        GameObject go = Instantiate(_dangerSignPrefab, new Vector3(x, 1, z), Quaternion.identity);
         go.transform.SetParent(transform);
         _exclamations.Add(go);
     }

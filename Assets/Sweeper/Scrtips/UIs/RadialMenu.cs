@@ -72,8 +72,6 @@ public class RadialMenu : Menu<RadialMenu>
                 radialItem.transform.position = centerRadialObject.transform.position;
                 radialItem.transform.position += new Vector3(Mathf.Cos(angleGap * i) * radius, Mathf.Sin(angleGap * i) * radius, 0.0f);
                 radialItem.transform.localScale = Vector3.one;
-                //RadialMenuItem item = radialItem.GetComponent<RadialMenuItem>();
-                //item.CommandIndex = i;
 
                 int localCount = i;
 
