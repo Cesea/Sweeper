@@ -16,7 +16,7 @@ public class RadarSkill : Skill
         _origin = origin;
     } 
 
-    public override void Activate()
+    public override void Activate(GameObject instance)
     {
         EventManager.Instance.TriggerEvent(new Events.RadarSkillEvent(_origin));
     }

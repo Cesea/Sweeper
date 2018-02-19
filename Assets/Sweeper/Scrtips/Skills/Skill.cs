@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class Skill 
 {
-    public virtual void Activate()
+    public virtual void Activate(GameObject instance)
     {
     } 
 }

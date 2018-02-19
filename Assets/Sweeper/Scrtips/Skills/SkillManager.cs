@@ -6,13 +6,8 @@ public class SkillManager : MonoBehaviour
 {
     public List<Skill> _skiils = new List<Skill>();
 
-	void Start ()
+    public void UseSkill()
     {
-		
-	}
-	
-	void Update ()
-    {
-		
-	}
+
+    }
 }

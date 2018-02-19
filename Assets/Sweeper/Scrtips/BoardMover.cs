@@ -25,7 +25,6 @@ public class BoardMover : MonoBehaviour
         _adjacentCells = new Cell[8];
     }
 
-
     public void MoveToCell(int x, int z)
     {
         if (_moving || !GameStateManager.Instance.BoardManager.CurrentBoard.CanMoveTo(x, z))
@@ -44,18 +43,12 @@ public class BoardMover : MonoBehaviour
 
     public void MoveBy(int x, int z)
     {
-        Vector3 tmpTarget = transform.position + new Vector3(x, 0, z);
-        if ((x == 0 && z == 0) || _moving || !GameStateManager.Instance.BoardManager.CurrentBoard.CanMoveTo((int)tmpTarget.x, (int)tmpTarget.z))
+        if ((x == 0 && z == 0))
         {
             return;
         }
-        _targetPosition = tmpTarget;
-        GameStateManager.Instance.RemoveExclamations();
-
-        if (_targetPosition != _startPosition)
-        {
-            _moving = true;
-        }
+        Vector3 tmpTarget = transform.position + new Vector3(x, 0, z);
+        MoveToCell((int)tmpTarget.x, (int)tmpTarget.z);
     }
 
     public void SetPosition(Vector2 v)
