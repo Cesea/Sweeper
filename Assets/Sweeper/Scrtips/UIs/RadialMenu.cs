@@ -14,8 +14,6 @@ public class RadialMenu : Menu<RadialMenu>
 
     public List<GameObject> _menuItems = new List<GameObject>();
 
-    int _itemCount = 0;
-
     public static void Show(Vector3 mousePosition, GameObject selectingObject)
     {
         Open();

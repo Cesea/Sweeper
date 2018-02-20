@@ -53,7 +53,6 @@ public class BoardManager : SingletonBase<BoardManager>
         }
     }
 
-
     private void BuildBoard(int width, int height)
     {
         _currentBoard = new Board(width, height);

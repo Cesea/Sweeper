@@ -13,6 +13,7 @@ public class MenuManager : SingletonBase<MenuManager>
     public MainMenu _mainMenuPrefab;
     public OptionMenu _optionMenuPrefab;
     public RadialMenu _radialMenuPrefab;
+    public ModalDialog _modalDialogPrefab;
 
     private void Start()
     {
