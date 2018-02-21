@@ -13,7 +13,7 @@ namespace Level
 
         private GameObject _objectToInstall;
 
-        public List<GameObject> _installObjects;
+        public List<GameObject> InstallObjects;
 
         public int _selectingIndex = 0;
         private int _prevIndex = 0; 
@@ -58,7 +58,7 @@ namespace Level
                     return;
                 }
 
-                if (Input.GetMouseButton(1))
+                if (Input.GetMouseButtonDown(1))
                 {
                     AddRotation();
                     return;
@@ -68,7 +68,7 @@ namespace Level
 
         public void InstallObjectAtBoardPosition(int x, int y, int prefabIndex)
         {
-            if (prefabIndex > _installObjects.Count - 1)
+            if (prefabIndex > InstallObjects.Count - 1)
             {
                 return;
             }
@@ -83,8 +83,10 @@ namespace Level
                 {
                     //오브젝트를 설치하고 노드의 속성을 업데이트 한다.
                     Quaternion rot = Quaternion.Euler(0, _yRotation, 0);
-                    GameObject go = Instantiate(_installObjects[prefabIndex], node.WorldPosition, rot);
+                    GameObject go = Instantiate(InstallObjects[prefabIndex], node.WorldPosition, rot);
                     LevelObject levelObject = go.GetComponent<LevelObject>();
+                    levelObject.PrefabIndex = prefabIndex;
+                    levelObject.SittingNode = node;
                     if (levelObject.IsHazard)
                     {
                         node.IsHazard = true;
@@ -113,7 +115,7 @@ namespace Level
 
         public void InstallObjectAtMousePosition(int prefabIndex)
         {
-            if (prefabIndex > _installObjects.Count - 1)
+            if (prefabIndex > InstallObjects.Count - 1)
             {
                 return;
             }
@@ -136,6 +138,7 @@ namespace Level
             {
                 _yRotation -= 360.0f;
             }
+            _objectToInstall.transform.rotation = Quaternion.Euler(0, _yRotation, 0);
         }
 
         private void RecreateObjectToInstall()
@@ -148,7 +151,7 @@ namespace Level
 
             if (_objectToInstall == null)
             {
-                _objectToInstall = Instantiate(_installObjects[_selectingIndex]);
+                _objectToInstall = Instantiate(InstallObjects[_selectingIndex]);
             }
         }
 

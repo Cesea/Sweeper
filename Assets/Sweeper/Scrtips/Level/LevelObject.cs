@@ -9,5 +9,38 @@ namespace Level
         public bool IsHazard = true;
         public bool IsWalkable = true;
 
+        public Node SittingNode = null;
+
+        public int PrefabIndex;
+
+        public LevelObjectSaveData ToSaveData()
+        {
+            LevelObjectSaveData result = new LevelObjectSaveData();
+            result.IsHazard = IsHazard;
+            result.IsWalkable = IsWalkable;
+            result.PrefabIndex = PrefabIndex;
+
+            if (SittingNode != null)
+            {
+                result.BoardX = SittingNode.X;
+                result.BoardY = SittingNode.Z;
+
+                result.YRotation = transform.rotation.eulerAngles.y;
+            }
+            return result;
+        }
+    }
+
+    [System.Serializable]
+    public class LevelObjectSaveData
+    {
+        public int PrefabIndex;
+        public int BoardX;
+        public int BoardY;
+
+        public float YRotation;
+
+        public bool IsHazard = true;
+        public bool IsWalkable = true;
     }
 }

@@ -20,7 +20,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4085248033334078}
   - component: {fileID: 114083335953660584}
-  - component: {fileID: 65107960401874786}
   m_Layer: 8
   m_Name: MineCube
   m_TagString: Untagged
@@ -113,18 +112,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1585271196341912}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!65 &65107960401874786
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1295389127078594}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: -0.5, z: 0}
 --- !u!114 &114083335953660584
 MonoBehaviour:
   m_ObjectHideFlags: 1
