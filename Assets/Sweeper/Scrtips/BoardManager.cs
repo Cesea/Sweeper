@@ -29,6 +29,11 @@ public class BoardManager : SingletonBase<BoardManager>
 
     private List<GameObject> _instantiatedCubes = new List<GameObject>();
 
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+
     public static Vector3 BoardPosToWorldPos(Vector2Int pos)
     {
         return Instance.transform.position + new Vector3(pos.x * Instance.NodeRadius * 2.0f + Instance.NodeRadius, 

@@ -15,7 +15,6 @@ public class GameStateManager : SingletonBase<GameStateManager>
     public GameObject _dangerSignPrefab;
 
     private List<GameObject> _exclamations;
-    private List<GameObject> _dangerSigns;
 
     //마우스 우클릭시 정보를 보여줄 오브젝트이다.
     private GameObject _selectingObject;
@@ -36,16 +35,18 @@ public class GameStateManager : SingletonBase<GameStateManager>
     public LayerMask _nodeMask;
     public LayerMask _objectMask;
 
+    public BoxCollider MouseCollisionBox;
+
     private void Start()
     {
         _boardManager = GetComponent<BoardManager>();
 
         _exclamations = new List<GameObject>();
-        _dangerSigns = new List<GameObject>();
 
         SetupNextBoard();
 
         _rightMouseClickTimer = new Timer(0.5f);
+
     }
 
     private void OnEnable()
@@ -78,7 +79,20 @@ public class GameStateManager : SingletonBase<GameStateManager>
         _boardManager.BuildNewBoard(new Vector2(10, 10), 0.5f);
         Player.SetPosition(_boardManager.CurrentBoard.StartCellCoord);
         RemoveExclamations();
-        RemoveDangerSigns();
+
+        CreateMouseCollisionBox();
+
+    }
+
+    private void CreateMouseCollisionBox()
+    {
+        if (MouseCollisionBox == null)
+        {
+            MouseCollisionBox = gameObject.AddComponent<BoxCollider>();
+        }
+        MouseCollisionBox.size = new Vector3(_boardManager.WorldSize.x, 0.2f, _boardManager.WorldSize.y);
+        MouseCollisionBox.center = new Vector3(_boardManager.WorldSize.x * 0.5f, 0.1f, _boardManager.WorldSize.y * 0.5f);
+        MouseCollisionBox.isTrigger = true;
     }
 
     public void RespawnPlayer()
@@ -88,14 +102,9 @@ public class GameStateManager : SingletonBase<GameStateManager>
 
     public void SpawnExclamation(int x, int z)
     {
-        GameObject go = Instantiate(_exclamationPrefab, new Vector3(x, 1, z), Quaternion.identity);
-        go.transform.SetParent(transform);
-        _exclamations.Add(go);
-    }
-
-    public void SpaenDangerSign(int x, int z)
-    {
-        GameObject go = Instantiate(_dangerSignPrefab, new Vector3(x, 1, z), Quaternion.identity);
+        Vector3 position = BoardManager.BoardPosToWorldPos(new Vector2Int(x, z));
+        position.y = 1.0f;
+        GameObject go = Instantiate(_exclamationPrefab, position, Quaternion.identity);
         go.transform.SetParent(transform);
         _exclamations.Add(go);
     }
@@ -109,18 +118,6 @@ public class GameStateManager : SingletonBase<GameStateManager>
                 Destroy(_exclamations[i]);
             }
             _exclamations.Clear();
-        }
-    }
-
-    public void RemoveDangerSigns()
-    {
-        if (_dangerSigns.Count > 0)
-        {
-            for (int i = _dangerSigns.Count - 1; i >= 0; --i)
-            {
-                Destroy(_dangerSigns[i]);
-            }
-            _dangerSigns.Clear();
         }
     }
 
@@ -157,24 +154,15 @@ public class GameStateManager : SingletonBase<GameStateManager>
         Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         {
             RaycastHit hitInfo;
-            if (Physics.Raycast(camRay, out hitInfo, Instance._nodeMask))
+            if (Instance.MouseCollisionBox.Raycast(camRay, out hitInfo, 1000.0f))
             {
-                if (hitInfo.collider.gameObject.GetComponent<Interactable>() != null)
+                Node node = BoardManager.Instance.CurrentBoard.GetNodeAt(hitInfo.point);
+                if (node != null)
                 {
-                    return hitInfo.collider.gameObject;
+                    return BoardManager.Instance.GetObjectAt(node.X, node.Z);
                 }
             }
         }
-        //{
-        //    RaycastHit hitInfo;
-        //    if (Physics.Raycast(camRay, out hitInfo, _cellMask))
-        //    {
-        //        if (hitInfo.collider.gameObject.GetComponent<Interactable>() != null)
-        //        {
-        //            return hitInfo.collider.gameObject;
-        //        }
-        //    }
-        //}
         return null;
     }
 
