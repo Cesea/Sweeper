@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Cell 
+public class Node 
 {
     public GameObject InstalledObject { get; set; }
     public GameObject SittingObject { get; set; }
 
-    public enum CellType
+    public enum NodeType
     {
         Empty,
         Mine,
@@ -16,9 +16,14 @@ public class Cell
         Count
     }
 
-    private CellType _type;
+    private NodeType _type;
     private int _x;
     private int _z;
+
+    public bool IsHazard { get; set; }
+    public bool IsWalkable { get; set; }
+
+    public Vector3 WorldPosition;
 
     public int X
     {
@@ -31,17 +36,18 @@ public class Cell
         set { _z = value; }
     }
 
-    public CellType Type
+    public NodeType Type
     {
         get { return _type; }
         set { _type = value; }
     }
 
-    public Cell(int x, int z, CellType type)
+    public Node(int x, int z, Vector3 worldPos, NodeType type)
     {
         _x = x;
         _z = z;
         _type = type;
+        WorldPosition = worldPos;
     }
 
     

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Board 
+public class Board
 {
     private Vector2Int _startCell;
     private Vector2Int _exitCell;
@@ -19,35 +19,45 @@ public class Board
         set { _exitCell = value; }
     }
 
-    private int _width; 
-    private int _height; 
-    public int Width
-    {
-        get { return _width; }
-        set { _width = value; }
-    }
-    public int Height
-    {
-        get { return _height; }
-        set { _height = value; }
-    }
+    public Vector2 WorldSize;
+    public float NodeRadius;
 
-    Cell[] _cells;
+    private float _nodeDiameter;
 
-    public Board(int width, int height)
+    Node[] _nodes;
+    private int _xCount;
+    private int _yCount;
+
+    public int XCount { get; set; }
+    public int YCount { get; set; }
+    public int TotalCount { get { return XCount * YCount; } }
+
+    public Vector3 WorldStartPos;
+
+
+
+    public Board(Vector3 boardWorldPos, Vector2 worldSize, float nodeRadius)
     {
-        _width = width;
-        _height = height;
-        _cells = new Cell[_width * _height];
-        for (int z = 0; z < _height; ++z)
+        WorldStartPos = boardWorldPos;
+        NodeRadius = nodeRadius;
+        _nodeDiameter = nodeRadius * 2.0f;
+
+        XCount = Mathf.RoundToInt(worldSize.x / _nodeDiameter);
+        YCount = Mathf.RoundToInt(worldSize.y / _nodeDiameter);
+
+        _nodes = new Node[XCount * YCount];
+
+        for (int y = 0; y < YCount; ++y)
         {
-            for (int x = 0; x < _width; ++x)
+            for (int x = 0; x < XCount; ++x)
             {
-                int index = x + _width * z;
-                _cells[index] = new Cell(x, z, Cell.CellType.Empty);
+                int index = x + XCount * y;
+                Vector3 worldPos = boardWorldPos + new Vector3(x * _nodeDiameter + NodeRadius, 0, y * _nodeDiameter + NodeRadius);
+                _nodes[index] = new Node(x, y, worldPos, Node.NodeType.Empty);
+
                 if (Random.Range(0.0f, 1.0f) > 0.85f)
                 {
-                    _cells[index].Type = Cell.CellType.Mine;
+                    _nodes[index].Type = Node.NodeType.Mine;
                 }
             }
         }
@@ -62,29 +72,42 @@ public class Board
             }
         }
 
-        _cells[_startCell.x + _startCell.y * _width].Type = Cell.CellType.Start;
-        _cells[_exitCell.x + _exitCell.y * _width].Type = Cell.CellType.Exit;
+        _nodes[_startCell.x + _startCell.y * XCount].Type = Node.NodeType.Start;
+        _nodes[_exitCell.x + _exitCell.y * XCount].Type = Node.NodeType.Exit;
 
-        SetAdjacentCells(_startCell.x, _startCell.y, Cell.CellType.Empty);
+        SetAdjacentCells(_startCell.x, _startCell.y, Node.NodeType.Empty);
     }
 
 
-    public Cell GetCellAt(int x, int z)
+    public Node GetNodeAt(int x, int z)
     {
         if (!IsInBound(x, z))
         {
             return null;
         }
-        return _cells[x + _width * z];
+        return _nodes[x + XCount * z];
     }
 
-    public Cell.CellType GetTypeAt(int x, int z)
+    public Node GetNodeAt(Vector3 worldPos)
+    {
+        int indexX = (int)((worldPos.x - WorldStartPos.x) / _nodeDiameter);
+        int indexY = (int)((worldPos.z - WorldStartPos.z) / _nodeDiameter);
+
+        if (!IsInBound(indexX, indexY))
+        {
+            return null;
+        }
+        return _nodes[indexX + XCount * indexY];
+
+    }
+
+    public Node.NodeType GetTypeAt(int x, int z)
     {
         if (!IsInBound(x, z))
         {
-            return Cell.CellType.Count;
+            return Node.NodeType.Count;
         }
-        return _cells[x + _width * z].Type;
+        return _nodes[x + XCount * z].Type;
     }
 
 
@@ -99,28 +122,39 @@ public class Board
         return result;
     }
 
+    public void DestoryAllLevelObjects()
+    {
+        foreach (var n in _nodes)
+        {
+            if (n.InstalledObject != null)
+            {
+                GameObject.Destroy(n.InstalledObject);    
+            }
+        }
+    }
+
     public Vector2Int GetRandomCellCoord()
     {
-        return new Vector2Int((int)Random.Range(0, _width), (int)Random.Range(0, _height));
+        return new Vector2Int((int)Random.Range(0, XCount), (int)Random.Range(0, YCount));
     }
 
     public bool IsInBound(int x, int z)
     {
-        if (x < 0 || z < 0 || x > _width - 1 || z > _height - 1)
+        if (x < 0 || z < 0 || x > XCount - 1 || z > YCount - 1)
         {
             return false;
         }
         return true;
     }
 
-    public void GetAdjacentCells(int x, int z, ref Cell[] cells)
+    public void GetAdjacentCells(int x, int z, ref Node[] cells)
     {
         int count = 0;
         for (int iz = z - 1; iz <= z + 1; ++iz)
         {
             for (int ix = x - 1; ix <= x + 1; ++ix)
             {
-                int index = ix + _width * iz;
+                int index = ix + XCount * iz;
                 if (ix == x && iz == z)
                 {
                     cells[count] = null;
@@ -128,27 +162,27 @@ public class Board
                 }
                 if (IsInBound(ix, iz))
                 {
-                    cells[count] = _cells[index];
+                    cells[count] = _nodes[index];
                 }
                 count++;
             }
         }
     }
 
-    private void SetAdjacentCells(int x, int z, Cell.CellType type)
+    private void SetAdjacentCells(int x, int z, Node.NodeType type)
     {
         for (int iz = z - 1; iz <= z + 1; ++iz)
         {
             for (int ix = x - 1; ix <= x + 1; ++ix)
             {
-                int index = ix + _width * iz;
+                int index = ix + XCount * iz;
                 if (ix == x && iz == z)
                 {
                     continue;
                 }
                 if (IsInBound(ix, iz))
                 {
-                    _cells[index].Type = type;
+                    _nodes[index].Type = type;
                 }
             }
         }

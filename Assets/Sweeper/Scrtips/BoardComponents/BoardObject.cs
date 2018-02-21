@@ -6,8 +6,8 @@ public class BoardObject : MonoBehaviour
 {
     private List<BoardMoveBase> _movementComponents = new List<BoardMoveBase>();
 
-    private Cell[] _adjacentCells;
-    public Cell[] AdjacentCells
+    private Node[] _adjacentCells;
+    public Node[] AdjacentCells
     {
         get { return _adjacentCells; }
     }
@@ -26,7 +26,7 @@ public class BoardObject : MonoBehaviour
             _movementComponents.Add(boardJump);
         }
 
-        _adjacentCells = new Cell[8];
+        _adjacentCells = new Node[8];
     }
 
     void Start ()
@@ -55,20 +55,10 @@ public class BoardObject : MonoBehaviour
         }
     }
 
-    public void SetPosition(Vector2 v)
-    {
-        transform.position = new Vector3(v.x, 0, v.y);
-        OnMovementDone();
-    }
 
-    public void SetPosition(int x, int z)
-    {
-        transform.position = new Vector3(x, 0, z);
-        OnMovementDone();
-    }
     public void SetPosition(Vector2Int v)
     {
-        transform.position= new Vector3(v.x, 0, v.y);
+        transform.position = BoardManager.BoardPosToWorldPos(v);
         OnMovementDone();
     }
 
@@ -84,10 +74,10 @@ public class BoardObject : MonoBehaviour
                 {
                     continue;
                 }
-                Cell currentCell = _adjacentCells[count];
+                Node currentCell = _adjacentCells[count];
                 if (currentCell != null)
                 {
-                    if (currentCell.Type == Cell.CellType.Mine)
+                    if (currentCell.Type == Node.NodeType.Mine)
                     {
                         isHazardExist = true;
                     }

@@ -33,18 +33,17 @@ public class GameStateManager : SingletonBase<GameStateManager>
 
     public BoardObject Player;
 
-    public LayerMask _cellMask;
+    public LayerMask _nodeMask;
     public LayerMask _objectMask;
 
     private void Start()
     {
         _boardManager = GetComponent<BoardManager>();
 
-        _boardManager.BuildNewBoard(10, 10);
-        Player.SetPosition(_boardManager.CurrentBoard.StartCellCoord);
-
         _exclamations = new List<GameObject>();
         _dangerSigns = new List<GameObject>();
+
+        SetupNextBoard();
 
         _rightMouseClickTimer = new Timer(0.5f);
     }
@@ -76,7 +75,7 @@ public class GameStateManager : SingletonBase<GameStateManager>
 
     public void SetupNextBoard()
     {
-        _boardManager.BuildNewBoard(10, 10);
+        _boardManager.BuildNewBoard(new Vector2(10, 10), 0.5f);
         Player.SetPosition(_boardManager.CurrentBoard.StartCellCoord);
         RemoveExclamations();
         RemoveDangerSigns();
@@ -129,21 +128,21 @@ public class GameStateManager : SingletonBase<GameStateManager>
     public bool CheckMovement(int x, int z)
     {
         bool result = false;
-        Cell.CellType currentCell = _boardManager.CurrentBoard.GetTypeAt(x, z);
+        Node.NodeType currentCell = _boardManager.CurrentBoard.GetTypeAt(x, z);
         switch (currentCell)
         {
-            case Cell.CellType.Empty:
+            case Node.NodeType.Empty:
                 {
                 } break;
-            case Cell.CellType.Mine:
+            case Node.NodeType.Mine:
                 {
                     RespawnPlayer();
                     result = true;
                 } break;
-            case Cell.CellType.Start:
+            case Node.NodeType.Start:
                 {
                 } break;
-            case Cell.CellType.Exit:
+            case Node.NodeType.Exit:
                 {
                     SetupNextBoard();
                     result = true;
@@ -153,12 +152,12 @@ public class GameStateManager : SingletonBase<GameStateManager>
     }
 
     //일단 오브젝트가 있는 땅이면 못간다....
-    private GameObject GetObjectUnderneathMouse()
+    public static GameObject GetObjectUnderneathMouse()
     {
         Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         {
             RaycastHit hitInfo;
-            if (Physics.Raycast(camRay, out hitInfo, _objectMask))
+            if (Physics.Raycast(camRay, out hitInfo, Instance._nodeMask))
             {
                 if (hitInfo.collider.gameObject.GetComponent<Interactable>() != null)
                 {
@@ -181,7 +180,7 @@ public class GameStateManager : SingletonBase<GameStateManager>
 
     public void OnRadarSkillEvent(Events.RadarSkillEvent e)
     {
-        Cell[] playerAdjacentCells = Player.AdjacentCells;
+        Node[] playerAdjacentCells = Player.AdjacentCells;
 
         int count = 0;
         for (int z = 0; z < 3; ++z)
@@ -192,10 +191,10 @@ public class GameStateManager : SingletonBase<GameStateManager>
                 {
                     continue;
                 }
-                Cell currentCell = playerAdjacentCells[count];
+                Node currentCell = playerAdjacentCells[count];
                 if (currentCell != null)
                 {
-                    if (currentCell.Type == Cell.CellType.Mine)
+                    if (currentCell.Type == Node.NodeType.Mine)
                     {
                         SpawnExclamation(currentCell.X, currentCell.Z);
                     }

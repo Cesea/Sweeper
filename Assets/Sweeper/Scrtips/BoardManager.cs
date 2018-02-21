@@ -17,9 +17,11 @@ public class BoardManager : SingletonBase<BoardManager>
     GameObject _exitPrefab;
 
     [Header("Board Size")]
-    [SerializeField]
+
+    public Vector2 WorldSize;
+    public float NodeRadius = 0.5f;
+
     private int _width;
-    [SerializeField]
     private int _height;
 
     private Board _currentBoard;
@@ -27,9 +29,27 @@ public class BoardManager : SingletonBase<BoardManager>
 
     private List<GameObject> _instantiatedCubes = new List<GameObject>();
 
-    public void BuildNewBoard(int width, int height)
+    public static Vector3 BoardPosToWorldPos(Vector2Int pos)
     {
-        BuildBoard(width, height);
+        return Instance.transform.position + new Vector3(pos.x * Instance.NodeRadius * 2.0f + Instance.NodeRadius, 
+            0, 
+            pos.y * Instance.NodeRadius * 2.0f + Instance.NodeRadius);
+    }
+
+    public static Vector2Int WorldPosToBoardPos(Vector3 pos)
+    {
+        Vector3 relativePos = pos - Instance.transform.position;
+        return new Vector2Int((int)(relativePos.x / (Instance.NodeRadius * 2.0f)), (int)(relativePos.z / (Instance.NodeRadius * 2.0f)));
+    }
+
+    public void BuildNewBoard(Vector2 worldSize, float nodeRadius)
+    {
+        WorldSize = worldSize;
+        NodeRadius = nodeRadius;
+        _width = Mathf.RoundToInt(WorldSize.x / (NodeRadius * 2.0f));
+        _height = Mathf.RoundToInt(WorldSize.y / (NodeRadius * 2.0f));
+
+        BuildBoard();
         BuildObjects();
     }
 
@@ -53,9 +73,13 @@ public class BoardManager : SingletonBase<BoardManager>
         }
     }
 
-    private void BuildBoard(int width, int height)
+    private void BuildBoard()
     {
-        _currentBoard = new Board(width, height);
+        if (_currentBoard != null)
+        {
+            _currentBoard.DestoryAllLevelObjects();
+        }
+        _currentBoard = new Board(transform.position, WorldSize, NodeRadius);
     }
 
     private void BuildObjects()
@@ -69,12 +93,12 @@ public class BoardManager : SingletonBase<BoardManager>
             _instantiatedCubes.Clear();
         }
 
-        for (int z = 0; z < _currentBoard.Height; ++z)
+        for (int z = 0; z < _currentBoard.YCount; ++z)
         {
-            for (int x = 0; x < _currentBoard.Width; ++x)
+            for (int x = 0; x < _currentBoard.XCount; ++x)
             {
                 GameObject prefab = GetPrefabByType(CurrentBoard.GetTypeAt(x, z));
-                GameObject go = Instantiate(prefab, new Vector3(x, 0, z), Quaternion.identity);
+                GameObject go = Instantiate(prefab, new Vector3(x + NodeRadius, 0, z + NodeRadius), Quaternion.identity);
                 go.name = "cube_" + x + "_" + z;
                 go.transform.SetParent(transform);
 
@@ -84,27 +108,27 @@ public class BoardManager : SingletonBase<BoardManager>
     }
 
 
-    private GameObject GetPrefabByType(Cell.CellType type)
+    private GameObject GetPrefabByType(Node.NodeType type)
     {
         GameObject result = null;
         switch (type)
         {
-            case Cell.CellType.Empty:
+            case Node.NodeType.Empty:
                 {
                     result = _emptyPrefab;
                 }
                 break;
-            case Cell.CellType.Mine:
+            case Node.NodeType.Mine:
                 {
                     result = _minePrefab;
                 }
                 break;
-            case Cell.CellType.Start:
+            case Node.NodeType.Start:
                 {
                     result = _startPrefab;
                 }
                 break;
-            case Cell.CellType.Exit:
+            case Node.NodeType.Exit:
                 {
                     result = _exitPrefab;
                 }

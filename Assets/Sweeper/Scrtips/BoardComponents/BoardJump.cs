@@ -27,8 +27,9 @@ public class BoardJump : BoardMoveBase
         {
             return;
         }
-        Vector3 targetPos = _targetPosition + new Vector3(x, 0, z);
-        MoveTo((int)targetPos.x, (int)targetPos.z);
+
+        Vector2Int targetPos = BoardManager.WorldPosToBoardPos(transform.position) + new Vector2Int(x, z);
+        MoveTo(targetPos.x, targetPos.y);
     }
 
     public override void MoveTo(int x, int z)
@@ -37,7 +38,8 @@ public class BoardJump : BoardMoveBase
         {
             return;
         }
-        _targetPosition = new Vector3(x, 0, z);
+
+        _targetPosition = BoardManager.BoardPosToWorldPos(new Vector2Int(x, z));
         _middlePosition = ((_targetPosition + _startPosition) / 2.0f) + new Vector3(0, _jumpHeight, 0);
 
         if (_targetPosition != _startPosition)

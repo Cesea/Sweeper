@@ -37,7 +37,7 @@ public static class CommandBuilder
         if (deltaGridToPlayer.x >= -1 && deltaGridToPlayer.x <= 1 &&
            deltaGridToPlayer.y >= -1 && deltaGridToPlayer.y <= 1)
         {
-            Cell cellAtObject = GameStateManager.Instance.BoardManager.CurrentBoard.GetCellAt((int)obj.transform.position.x, (int)obj.transform.position.z);
+            Node cellAtObject = GameStateManager.Instance.BoardManager.CurrentBoard.GetNodeAt((int)obj.transform.position.x, (int)obj.transform.position.z);
             if (cellAtObject.InstalledObject == null)
             {
                 result.Add(new InstallObjectCommand(GameStateManager.Instance._dangerSignPrefab, objectCellPosition.x, objectCellPosition.y));

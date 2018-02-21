@@ -12,7 +12,7 @@ public class BoardWalk : BoardMoveBase
             return;
         }
 
-        _targetPosition = new Vector3(x, 0, z);
+        _targetPosition = BoardManager.BoardPosToWorldPos(new Vector2Int(x, z));
 
         if (_targetPosition != _startPosition)
         {
@@ -27,7 +27,7 @@ public class BoardWalk : BoardMoveBase
         {
             return;
         }
-        Vector2Int tmpTarget = transform.WorldPosToCellPos() + new Vector2Int(x, z);
+        Vector2Int tmpTarget = BoardManager.WorldPosToBoardPos(transform.position) + new Vector2Int(x, z);
         MoveTo((int)tmpTarget.x, (int)tmpTarget.y);
     }
 
@@ -35,25 +35,25 @@ public class BoardWalk : BoardMoveBase
     public void MoveRight()
     {
         Vector3 targetPos = transform.position + Vector3.right;
-        MoveTo((int)targetPos.x, (int)targetPos.z);
+        MoveBy(1, 0);
     }
 
     public void MoveLeft()
     {
         Vector3 targetPos = transform.position + Vector3.left;
-        MoveTo((int)targetPos.x, (int)targetPos.z);
+        MoveBy(-1, 0);
     }
 
     public void MoveUp()
     {
         Vector3 targetPos = transform.position + Vector3.forward;
-        MoveTo((int)targetPos.x, (int)targetPos.z);
+        MoveBy(0, 1);
     }
 
     public void MoveDown()
     {
         Vector3 targetPos = transform.position + Vector3.back;
-        MoveTo((int)targetPos.x, (int)targetPos.z);
+        MoveBy(0, -1);
     }
 
     private void Update()
@@ -114,6 +114,4 @@ public class BoardWalk : BoardMoveBase
             }
         }
     }
-
-
 }
