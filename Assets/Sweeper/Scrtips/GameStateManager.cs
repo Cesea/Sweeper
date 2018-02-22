@@ -76,7 +76,7 @@ public class GameStateManager : SingletonBase<GameStateManager>
 
     public void SetupNextBoard()
     {
-        _boardManager.BuildNewBoard(new Vector2(10, 10), 0.5f);
+        _boardManager.BuildNewBoard();
         Player.SetPosition(_boardManager.CurrentBoard.StartCellCoord);
         RemoveExclamations();
 
@@ -100,9 +100,9 @@ public class GameStateManager : SingletonBase<GameStateManager>
         Player.SetPosition(_boardManager.CurrentBoard.StartCellCoord);
     }
 
-    public void SpawnExclamation(int x, int z)
+    public void SpawnExclamation(int x, int y, int z)
     {
-        Vector3 position = BoardManager.BoardPosToWorldPos(new Vector2Int(x, z));
+        Vector3 position = BoardManager.BoardPosToWorldPos(new Vector3Int(x, y, z));
         position.y = 1.0f;
         GameObject go = Instantiate(_exclamationPrefab, position, Quaternion.identity);
         go.transform.SetParent(transform);
@@ -122,29 +122,24 @@ public class GameStateManager : SingletonBase<GameStateManager>
     }
 
     //만약 플레이어가 죽거나 출구에 도착한다면 true를 반환한다
-    public bool CheckMovement(int x, int z)
+    public bool CheckMovement(Vector3Int pos)
+    {
+        return CheckMovement(pos.x, pos.y, pos.z);
+    }
+    public bool CheckMovement(int x, int y, int z)
     {
         bool result = false;
-        Node.NodeType currentCell = _boardManager.CurrentBoard.GetTypeAt(x, z);
-        switch (currentCell)
+        Node currentNode = _boardManager.CurrentBoard.GetNodeAt(x, y, z);
+        if (currentNode.IsHazard)
         {
-            case Node.NodeType.Empty:
-                {
-                } break;
-            case Node.NodeType.Mine:
-                {
-                    RespawnPlayer();
-                    result = true;
-                } break;
-            case Node.NodeType.Start:
-                {
-                } break;
-            case Node.NodeType.Exit:
-                {
-                    SetupNextBoard();
-                    result = true;
-                } break;
+            RespawnPlayer();
+            result = true;
         }
+        //else if (currentNode.IsExit)
+        //{
+        //    SetupNextBoard();
+        //    result = true;
+        //}
         return result;
     }
 
@@ -159,7 +154,7 @@ public class GameStateManager : SingletonBase<GameStateManager>
                 Node node = BoardManager.Instance.CurrentBoard.GetNodeAt(hitInfo.point);
                 if (node != null)
                 {
-                    return BoardManager.Instance.GetObjectAt(node.X, node.Z);
+                    //return BoardManager.Instance.GetObjectAt(node.X, node.Z);
                 }
             }
         }
@@ -179,12 +174,12 @@ public class GameStateManager : SingletonBase<GameStateManager>
                 {
                     continue;
                 }
-                Node currentCell = playerAdjacentCells[count];
-                if (currentCell != null)
+                Node currentNode = playerAdjacentCells[count];
+                if (currentNode != null)
                 {
-                    if (currentCell.Type == Node.NodeType.Mine)
+                    if (currentNode.IsHazard)
                     {
-                        SpawnExclamation(currentCell.X, currentCell.Z);
+                        SpawnExclamation(currentNode.X, currentNode.Y, currentNode.Z);
                     }
                 }
                 count++;

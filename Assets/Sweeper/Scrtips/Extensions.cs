@@ -4,9 +4,9 @@ using UnityEngine;
 
 public static class Extensions
 {
-    public static Vector2Int WorldPosToCellPos(this Transform trans)
+    public static Vector3Int ToVector3Int(this Vector3 position, int xDelta = 0, int yDelta = 0, int  zDelta = 0)
     {
-        return new Vector2Int((int)trans.position.x, (int)trans.position.z);
+        return new Vector3Int((int)position.x + xDelta, (int)position.y + yDelta, (int)position.z + zDelta);
     }
 
 }

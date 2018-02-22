@@ -5,64 +5,62 @@ using UnityEngine;
 [System.Serializable]
 public class Board
 {
-    private Vector2Int _startCell;
-    private Vector2Int _exitCell;
+    private Vector3Int _startCell;
+    private Vector3Int _exitCell;
 
-    public Vector2Int StartCellCoord
+    public Vector3Int StartCellCoord
     {
         get { return _startCell; }
         set { _startCell = value; }
     }
-    public Vector2Int ExitCellCoord
+    public Vector3Int ExitCellCoord
     {
         get { return _exitCell; }
         set { _exitCell = value; }
     }
 
-    public Vector2 WorldSize;
+    public Vector3 WorldSize;
     public float NodeRadius;
 
     private float _nodeDiameter;
 
     Node[] _nodes;
-    private int _xCount;
-    private int _yCount;
 
     public int XCount { get; set; }
     public int YCount { get; set; }
-    public int TotalCount { get { return XCount * YCount; } }
+    public int ZCount { get; set; }
+
+    public int TotalCount { get { return XCount * YCount * ZCount; } }
 
     public Vector3 WorldStartPos;
 
 
-
-    public Board(Vector3 boardWorldPos, Vector2 worldSize, float nodeRadius)
+    public Board(Vector3 boardWorldPos, Vector3 worldSize, float nodeRadius)
     {
         WorldStartPos = boardWorldPos;
         NodeRadius = nodeRadius;
+
         _nodeDiameter = nodeRadius * 2.0f;
 
         XCount = Mathf.RoundToInt(worldSize.x / _nodeDiameter);
         YCount = Mathf.RoundToInt(worldSize.y / _nodeDiameter);
+        ZCount = Mathf.RoundToInt(worldSize.z / _nodeDiameter);
 
-        _nodes = new Node[XCount * YCount];
+        _nodes = new Node[TotalCount];
 
-        for (int y = 0; y < YCount; ++y)
+        for (int z = 0; z < ZCount; ++z)
         {
-            for (int x = 0; x < XCount; ++x)
+            for (int y = 0; y < YCount; ++y)
             {
-                int index = x + XCount * y;
-                Vector3 worldPos = boardWorldPos + new Vector3(x * _nodeDiameter + NodeRadius, 0, y * _nodeDiameter + NodeRadius);
-                _nodes[index] = new Node(x, y, worldPos, Node.NodeType.Normal);
+                for (int x = 0; x < XCount; ++x)
+                {
+                    int index = Index3D(x, y, z);
+                    Vector3 worldPos = boardWorldPos + new Vector3(
+                        x * _nodeDiameter + NodeRadius,
+                        y * _nodeDiameter + NodeRadius,
+                        z * _nodeDiameter + nodeRadius );
 
-                float randomValue = Random.Range(0.0f, 1.0f);
-                if (randomValue > 0.80f && randomValue < 0.9f)
-                {
-                    _nodes[index].Type = Node.NodeType.Empty;
-                }
-                else if (randomValue > 0.9f && randomValue < 1.0f)
-                {
-                    _nodes[index].Type = Node.NodeType.Wall;
+                    _nodes[index] = new Node(x, y, z, worldPos, Node.NodeType.Normal);
                 }
             }
         }
@@ -79,47 +77,45 @@ public class Board
 
         _nodes[_startCell.x + _startCell.y * XCount].Type = Node.NodeType.Start;
         _nodes[_exitCell.x + _exitCell.y * XCount].Type = Node.NodeType.Exit;
-
-        SetAdjacentCells(_startCell.x, _startCell.y, Node.NodeType.Normal);
     }
 
-
-    public Node GetNodeAt(int x, int z)
+    public Node GetNodeAt(int x, int y, int z)
     {
-        if (!IsInBound(x, z))
+        if (!IsInBound(x, y, z))
         {
             return null;
         }
-        return _nodes[x + XCount * z];
+        return _nodes[Index3D(x, y, z)];
     }
 
     public Node GetNodeAt(Vector3 worldPos)
     {
         int indexX = (int)((worldPos.x - WorldStartPos.x) / _nodeDiameter);
-        int indexY = (int)((worldPos.z - WorldStartPos.z) / _nodeDiameter);
+        int indexY = (int)((worldPos.y - WorldStartPos.y) / _nodeDiameter);
+        int indexZ = (int)((worldPos.z - WorldStartPos.z) / _nodeDiameter);
 
-        if (!IsInBound(indexX, indexY))
+        if (!IsInBound(indexX, indexY, indexZ))
         {
             return null;
         }
-        return _nodes[indexX + XCount * indexY];
+        return _nodes[Index3D(indexX, indexY, indexZ)];
 
     }
 
-    public Node.NodeType GetTypeAt(int x, int z)
+    public Node.NodeType GetTypeAt(int x, int y, int z)
     {
-        if (!IsInBound(x, z))
+        if (!IsInBound(x, y, z))
         {
             return Node.NodeType.Count;
         }
-        return _nodes[x + XCount * z].Type;
+        return GetNodeAt(x, y, z).Type;
     }
 
 
-    public bool CanMoveTo(int x, int z)
+    public bool CanMoveTo(int x, int y, int z)
     {
         bool result = true;
-        if (!IsInBound(x, z))
+        if (!IsInBound(x, y, z))
         {
             result = false;
             Debug.Log("movement out of range");
@@ -138,34 +134,43 @@ public class Board
         }
     }
 
-    public Vector2Int GetRandomCellCoord()
+    public Vector3Int GetRandomCellCoord()
     {
-        return new Vector2Int((int)Random.Range(0, XCount), (int)Random.Range(0, YCount));
+        return new Vector3Int((int)Random.Range(0, XCount), (int)Random.Range(0, YCount), (int)Random.Range(0, ZCount));
     }
 
-    public bool IsInBound(int x, int z)
+    public bool IsInBound(int x, int y, int z)
     {
-        if (x < 0 || z < 0 || x > XCount - 1 || z > YCount - 1)
+        if (x < 0 || x > XCount - 1 ||
+            y < 0 || y > YCount - 1 ||
+            z < 0 || z > YCount - 1)
         {
             return false;
         }
         return true;
     }
 
-    public void GetAdjacentCells(int x, int z, ref Node[] cells)
+    public void GetAdjacentCellsHorizontally(Vector3Int pos, bool includeCenter, ref Node[] cells)
+    {
+        GetAdjacentCellsHorizontally(pos.x, pos.y, pos.z, includeCenter, ref cells);
+    }
+
+    public void GetAdjacentCellsHorizontally(int x, int y, int z, bool includeCenter, ref Node[] cells)
     {
         int count = 0;
         for (int iz = z - 1; iz <= z + 1; ++iz)
         {
             for (int ix = x - 1; ix <= x + 1; ++ix)
             {
-                int index = ix + XCount * iz;
-                if (ix == x && iz == z)
+                int index = Index3D(ix, y, iz);
+
+                if (!includeCenter && ix == x && iz == z)
                 {
                     cells[count] = null;
                     continue;
                 }
-                if (IsInBound(ix, iz))
+
+                if (IsInBound(ix, y, iz))
                 {
                     cells[count] = _nodes[index];
                 }
@@ -174,24 +179,55 @@ public class Board
         }
     }
 
-    private void SetAdjacentCells(int x, int z, Node.NodeType type)
+    //public void GetAdjacentCells(int x, int z, ref Node[] cells)
+    //{
+    //    int count = 0;
+    //    for (int iz = z - 1; iz <= z + 1; ++iz)
+    //    {
+    //        for (int ix = x - 1; ix <= x + 1; ++ix)
+    //        {
+    //            int index = ix + XCount * iz;
+    //            if (ix == x && iz == z)
+    //            {
+    //                cells[count] = null;
+    //                continue;
+    //            }
+    //            if (IsInBound(ix, iz))
+    //            {
+    //                cells[count] = _nodes[index];
+    //            }
+    //            count++;
+    //        }
+    //    }
+    //}
+
+    //private void SetAdjacentCells(int x, int y, int z, Node.NodeType type)
+    //{
+    //    for (int iz = z - 1; iz <= z + 1; ++iz)
+    //    {
+    //        for (int ix = x - 1; ix <= x + 1; ++ix)
+    //        {
+    //            int index = ix + XCount * iz;
+    //            if (ix == x && iz == z)
+    //            {
+    //                continue;
+    //            }
+    //            if (IsInBound(ix, iz))
+    //            {
+    //                _nodes[index].Type = type;
+    //            }
+    //        }
+    //    }
+    //}
+
+    #region  Utils
+
+    private int Index3D(int x, int y, int z)
     {
-        for (int iz = z - 1; iz <= z + 1; ++iz)
-        {
-            for (int ix = x - 1; ix <= x + 1; ++ix)
-            {
-                int index = ix + XCount * iz;
-                if (ix == x && iz == z)
-                {
-                    continue;
-                }
-                if (IsInBound(ix, iz))
-                {
-                    _nodes[index].Type = type;
-                }
-            }
-        }
+        return x + (XCount * z) + (XCount * ZCount * y);
     }
+
+    #endregion
 
     //public int GetAdjacentSum(int x, int z)
     //{

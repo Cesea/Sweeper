@@ -5,14 +5,14 @@ using UnityEngine;
 [RequireComponent(typeof(BoardObject))]
 public class BoardWalk : BoardMoveBase
 {
-    public override void MoveTo(int x, int z)
+    public override void MoveTo(int x, int y, int z)
     {
-        if (_moving || !GameStateManager.Instance.BoardManager.CurrentBoard.CanMoveTo(x, z))
+        if (_moving || !GameStateManager.Instance.BoardManager.CurrentBoard.CanMoveTo(x, y, z))
         {
             return;
         }
 
-        _targetPosition = BoardManager.BoardPosToWorldPos(new Vector2Int(x, z));
+        _targetPosition = BoardManager.BoardPosToWorldPos(new Vector3Int(x, y, z));
 
         if (_targetPosition != _startPosition)
         {
@@ -21,39 +21,39 @@ public class BoardWalk : BoardMoveBase
         }
     }
 
-    public override void MoveBy(int x, int z)
+    public override void MoveBy(int x, int y, int z)
     {
         if ((x == 0 && z == 0))
         {
             return;
         }
-        Vector2Int tmpTarget = BoardManager.WorldPosToBoardPos(transform.position) + new Vector2Int(x, z);
-        MoveTo((int)tmpTarget.x, (int)tmpTarget.y);
+        Vector3Int tmpTarget = BoardManager.WorldPosToBoardPos(transform.position) + new Vector3Int(x, y, z);
+        MoveTo((int)tmpTarget.x, (int)tmpTarget.y, (int)tmpTarget.y);
     }
 
 
     public void MoveRight()
     {
         Vector3 targetPos = transform.position + Vector3.right;
-        MoveBy(1, 0);
+        MoveBy(1, 0, 0);
     }
 
     public void MoveLeft()
     {
         Vector3 targetPos = transform.position + Vector3.left;
-        MoveBy(-1, 0);
+        MoveBy(-1, 0, 0);
     }
 
     public void MoveUp()
     {
         Vector3 targetPos = transform.position + Vector3.forward;
-        MoveBy(0, 1);
+        MoveBy(0, 0, 1);
     }
 
     public void MoveDown()
     {
         Vector3 targetPos = transform.position + Vector3.back;
-        MoveBy(0, -1);
+        MoveBy(0, 0, -1);
     }
 
     private void Update()
@@ -103,7 +103,7 @@ public class BoardWalk : BoardMoveBase
 
                 _object.OnMovementDone();
                 //만약 플레이어가 죽거나 출구에 도착한다면 true를 반환한다
-                if (GameStateManager.Instance.CheckMovement((int)_targetPosition.x, (int)_targetPosition.z))
+                if (GameStateManager.Instance.CheckMovement(_targetPosition.ToVector3Int()))
                 {
                     return;
                 }

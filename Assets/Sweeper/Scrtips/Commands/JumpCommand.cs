@@ -8,11 +8,13 @@ using Foundation;
 public class JumpCommand : Command
 {
     public int DeltaX { get; set; }
+    public int DeltaY { get; set; }
     public int DeltaZ { get; set; }
 
-    public JumpCommand(int deltaX, int deltaZ)
+    public JumpCommand(int deltaX, int deltaY, int deltaZ)
     {
         DeltaX = deltaX;
+        DeltaY = deltaY;
         DeltaZ = deltaZ;
 
         _cost = 2;
@@ -22,6 +24,6 @@ public class JumpCommand : Command
     {
         base.Execute(target);
         BoardJump jump = target.GetComponent<BoardJump>();
-        jump.MoveBy(DeltaX, DeltaZ);
+        jump.MoveBy(DeltaX, DeltaY, DeltaZ);
     }
 }

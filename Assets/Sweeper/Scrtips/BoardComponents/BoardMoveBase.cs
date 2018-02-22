@@ -25,13 +25,13 @@ public class BoardMoveBase : MonoBehaviour
     {
     }
 
-    public virtual void MoveTo(int x, int z)
+    public virtual void MoveTo(int x, int y, int z)
     {
     }
 
-    public virtual void MoveBy(int x, int z)
+    public virtual void MoveBy(int x, int y, int z)
     {
-        if (x == 0 && z == 0)
+        if (x == 0 && y == 0 && z == 0)
         {
             return;
         }

@@ -9,6 +9,18 @@ public class BoardObject : MonoBehaviour
 
     private List<BoardMoveBase> _movementComponents = new List<BoardMoveBase>();
 
+
+    private Node[] _upperCells;
+    public Node[] UpperCells
+    {
+        get { return _upperCells; }
+    }
+    private Node[] _lowerCells;
+    public Node[] LowerCells
+    {
+        get { return _lowerCells; }
+    }
+
     private Node[] _adjacentCells;
     public Node[] AdjacentCells
     {
@@ -30,6 +42,8 @@ public class BoardObject : MonoBehaviour
         }
 
         _adjacentCells = new Node[8];
+        _upperCells = new Node[9];
+        _lowerCells = new Node[9];
     }
 
     void Start ()
@@ -49,7 +63,7 @@ public class BoardObject : MonoBehaviour
 
     public void OnMovementDone()
     {
-        UpdateAdjacentCells();
+        UpdateNeighbourCells();
         CheckAdjacentCells();
 
         foreach (var movement in _movementComponents)
@@ -59,7 +73,7 @@ public class BoardObject : MonoBehaviour
     }
 
 
-    public void SetPosition(Vector2Int v)
+    public void SetPosition(Vector3Int v)
     {
         transform.position = BoardManager.BoardPosToWorldPos(v);
         OnMovementDone();
@@ -80,7 +94,7 @@ public class BoardObject : MonoBehaviour
                 Node currentCell = _adjacentCells[count];
                 if (currentCell != null)
                 {
-                    if (currentCell.Type == Node.NodeType.Mine)
+                    if (currentCell.IsHazard)
                     {
                         isHazardExist = true;
                     }
@@ -91,13 +105,21 @@ public class BoardObject : MonoBehaviour
 
         if (isHazardExist)
         {
-            GameStateManager.Instance.SpawnExclamation((int)transform.position.x, (int)transform.position.z);
+            GameStateManager.Instance.SpawnExclamation((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);
         }
     }
 
-    private void UpdateAdjacentCells()
+    private void UpdateNeighbourCells()
     {
-        GameStateManager.Instance.CurrentBoard.GetAdjacentCells((int)transform.position.x, (int)transform.position.z, ref _adjacentCells);
+        //upper
+        GameStateManager.Instance.CurrentBoard.GetAdjacentCellsHorizontally(
+            transform.position.ToVector3Int(0, 1, 0), true, ref _upperCells);
+        //center
+        GameStateManager.Instance.CurrentBoard.GetAdjacentCellsHorizontally(
+            transform.position.ToVector3Int(), false, ref _upperCells);
+        //lower
+        GameStateManager.Instance.CurrentBoard.GetAdjacentCellsHorizontally(
+            transform.position.ToVector3Int(0, -1, 0), false, ref _upperCells);
     }
 
 

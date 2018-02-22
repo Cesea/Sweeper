@@ -24,7 +24,8 @@ namespace Level
             if (SittingNode != null)
             {
                 result.BoardX = SittingNode.X;
-                result.BoardY = SittingNode.Z;
+                result.BoardY = SittingNode.Y;
+                result.BoardZ = SittingNode.Z;
 
                 result.YRotation = transform.rotation.eulerAngles.y;
             }
@@ -38,6 +39,7 @@ namespace Level
         public int PrefabIndex;
         public int BoardX;
         public int BoardY;
+        public int BoardZ;
 
         public float YRotation;
 

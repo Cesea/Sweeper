@@ -15,31 +15,27 @@ public class BoardJump : BoardMoveBase
     private void Update()
     {
         Move();
-
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            MoveBy(2, 0);
-        }
     }
-    public override void MoveBy(int x, int z)
+
+    public override void MoveBy(int x, int y, int z)
     {
-        if (x == 0 && z == 0)
+        if (x == 0 && y == 0 && z == 0)
         {
             return;
         }
 
-        Vector2Int targetPos = BoardManager.WorldPosToBoardPos(transform.position) + new Vector2Int(x, z);
-        MoveTo(targetPos.x, targetPos.y);
+        Vector3Int targetPos = BoardManager.WorldPosToBoardPos(transform.position) + new Vector3Int(x, y, z);
+        MoveTo(targetPos.x, targetPos.y, targetPos.z);
     }
 
-    public override void MoveTo(int x, int z)
+    public override void MoveTo(int x, int y, int z)
     {
-        if (_moving || !GameStateManager.Instance.BoardManager.CurrentBoard.CanMoveTo(x, z))
+        if (_moving || !GameStateManager.Instance.BoardManager.CurrentBoard.CanMoveTo(x, y, z))
         {
             return;
         }
 
-        _targetPosition = BoardManager.BoardPosToWorldPos(new Vector2Int(x, z));
+        _targetPosition = BoardManager.BoardPosToWorldPos(new Vector3Int(x, y, z));
         _middlePosition = ((_targetPosition + _startPosition) / 2.0f) + new Vector3(0, _jumpHeight, 0);
 
         if (_targetPosition != _startPosition)
@@ -68,7 +64,7 @@ public class BoardJump : BoardMoveBase
 
                 _object.OnMovementDone();
                 //만약 플레이어가 죽거나 출구에 도착한다면 true를 반환한다
-                if (GameStateManager.Instance.CheckMovement((int)_targetPosition.x, (int)_targetPosition.z))
+                if (GameStateManager.Instance.CheckMovement((int)_targetPosition.x, (int)_targetPosition.y, (int)_targetPosition.z))
                 {
                     return;
                 }

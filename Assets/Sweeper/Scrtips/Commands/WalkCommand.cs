@@ -10,7 +10,6 @@ public class WalkCommand : Command
     public int DeltaX { get; set; }
     public int DeltaZ { get; set; }
 
-
     public WalkCommand(int deltaX, int deltaZ)
     {
         DeltaX = deltaX;
@@ -23,6 +22,6 @@ public class WalkCommand : Command
         base.Execute(target);
 
         BoardWalk move = target.GetComponent<BoardWalk>();
-        move.MoveBy(DeltaX, DeltaZ);
+        move.MoveBy(DeltaX, 0, DeltaZ);
     }
 }

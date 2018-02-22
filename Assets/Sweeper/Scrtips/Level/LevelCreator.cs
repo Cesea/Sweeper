@@ -66,13 +66,13 @@ namespace Level
             }
         }
 
-        public void InstallObjectAtBoardPosition(int x, int y, int prefabIndex)
+        public void InstallObjectAtBoardPosition(int x, int y, int z, int prefabIndex)
         {
             if (prefabIndex > InstallObjects.Count - 1)
             {
                 return;
             }
-            Node node = GameStateManager.Instance.CurrentBoard.GetNodeAt(x, y);
+            Node node = GameStateManager.Instance.CurrentBoard.GetNodeAt(x, y, z);
             if (node != null)
             {
                 if (node.InstalledObject != null)
@@ -93,7 +93,7 @@ namespace Level
                     }
                     if (!levelObject.IsWalkable)
                     {
-                        node.IsWalkable = false;
+                        node.IsPassable = false;
                     }
 
                     node.InstalledObject = go;
@@ -101,9 +101,9 @@ namespace Level
             }
         }
 
-        public void DestroyObjectAtBoardPosition(int x, int y)
+        public void DestroyObjectAtBoardPosition(int x, int y, int z)
         {
-            Node node = GameStateManager.Instance.CurrentBoard.GetNodeAt(x, y);
+            Node node = GameStateManager.Instance.CurrentBoard.GetNodeAt(x, y, z);
             if (node != null &&
                 node.InstalledObject != null)
             {
@@ -120,15 +120,15 @@ namespace Level
                 return;
             }
             GameObject objectUnder = GameStateManager.GetObjectUnderneathMouse();
-            Vector2Int boardPos = BoardManager.WorldPosToBoardPos(objectUnder.transform.position);
-            InstallObjectAtBoardPosition(boardPos.x, boardPos.y, prefabIndex);
+            Vector3Int boardPos = BoardManager.WorldPosToBoardPos(objectUnder.transform.position);
+            InstallObjectAtBoardPosition(boardPos.x, boardPos.y, boardPos.z, prefabIndex);
         }
 
         public void DestroyObjectAtMousePosition()
         {
             GameObject objectUnder = GameStateManager.GetObjectUnderneathMouse();
-            Vector2Int boardPos = BoardManager.WorldPosToBoardPos(objectUnder.transform.position);
-            DestroyObjectAtBoardPosition(boardPos.x, boardPos.y);
+            Vector3Int boardPos = BoardManager.WorldPosToBoardPos(objectUnder.transform.position);
+            DestroyObjectAtBoardPosition(boardPos.x, boardPos.y, boardPos.z);
         }
 
         private void AddRotation()
