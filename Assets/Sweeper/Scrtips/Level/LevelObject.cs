@@ -11,6 +11,7 @@ namespace Level
 
         public Node SittingNode = null;
 
+        [HideInInspector]
         public int PrefabIndex;
 
         public LevelObjectSaveData ToSaveData()

@@ -53,11 +53,16 @@ public class Board
             {
                 int index = x + XCount * y;
                 Vector3 worldPos = boardWorldPos + new Vector3(x * _nodeDiameter + NodeRadius, 0, y * _nodeDiameter + NodeRadius);
-                _nodes[index] = new Node(x, y, worldPos, Node.NodeType.Empty);
+                _nodes[index] = new Node(x, y, worldPos, Node.NodeType.Normal);
 
-                if (Random.Range(0.0f, 1.0f) > 0.85f)
+                float randomValue = Random.Range(0.0f, 1.0f);
+                if (randomValue > 0.80f && randomValue < 0.9f)
                 {
-                    _nodes[index].Type = Node.NodeType.Mine;
+                    _nodes[index].Type = Node.NodeType.Empty;
+                }
+                else if (randomValue > 0.9f && randomValue < 1.0f)
+                {
+                    _nodes[index].Type = Node.NodeType.Wall;
                 }
             }
         }
@@ -75,7 +80,7 @@ public class Board
         _nodes[_startCell.x + _startCell.y * XCount].Type = Node.NodeType.Start;
         _nodes[_exitCell.x + _exitCell.y * XCount].Type = Node.NodeType.Exit;
 
-        SetAdjacentCells(_startCell.x, _startCell.y, Node.NodeType.Empty);
+        SetAdjacentCells(_startCell.x, _startCell.y, Node.NodeType.Normal);
     }
 
 

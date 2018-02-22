@@ -15,10 +15,12 @@ public class RadarCommand : Command
     {
         X = x;
         Z = z;
+        _cost = 1;
     } 
 
     public override void Execute(GameObject target)
     {
+        base.Execute(target);
         //Instantiate particle prefab;
     }
 }

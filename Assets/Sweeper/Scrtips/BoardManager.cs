@@ -15,6 +15,8 @@ public class BoardManager : SingletonBase<BoardManager>
     GameObject _startPrefab;
     [SerializeField]
     GameObject _exitPrefab;
+    [SerializeField]
+    GameObject _wallPrefab;
 
     [Header("Board Size")]
 
@@ -123,9 +125,14 @@ public class BoardManager : SingletonBase<BoardManager>
                     result = _emptyPrefab;
                 }
                 break;
-            case Node.NodeType.Mine:
+            case Node.NodeType.Normal:
                 {
                     result = _minePrefab;
+                }
+                break;
+            case Node.NodeType.Wall:
+                {
+                    result = _wallPrefab;
                 }
                 break;
             case Node.NodeType.Start:

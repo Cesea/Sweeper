@@ -8,6 +8,11 @@ public class InspectCommand : Command
 {
     public string _name;
 
+    public InspectCommand()
+    {
+        _cost = 1;
+    }
+
     public override void Execute(GameObject target)
     {
         DialogContent content = new DialogContent();

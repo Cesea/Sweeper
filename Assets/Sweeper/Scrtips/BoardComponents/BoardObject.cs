@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class BoardObject : MonoBehaviour
 {
+    public int MaxStamina;
+    public int CurrentStamina;
+
     private List<BoardMoveBase> _movementComponents = new List<BoardMoveBase>();
 
     private Node[] _adjacentCells;
@@ -97,13 +100,5 @@ public class BoardObject : MonoBehaviour
         GameStateManager.Instance.CurrentBoard.GetAdjacentCells((int)transform.position.x, (int)transform.position.z, ref _adjacentCells);
     }
 
-    //private BoardMoveBase GetMovementComponent<T>() where T : BoardMoveBase
-    //{
-    //    T component = GetComponent<T>();
-    //    if (component != null)
-    //    {
-    //        return component;
-    //    }
-    //    return null;
-    //}
+
 }

@@ -10,9 +10,10 @@ public class Node
     public enum NodeType
     {
         Empty,
-        Mine,
+        Normal,
         Start,
         Exit,
+        Wall,
         Count
     }
 
@@ -39,7 +40,38 @@ public class Node
     public NodeType Type
     {
         get { return _type; }
-        set { _type = value; }
+        set
+        {
+            _type = value;
+            switch (_type)
+            {
+                case NodeType.Empty:
+                    {
+                        IsHazard = true;
+                        IsWalkable = true;
+                    } break;
+                case NodeType.Normal:
+                    {
+                        IsHazard = false;
+                        IsWalkable = true;
+                    } break;
+                case NodeType.Start:
+                    {
+                        IsHazard = false;
+                        IsWalkable = true;
+                    } break;
+                case NodeType.Exit:
+                    {
+                        IsHazard = false;
+                        IsWalkable = true;
+                    } break;
+                case NodeType.Wall:
+                    {
+                        IsHazard = false;
+                        IsWalkable = false;
+                    } break;
+            }
+        }
     }
 
     public Node(int x, int z, Vector3 worldPos, NodeType type)

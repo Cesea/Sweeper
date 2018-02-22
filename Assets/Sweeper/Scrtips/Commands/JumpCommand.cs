@@ -14,10 +14,13 @@ public class JumpCommand : Command
     {
         DeltaX = deltaX;
         DeltaZ = deltaZ;
+
+        _cost = 2;
     } 
 
     public override void Execute(GameObject target)
     {
+        base.Execute(target);
         BoardJump jump = target.GetComponent<BoardJump>();
         jump.MoveBy(DeltaX, DeltaZ);
     }
