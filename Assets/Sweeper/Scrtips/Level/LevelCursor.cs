@@ -14,16 +14,20 @@ namespace Level
 
         void Update()
         {
-            //Vector3 worldPosition = transform.position;
-            //Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-            //RaycastHit hitInfo;
-            //if (GameStateManager.Instance.MouseCollisionBox.Raycast(camRay, out hitInfo, 1000.0f))
-            //{
-            //    worldPosition = hitInfo.point;
-            //    Vector3Int boardPos = BoardManager.WorldPosToBoardPos(worldPosition);
-            //    worldPosition = BoardManager.BoardPosToWorldPos(boardPos);
-            //}
-            //transform.position = worldPosition;
+            Side hitSide = Side.Top;
+            Vector3 hitPos = Vector3.zero;
+            Node node = BoardManager.GetNodeAtMouse(ref hitSide, ref hitPos);
+
+            Vector3 worldPosition = transform.position;
+            if (node != null)
+            {
+                //TODO;
+                //RadialMenu.Show(Input.mousePosition, _selectingNode);
+                worldPosition = hitPos;
+            }
+            transform.position = worldPosition;
+
+
         }
 
         void UpdatePosition()

@@ -28,7 +28,7 @@ public class BoardWalk : BoardMoveBase
             return;
         }
         Vector3Int tmpTarget = BoardManager.WorldPosToBoardPos(transform.position) + new Vector3Int(x, y, z);
-        MoveTo((int)tmpTarget.x, (int)tmpTarget.y, (int)tmpTarget.y);
+        MoveTo((int)tmpTarget.x, (int)tmpTarget.y, (int)tmpTarget.z);
     }
 
 

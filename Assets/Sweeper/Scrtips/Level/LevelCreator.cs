@@ -66,7 +66,7 @@ namespace Level
             }
         }
 
-        public void InstallObjectAtBoardPosition(int x, int y, int z, int prefabIndex)
+        public void InstallObjectAtBoardPosition(int x, int y, int z, int prefabIndex, Side side)
         {
             if (prefabIndex > InstallObjects.Count - 1)
             {
@@ -75,7 +75,7 @@ namespace Level
             Node node = GameStateManager.Instance.CurrentBoard.GetNodeAt(x, y, z);
             if (node != null)
             {
-                if (node.InstalledObject != null)
+                if (node.GetInstalledObjectAt(side) != null)
                 {
                     //설치하려는 자리에 이미 노드가 있다.... 어떻게 처리 할까??
                 }
@@ -95,20 +95,20 @@ namespace Level
                     {
                         node.IsPassable = false;
                     }
-
-                    node.InstalledObject = go;
+                    node.SetInstalledObjectAt(side, go);
                 }
             }
         }
 
-        public void DestroyObjectAtBoardPosition(int x, int y, int z)
+        public void DestroyObjectAtBoardPosition(int x, int y, int z, Side side)
         {
             Node node = GameStateManager.Instance.CurrentBoard.GetNodeAt(x, y, z);
             if (node != null &&
-                node.InstalledObject != null)
+                node.InstalledObjects != null)
             {
-                LevelObject levelObject = node.InstalledObject.GetComponent<LevelObject>();
-                Destroy(node.InstalledObject);
+                LevelObject levelObject = node.GetInstalledObjectAt(side).GetComponent<LevelObject>();
+
+                Destroy(node.GetInstalledObjectAt(side));
                 node.IsHazard = false;
             }
         }
@@ -119,16 +119,17 @@ namespace Level
             {
                 return;
             }
-            GameObject objectUnder = GameStateManager.GetObjectUnderneathMouse();
-            Vector3Int boardPos = BoardManager.WorldPosToBoardPos(objectUnder.transform.position);
-            InstallObjectAtBoardPosition(boardPos.x, boardPos.y, boardPos.z, prefabIndex);
+
+            //Node node = BoardManager.GetNodeAtMouse();
+            //Vector3Int boardPos = BoardManager.WorldPosToBoardPos(objectUnder.transform.position);
+            //InstallObjectAtBoardPosition(boardPos.x, boardPos.y, boardPos.z, prefabIndex, Side.Top);
         }
 
         public void DestroyObjectAtMousePosition()
         {
-            GameObject objectUnder = GameStateManager.GetObjectUnderneathMouse();
-            Vector3Int boardPos = BoardManager.WorldPosToBoardPos(objectUnder.transform.position);
-            DestroyObjectAtBoardPosition(boardPos.x, boardPos.y, boardPos.z);
+            //Node node = BoardManager.GetNodeAtMouse();
+            //Vector3Int boardPos = BoardManager.WorldPosToBoardPos(objectUnder.transform.position);
+            //DestroyObjectAtBoardPosition(boardPos.x, boardPos.y, boardPos.z, Side.Top);
         }
 
         private void AddRotation()

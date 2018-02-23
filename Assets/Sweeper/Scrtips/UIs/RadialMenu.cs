@@ -22,7 +22,7 @@ public class RadialMenu : Menu<RadialMenu>
 
     public static void Shut()
     {
-        GameStateManager.Instance.SelectingObject = null;
+        //GameStateManager.Instance.SelectingObject = null;
         Close();
     }
 
@@ -41,8 +41,8 @@ public class RadialMenu : Menu<RadialMenu>
         Debug.Log(index);
         if (_menuItems.Count > 1)
         {
-            Interactable interactable = GameStateManager.Instance.SelectingObject.GetComponent<Interactable>();
-            interactable.DoCommand(index);
+            //Interactable interactable = GameStateManager.Instance.SelectingObject.GetComponent<Interactable>();
+            //interactable.DoCommand(index);
         }
     } 
 

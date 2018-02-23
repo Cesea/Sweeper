@@ -869,7 +869,6 @@ MonoBehaviour:
   _objectMask:
     serializedVersion: 2
     m_Bits: 512
-  MouseCollisionBox: {fileID: 0}
 --- !u!4 &1933234231
 Transform:
   m_ObjectHideFlags: 0
@@ -894,8 +893,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bc6e3ca7f3bbb544a0f8afe91e0c087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _normalPrefab: {fileID: 1724201237527520, guid: 4087cf834f0abaa4893c37e041a9a9a7,
-    type: 2}
+  _material: {fileID: 2100000, guid: 5f08124ec09cb7d4385683479282e5e4, type: 2}
   WorldSize: {x: 10, y: 4, z: 10}
   NodeRadius: 0.5
 --- !u!114 &1933234233

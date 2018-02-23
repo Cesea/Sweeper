@@ -24,7 +24,7 @@ public class Board
 
     private float _nodeDiameter;
 
-    Node[] _nodes;
+    public Node[] Nodes;
 
     public int XCount { get; set; }
     public int YCount { get; set; }
@@ -34,9 +34,14 @@ public class Board
 
     public Vector3 WorldStartPos;
 
+    public GameObject BoardObject;
 
-    public Board(Vector3 boardWorldPos, Vector3 worldSize, float nodeRadius)
+
+    private Material _material;
+
+    public Board(Vector3 boardWorldPos, Vector3 worldSize, float nodeRadius, Material material)
     {
+        _material = material;
         WorldStartPos = boardWorldPos;
         NodeRadius = nodeRadius;
 
@@ -46,7 +51,14 @@ public class Board
         YCount = Mathf.RoundToInt(worldSize.y / _nodeDiameter);
         ZCount = Mathf.RoundToInt(worldSize.z / _nodeDiameter);
 
-        _nodes = new Node[TotalCount];
+        BoardObject = new GameObject();
+        BoardObject.transform.position = boardWorldPos;
+        BuildNodes();
+    }
+
+    public void BuildNodes()
+    {
+        Nodes = new Node[TotalCount];
 
         for (int z = 0; z < ZCount; ++z)
         {
@@ -55,67 +67,64 @@ public class Board
                 for (int x = 0; x < XCount; ++x)
                 {
                     int index = Index3D(x, y, z);
-                    Vector3 worldPos = boardWorldPos + new Vector3(
+                    Vector3 worldPos = WorldStartPos + new Vector3(
                         x * _nodeDiameter + NodeRadius,
                         y * _nodeDiameter + NodeRadius,
-                        z * _nodeDiameter + nodeRadius );
+                        z * _nodeDiameter + NodeRadius );
 
-                    _nodes[index] = new Node(x, y, z, worldPos, Node.NodeType.Normal);
+                    Nodes[index] = new Node(x, y, z, worldPos, Node.NodeType.Empty, BoardObject, this);
+
+                    if (y == 0)
+                    {
+                        Nodes[index].Type = Node.NodeType.Normal;
+                    }
                 }
             }
         }
 
-        _startCell = GetRandomCellCoord();
-        _exitCell = GetRandomCellCoord();
-        if (_startCell == _exitCell)
+        //_startCell = GetRandomCellCoord();
+        //_exitCell = GetRandomCellCoord();
+        //if (_startCell == _exitCell)
+        //{
+        //    while (_startCell == _exitCell)
+        //    {
+        //        _exitCell = GetRandomCellCoord();
+        //    }
+        //}
+
+        Nodes[Index3D(5, 1, 3)].Type = Node.NodeType.Normal;
+
+        StartCellCoord = new Vector3Int(0, 0, 0);
+        ExitCellCoord = new Vector3Int(5, 0, 5);
+
+        Nodes[Index3D(StartCellCoord.x, StartCellCoord.y, StartCellCoord.z)].Type = Node.NodeType.Start;
+        Nodes[Index3D(ExitCellCoord.x, ExitCellCoord.y, ExitCellCoord.y)].Type = Node.NodeType.Exit;
+        //Nodes[Index3D(0, 0, 0)].Type = Node.NodeType.Start;
+        //Nodes[Index3D(5, 0, 5)].Type = Node.NodeType.Exit;
+    }
+
+    public void BuildMesh()
+    {
+        for (int z = 0; z < ZCount; ++z)
         {
-            while (_startCell == _exitCell)
+            for (int y = 0; y < YCount; ++y)
             {
-                _exitCell = GetRandomCellCoord();
+                for (int x = 0; x < XCount; ++x)
+                {
+                    Nodes[Index3D(x, y, z)].BuildMesh();
+                }
             }
         }
+        CombineQuads();
 
-        _nodes[_startCell.x + _startCell.y * XCount].Type = Node.NodeType.Start;
-        _nodes[_exitCell.x + _exitCell.y * XCount].Type = Node.NodeType.Exit;
-    }
-
-    public Node GetNodeAt(int x, int y, int z)
-    {
-        if (!IsInBound(x, y, z))
-        {
-            return null;
-        }
-        return _nodes[Index3D(x, y, z)];
-    }
-
-    public Node GetNodeAt(Vector3 worldPos)
-    {
-        int indexX = (int)((worldPos.x - WorldStartPos.x) / _nodeDiameter);
-        int indexY = (int)((worldPos.y - WorldStartPos.y) / _nodeDiameter);
-        int indexZ = (int)((worldPos.z - WorldStartPos.z) / _nodeDiameter);
-
-        if (!IsInBound(indexX, indexY, indexZ))
-        {
-            return null;
-        }
-        return _nodes[Index3D(indexX, indexY, indexZ)];
-
-    }
-
-    public Node.NodeType GetTypeAt(int x, int y, int z)
-    {
-        if (!IsInBound(x, y, z))
-        {
-            return Node.NodeType.Count;
-        }
-        return GetNodeAt(x, y, z).Type;
-    }
-
+        MeshCollider collider = BoardObject.AddComponent<MeshCollider>();
+        collider.sharedMesh = BoardObject.GetComponent<MeshFilter>().mesh;
+    } 
 
     public bool CanMoveTo(int x, int y, int z)
     {
         bool result = true;
-        if (!IsInBound(x, y, z))
+        if (!IsInBound(x, y, z) || Nodes[Index3D(x, y, z)].IsSolid)
         {
             result = false;
             Debug.Log("movement out of range");
@@ -125,30 +134,15 @@ public class Board
 
     public void DestoryAllLevelObjects()
     {
-        foreach (var n in _nodes)
+        foreach (var n in Nodes)
         {
-            if (n.InstalledObject != null)
+            foreach (var o in n.InstalledObjects)
             {
-                GameObject.Destroy(n.InstalledObject);    
+                GameObject.Destroy(o);
             }
         }
     }
 
-    public Vector3Int GetRandomCellCoord()
-    {
-        return new Vector3Int((int)Random.Range(0, XCount), (int)Random.Range(0, YCount), (int)Random.Range(0, ZCount));
-    }
-
-    public bool IsInBound(int x, int y, int z)
-    {
-        if (x < 0 || x > XCount - 1 ||
-            y < 0 || y > YCount - 1 ||
-            z < 0 || z > YCount - 1)
-        {
-            return false;
-        }
-        return true;
-    }
 
     public void GetAdjacentCellsHorizontally(Vector3Int pos, bool includeCenter, ref Node[] cells)
     {
@@ -172,7 +166,7 @@ public class Board
 
                 if (IsInBound(ix, y, iz))
                 {
-                    cells[count] = _nodes[index];
+                    cells[count] = Nodes[index];
                 }
                 count++;
             }
@@ -222,9 +216,82 @@ public class Board
 
     #region  Utils
 
-    private int Index3D(int x, int y, int z)
+    public int Index3D(int x, int y, int z)
     {
         return x + (XCount * z) + (XCount * ZCount * y);
+    }
+
+    private void CombineQuads()
+    {
+        MeshFilter[] filters = BoardObject.GetComponentsInChildren<MeshFilter>();
+        CombineInstance[] combines = new CombineInstance[filters.Length];
+
+        for (int i = 0; i < filters.Length; ++i)
+        {
+            combines[i].mesh = filters[i].sharedMesh;
+            combines[i].transform = filters[i].transform.localToWorldMatrix;
+        }
+
+        MeshFilter filter = BoardObject.AddComponent<MeshFilter>();
+        filter.mesh = new Mesh();
+
+        filter.mesh.CombineMeshes(combines);
+
+        MeshRenderer renderer = BoardObject.AddComponent<MeshRenderer>();
+        renderer.material = _material;
+
+        foreach (Transform q in BoardObject.transform)
+        {
+            GameObject.Destroy(q.gameObject);
+        }
+    }
+
+    public Node GetNodeAt(int x, int y, int z)
+    {
+        if (!IsInBound(x, y, z))
+        {
+            return null;
+        }
+        return Nodes[Index3D(x, y, z)];
+    }
+
+    public Node GetNodeAt(Vector3 worldPos)
+    {
+        int indexX = (int)((worldPos.x - WorldStartPos.x) / _nodeDiameter);
+        int indexY = (int)((worldPos.y - WorldStartPos.y) / _nodeDiameter);
+        int indexZ = (int)((worldPos.z - WorldStartPos.z) / _nodeDiameter);
+
+        if (!IsInBound(indexX, indexY, indexZ))
+        {
+            return null;
+        }
+        return Nodes[Index3D(indexX, indexY, indexZ)];
+
+    }
+
+    public Node.NodeType GetTypeAt(int x, int y, int z)
+    {
+        if (!IsInBound(x, y, z))
+        {
+            return Node.NodeType.Count;
+        }
+        return GetNodeAt(x, y, z).Type;
+    }
+
+    public Vector3Int GetRandomCellCoord()
+    {
+        return new Vector3Int((int)Random.Range(0, XCount), (int)Random.Range(0, YCount), (int)Random.Range(0, ZCount));
+    }
+
+    public bool IsInBound(int x, int y, int z)
+    {
+        if (x < 0 || x > XCount - 1 ||
+            y < 0 || y > YCount - 1 ||
+            z < 0 || z > ZCount - 1)
+        {
+            return false;
+        }
+        return true;
     }
 
     #endregion

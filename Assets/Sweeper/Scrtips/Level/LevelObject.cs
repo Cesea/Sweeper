@@ -8,8 +8,12 @@ namespace Level
     {
         public bool IsHazard = true;
         public bool IsWalkable = true;
+        public bool CanInstallVertical = false;
 
+        [HideInInspector]
         public Node SittingNode = null;
+        [HideInInspector]
+        public Side InstalledSide;
 
         [HideInInspector]
         public int PrefabIndex;
@@ -20,6 +24,7 @@ namespace Level
             result.IsHazard = IsHazard;
             result.IsWalkable = IsWalkable;
             result.PrefabIndex = PrefabIndex;
+            result.InstalledSide = InstalledSide;
 
             if (SittingNode != null)
             {
@@ -43,6 +48,7 @@ namespace Level
 
         public float YRotation;
 
+        public Side InstalledSide;
         public bool IsHazard = true;
         public bool IsWalkable = true;
     }

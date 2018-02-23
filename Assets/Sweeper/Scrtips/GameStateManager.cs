@@ -17,11 +17,11 @@ public class GameStateManager : SingletonBase<GameStateManager>
     private List<GameObject> _exclamations;
 
     //마우스 우클릭시 정보를 보여줄 오브젝트이다.
-    private GameObject _selectingObject;
-    public GameObject SelectingObject
+    private Node _selectingNode;
+    public Node SelectingNode
     {
-        get { return _selectingObject; }
-        set { _selectingObject = value; }
+        get { return _selectingNode; }
+        set { _selectingNode = value; }
     }
     private Timer _rightMouseClickTimer;    
 
@@ -34,8 +34,6 @@ public class GameStateManager : SingletonBase<GameStateManager>
 
     public LayerMask _nodeMask;
     public LayerMask _objectMask;
-
-    public BoxCollider MouseCollisionBox;
 
     private void Start()
     {
@@ -61,14 +59,17 @@ public class GameStateManager : SingletonBase<GameStateManager>
 
     public void Update()
     {
-        if (_selectingObject == null)
+        if (_selectingNode == null)
         {
             if (Input.GetMouseButton(1) && _rightMouseClickTimer.Tick(Time.deltaTime))
             {
-                _selectingObject = GetObjectUnderneathMouse();
-                if (_selectingObject != null)
+                Side hitSide = Side.Top;
+                Vector3 hitPos  = Vector3.zero;
+                _selectingNode = BoardManager.GetNodeAtMouse(ref hitSide, ref hitPos);
+                if (_selectingNode != null)
                 {
-                    RadialMenu.Show(Input.mousePosition, _selectingObject);
+                    //TODO;
+                    //RadialMenu.Show(Input.mousePosition, _selectingNode);
                 }
             }
         }
@@ -77,22 +78,9 @@ public class GameStateManager : SingletonBase<GameStateManager>
     public void SetupNextBoard()
     {
         _boardManager.BuildNewBoard();
-        Player.SetPosition(_boardManager.CurrentBoard.StartCellCoord);
+        Player.SetPosition(_boardManager.CurrentBoard.StartCellCoord + Vector3Int.up);
         RemoveExclamations();
 
-        CreateMouseCollisionBox();
-
-    }
-
-    private void CreateMouseCollisionBox()
-    {
-        if (MouseCollisionBox == null)
-        {
-            MouseCollisionBox = gameObject.AddComponent<BoxCollider>();
-        }
-        MouseCollisionBox.size = new Vector3(_boardManager.WorldSize.x, 0.2f, _boardManager.WorldSize.y);
-        MouseCollisionBox.center = new Vector3(_boardManager.WorldSize.x * 0.5f, 0.1f, _boardManager.WorldSize.y * 0.5f);
-        MouseCollisionBox.isTrigger = true;
     }
 
     public void RespawnPlayer()
@@ -143,23 +131,6 @@ public class GameStateManager : SingletonBase<GameStateManager>
         return result;
     }
 
-    //일단 오브젝트가 있는 땅이면 못간다....
-    public static GameObject GetObjectUnderneathMouse()
-    {
-        Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-        {
-            RaycastHit hitInfo;
-            if (Instance.MouseCollisionBox.Raycast(camRay, out hitInfo, 1000.0f))
-            {
-                Node node = BoardManager.Instance.CurrentBoard.GetNodeAt(hitInfo.point);
-                if (node != null)
-                {
-                    //return BoardManager.Instance.GetObjectAt(node.X, node.Z);
-                }
-            }
-        }
-        return null;
-    }
 
     public void OnRadarSkillEvent(Events.RadarSkillEvent e)
     {
