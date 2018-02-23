@@ -293,4 +293,9 @@ public class Node
         return false;
     }
 
+    public Vector3 GetWorldPositionBySide(Side side)
+    {
+        return WorldPosition + BoardManager.SideToVector3Offset(side);
+    }
+
 }

@@ -35,7 +35,8 @@ public class BoardJump : BoardMoveBase
             return;
         }
 
-        _targetPosition = BoardManager.BoardPosToWorldPos(new Vector3Int(x, y, z));
+        Node node = BoardManager.Instance.CurrentBoard.GetNodeAt(x, y, z);
+        _targetPosition = node.GetWorldPositionBySide(Side.Bottom);
         _middlePosition = ((_targetPosition + _startPosition) / 2.0f) + new Vector3(0, _jumpHeight, 0);
 
         if (_targetPosition != _startPosition)

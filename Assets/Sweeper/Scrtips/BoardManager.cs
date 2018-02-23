@@ -32,7 +32,7 @@ public class BoardManager : SingletonBase<BoardManager>
     {
         return Instance.transform.position + 
             new Vector3(pos.x * Instance.NodeRadius * 2.0f + Instance.NodeRadius,
-                        pos.y * Instance.NodeRadius * 2.0f /*+ Instance.NodeRadius*/,
+                        pos.y * Instance.NodeRadius * 2.0f + Instance.NodeRadius,
                         pos.z * Instance.NodeRadius * 2.0f + Instance.NodeRadius);
     }
 
@@ -165,34 +165,67 @@ public class BoardManager : SingletonBase<BoardManager>
         {
             case Side.Left:
                 {
-                    result = Vector3.left;
+                    result = Vector3.left * Instance.NodeRadius;
                 } break;
             case Side.Right :
                 {
-                    result = Vector3.right;
+                    result = Vector3.right * Instance.NodeRadius;
                 } break;
             case Side.Top :
                 {
-                    result = Vector3.up;
+                    result = Vector3.up * Instance.NodeRadius;
                 } break;
             case Side.Bottom :
                 {
-                    result = Vector3.down;
+                    result = Vector3.down * Instance.NodeRadius;
                 } break;
             case Side.Front :
                 {
-                    result = Vector3.forward;
+                    result = Vector3.forward * Instance.NodeRadius;
                 } break;
             case Side.Back :
                 {
-                    result = Vector3.back;
+                    result = Vector3.back * Instance.NodeRadius;
+                } break;
+        }
+        return result;
+    }
+
+    public static Quaternion SideToRotation(Side side)
+    {
+        Quaternion result = Quaternion.identity;
+        switch (side)
+        {
+            case Side.Left:
+                {
+                    result = Quaternion.Euler(90, 90, 0);
+                } break;
+            case Side.Right :
+                {
+                    result = Quaternion.Euler(90, -90, 0);
+                } break;
+            case Side.Top :
+                {
+                    result = Quaternion.identity;
+                } break;
+            case Side.Bottom :
+                {
+                    result = Quaternion.Euler(180, 0, 0);
+                } break;
+            case Side.Front :
+                {
+                    result = Quaternion.Euler(90, 0, 0);
+                } break;
+            case Side.Back :
+                {
+                    result = Quaternion.Euler(-90, 0, 0);
                 } break;
         }
         return result;
     }
 
     //일단 오브젝트가 있는 땅이면 못간다....
-    public static Node GetNodeAtMouse(ref Side side, ref Vector3 gridPos)
+    public static Node GetNodeAtMouse(ref Side side)
     {
         Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         {
@@ -200,7 +233,6 @@ public class BoardManager : SingletonBase<BoardManager>
             if (Instance.CurrentBoard.BoardObject.GetComponent<MeshCollider>().Raycast(camRay, out hitInfo, 1000.0f))
             {
                 Vector3Int boardCoord = BoardManager.WorldPosToBoardPos(hitInfo.point);
-                gridPos = BoardManager.BoardPosToWorldPos(boardCoord);
                 //Upper Side
                 if (hitInfo.normal.y > 0)
                 {
@@ -216,6 +248,7 @@ public class BoardManager : SingletonBase<BoardManager>
                 }
 
                 side = NormalToSide(hitInfo.normal);
+
                 Node node = BoardManager.Instance.CurrentBoard.GetNodeAt(boardCoord);
                 if (node != null)
                 {

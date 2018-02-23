@@ -66,13 +66,12 @@ namespace Level
             }
         }
 
-        public void InstallObjectAtBoardPosition(int x, int y, int z, int prefabIndex, Side side)
+        public void InstallObjectAtNode(Node node, int prefabIndex, Side side)
         {
             if (prefabIndex > InstallObjects.Count - 1)
             {
                 return;
             }
-            Node node = GameStateManager.Instance.CurrentBoard.GetNodeAt(x, y, z);
             if (node != null)
             {
                 if (node.GetInstalledObjectAt(side) != null)
@@ -120,9 +119,10 @@ namespace Level
                 return;
             }
 
-            //Node node = BoardManager.GetNodeAtMouse();
-            //Vector3Int boardPos = BoardManager.WorldPosToBoardPos(objectUnder.transform.position);
-            //InstallObjectAtBoardPosition(boardPos.x, boardPos.y, boardPos.z, prefabIndex, Side.Top);
+            Side side = Side.Top;
+            Node node = BoardManager.GetNodeAtMouse(ref side);
+            Vector3 worldPosition = node.GetWorldPositionBySide(side);
+            InstallObjectAtNode(node, prefabIndex, side);
         }
 
         public void DestroyObjectAtMousePosition()

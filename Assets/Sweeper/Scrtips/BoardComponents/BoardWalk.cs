@@ -12,7 +12,8 @@ public class BoardWalk : BoardMoveBase
             return;
         }
 
-        _targetPosition = BoardManager.BoardPosToWorldPos(new Vector3Int(x, y, z));
+        Node node = BoardManager.Instance.CurrentBoard.GetNodeAt(x, y, z);
+        _targetPosition = node.GetWorldPositionBySide(Side.Bottom);
 
         if (_targetPosition != _startPosition)
         {

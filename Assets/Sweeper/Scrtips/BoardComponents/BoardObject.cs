@@ -74,7 +74,8 @@ public class BoardObject : MonoBehaviour
 
     public void SetPosition(Vector3Int v)
     {
-        transform.position = BoardManager.BoardPosToWorldPos(v);
+        Node node = BoardManager.Instance.CurrentBoard.GetNodeAt(v);
+        transform.position = node.GetWorldPositionBySide(Side.Bottom);
         OnMovementDone();
     }
 

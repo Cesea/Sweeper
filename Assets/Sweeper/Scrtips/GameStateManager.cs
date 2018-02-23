@@ -64,8 +64,7 @@ public class GameStateManager : SingletonBase<GameStateManager>
             if (Input.GetMouseButton(1) && _rightMouseClickTimer.Tick(Time.deltaTime))
             {
                 Side hitSide = Side.Top;
-                Vector3 hitPos  = Vector3.zero;
-                _selectingNode = BoardManager.GetNodeAtMouse(ref hitSide, ref hitPos);
+                _selectingNode = BoardManager.GetNodeAtMouse(ref hitSide);
                 if (_selectingNode != null)
                 {
                     //TODO;
