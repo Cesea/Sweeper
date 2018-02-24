@@ -63,12 +63,12 @@ public class GameStateManager : SingletonBase<GameStateManager>
         {
             if (Input.GetMouseButton(1) && _rightMouseClickTimer.Tick(Time.deltaTime))
             {
-                Side hitSide = Side.Top;
-                _selectingNode = BoardManager.GetNodeAtMouse(ref hitSide);
-                if (_selectingNode != null)
+                NodeSideInfo info = new NodeSideInfo();
+                if (BoardManager.GetNodeSideInfoAtMouse(ref info))
                 {
-                    //TODO;
-                    //RadialMenu.Show(Input.mousePosition, _selectingNode);
+                    _selectingNode = info.Node;
+
+                    //RadialMenu.Show(Input.mousePosition, info);
                 }
             }
         }

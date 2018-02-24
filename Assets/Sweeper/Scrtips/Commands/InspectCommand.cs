@@ -19,7 +19,7 @@ public class InspectCommand : Command
         content._content = "Objet Name : " + target.name;
         content._action = () => ModalDialog.Shut();
 
-        RadialMenu.Shut();
+        //RadialMenu.Shut();
 
         ModalDialog.Show(content);
     }

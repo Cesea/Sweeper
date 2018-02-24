@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4662002505390400}
   - component: {fileID: 114150141619840152}
+  - component: {fileID: 114244188031085210}
   m_Layer: 9
   m_Name: DangerSign
   m_TagString: Untagged
@@ -143,3 +144,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsHazard: 0
   IsWalkable: 1
+  CanInstallVertical: 0
+  InstalledSide: 0
+  PrefabIndex: 0
+--- !u!114 &114244188031085210
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1370135647862746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5490d42dc16a1e04ca4cf8e593ef8aef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

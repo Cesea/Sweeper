@@ -183,7 +183,6 @@ public class Node
 
         if (_type == NodeType.Normal)
         {
-            Debug.Log("normal");
             uv00 = BlockUVs[(int)(_type), 0];
             uv10 = BlockUVs[(int)(_type), 1];
             uv01 = BlockUVs[(int)(_type), 2];
@@ -307,6 +306,10 @@ public struct NodeSideInfo
 
     public Vector3 GetWorldPosition()
     {
+        if (Node == null)
+        {
+            Debug.Log("null");
+        }
         return Node.GetWorldPositionBySide(Side);
     }
 }

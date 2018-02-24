@@ -14,27 +14,23 @@ namespace Level
 
         void Update()
         {
-            Side hitSide = Side.Top;
             Quaternion rotation = transform.rotation;
-            Node node = BoardManager.GetNodeAtMouse(ref hitSide);
-
             Vector3 worldPosition = transform.position;
-            if (node != null)
+
+            NodeSideInfo info = new NodeSideInfo();
+            if (BoardManager.GetNodeSideInfoAtMouse(ref info))
             {
                 //TODO;
                 //RadialMenu.Show(Input.mousePosition, _selectingNode);
-                worldPosition = node.GetWorldPositionBySide(hitSide);
-                //if (hitSide != Side.Top && hitSide != Side.Bottom)
-                //{
-                //    worldPosition += BoardManager.SideToVector3Offset(hitSide);
-                //}
-                rotation = BoardManager.SideToRotation(hitSide);
-                Debug.Log(rotation);
+                if (info.Node == null )
+                {
+                    Debug.Log("aaaaa");
+                }
+                worldPosition = info.GetWorldPosition();
+                rotation = BoardManager.SideToRotation(info.Side);
             }
             transform.position = worldPosition;
             transform.rotation = rotation;
-
-
         }
 
         void UpdatePosition()

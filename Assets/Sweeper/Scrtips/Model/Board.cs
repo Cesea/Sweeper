@@ -118,12 +118,14 @@ public class Board
 
         MeshCollider collider = BoardObject.AddComponent<MeshCollider>();
         collider.sharedMesh = BoardObject.GetComponent<MeshFilter>().mesh;
+
+        BoardObject.AddComponent<Rigidbody>().isKinematic = true;
     } 
 
     public bool CanMoveTo(int x, int y, int z)
     {
         bool result = true;
-        if (!IsInBound(x, y, z) || Nodes[Index3D(x, y, z)].IsSolid)
+        if (!IsInBound(ref x, ref y, ref z) || Nodes[Index3D(x, y, z)].IsSolid)
         {
             result = false;
             Debug.Log("movement out of range");
@@ -163,7 +165,7 @@ public class Board
                     continue;
                 }
 
-                if (IsInBound(ix, y, iz))
+                if (IsInBound(ref ix, ref y, ref iz))
                 {
                     cells[count] = Nodes[index];
                 }
@@ -247,9 +249,9 @@ public class Board
 
     public Node GetNodeAt(int x, int y, int z)
     {
-        if (!IsInBound(x, y, z))
+        if (!IsInBound(ref x, ref y, ref z))
         {
-            return null;
+            return Nodes[Index3D(x, y, z)];
         }
         return Nodes[Index3D(x, y, z)];
     }
@@ -260,9 +262,10 @@ public class Board
         int indexY = (int)((worldPos.y - WorldStartPos.y) / _nodeDiameter);
         int indexZ = (int)((worldPos.z - WorldStartPos.z) / _nodeDiameter);
 
-        if (!IsInBound(indexX, indexY, indexZ))
+        if (!IsInBound(ref indexX, ref indexY, ref indexZ))
         {
-            return null;
+            return Nodes[Index3D(indexX, indexY, indexZ)];
+            //return null;
         }
         return Nodes[Index3D(indexX, indexY, indexZ)];
 
@@ -270,9 +273,10 @@ public class Board
 
     public Node.NodeType GetTypeAt(int x, int y, int z)
     {
-        if (!IsInBound(x, y, z))
+        if (!IsInBound(ref x, ref y, ref z))
         {
-            return Node.NodeType.Count;
+            return GetNodeAt(x, y, z).Type;
+            //return Node.NodeType.Count;
         }
         return GetNodeAt(x, y, z).Type;
     }
@@ -287,12 +291,15 @@ public class Board
         return Nodes[Index3D(node.X + x, node.Y + y, node.Z + z)];
     }
 
-    public bool IsInBound(int x, int y, int z)
+    public bool IsInBound(ref int x, ref int y, ref int z)
     {
         if (x < 0 || x > XCount - 1 ||
             y < 0 || y > YCount - 1 ||
             z < 0 || z > ZCount - 1)
         {
+            Mathf.Clamp(x, 0, XCount - 1);
+            Mathf.Clamp(y, 0, YCount - 1);
+            Mathf.Clamp(z, 0, ZCount - 1);
             return false;
         }
         return true;

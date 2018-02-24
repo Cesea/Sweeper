@@ -27,7 +27,6 @@ namespace Utils
 
             if (_currentTime >= TargetTime)
             {
-                Debug.Log("haha");
                 _currentTime -= TargetTime;
                 return true;
             }

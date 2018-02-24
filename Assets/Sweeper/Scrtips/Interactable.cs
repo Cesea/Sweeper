@@ -20,7 +20,6 @@ public class Interactable : MonoBehaviour
 
     public Command[] GetAvailableCommands()
     {
-        Debug.Log("Getting Commands");
         _commandBuffer = CommandBuilder.BuildCommands(gameObject);
         return _commandBuffer.ToArray();
     }
@@ -29,7 +28,6 @@ public class Interactable : MonoBehaviour
     {
         if (index > _commandBuffer.Count - 1)
         {
-            Debug.Log("Command index out of range");
             return;
         }
         _commandBuffer[index].Execute(GameStateManager.Instance.Player.gameObject);

@@ -23,6 +23,8 @@ public class BoardManager : SingletonBase<BoardManager>
 
     private List<GameObject> _instantiatedCubes = new List<GameObject>();
 
+    static float EPSILON = 0.001f;
+
     protected override void Awake()
     {
         base.Awake();
@@ -175,39 +177,49 @@ public class BoardManager : SingletonBase<BoardManager>
         return result;
     }
 
-    //일단 오브젝트가 있는 땅이면 못간다....
-    public static Node GetNodeAtMouse(ref Side side)
+    public static bool GetNodeSideInfoAtMouse(ref NodeSideInfo info)
     {
+
+        bool result = false;
         Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hitInfo;
+        if (Instance.CurrentBoard.BoardObject.GetComponent<MeshCollider>().Raycast(camRay, out hitInfo, 1000.0f))
         {
-            RaycastHit hitInfo;
-            if (Instance.CurrentBoard.BoardObject.GetComponent<MeshCollider>().Raycast(camRay, out hitInfo, 1000.0f))
+            Vector3 roundedHitPos = hitInfo.point;
+            if (Mathf.Abs(hitInfo.point.x - Mathf.RoundToInt(hitInfo.point.x)) < EPSILON)
             {
-                Vector3Int boardCoord = BoardManager.WorldPosToBoardPos(hitInfo.point);
-                //Upper Side
-                if (hitInfo.normal.y > 0)
-                {
-                    boardCoord.y -= 1;
-                }
-                else if (hitInfo.normal.x > 0)
-                {
-                    boardCoord.x -= 1;
-                }
-                else if (hitInfo.normal.z > 0)
-                {
-                    boardCoord.z -= 1;
-                }
-
-                side = NormalToSide(hitInfo.normal);
-
-                Node node = BoardManager.Instance.CurrentBoard.GetNodeAt(boardCoord);
-                if (node != null)
-                {
-                    return node;
-                }
+                roundedHitPos.x = Mathf.RoundToInt(hitInfo.point.x);
             }
+            if (Mathf.Abs(hitInfo.point.y - Mathf.RoundToInt(hitInfo.point.y)) < EPSILON)
+            {
+                roundedHitPos.y = Mathf.RoundToInt(hitInfo.point.y);
+            }
+            if (Mathf.Abs(hitInfo.point.z - Mathf.RoundToInt(hitInfo.point.z)) < EPSILON)
+            {
+                roundedHitPos.z = Mathf.RoundToInt(hitInfo.point.z);
+            }
+
+            Vector3Int tmp = BoardManager.WorldPosToBoardPos(roundedHitPos);
+
+            if (hitInfo.normal.y > 0)
+            {
+                tmp.y -= 1;
+            }
+            else if (hitInfo.normal.x > 0)
+            {
+                tmp.x -= 1;
+            }
+            else if (hitInfo.normal.z > 0)
+            {
+                tmp.z -= 1;
+            }
+
+            info.Node = BoardManager.Instance.CurrentBoard.GetNodeAt(tmp.x, tmp.y, tmp.z);
+            info.Side = NormalToSide(hitInfo.normal);
+
+            result = true;
         }
-        return null;
+        return result;
     }
 
     #endregion

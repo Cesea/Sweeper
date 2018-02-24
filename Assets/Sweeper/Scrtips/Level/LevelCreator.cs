@@ -117,18 +117,20 @@ namespace Level
             {
                 return;
             }
-
-            Side side = Side.Top;
-            Node node = BoardManager.GetNodeAtMouse(ref side);
-            Vector3 worldPosition = node.GetWorldPositionBySide(side);
-            InstallObjectAtNode(node, side, prefabIndex);
+            NodeSideInfo nodeInfo = new NodeSideInfo();
+            if (BoardManager.GetNodeSideInfoAtMouse(ref nodeInfo))
+            {
+                InstallObjectAtNode(nodeInfo.Node, nodeInfo.Side, prefabIndex);
+            }
         }
 
         public void DestroyObjectAtMousePosition()
         {
-            Side side = Side.Top;
-            Node node = BoardManager.GetNodeAtMouse(ref side);
-            DestroyObjectAtNode(node, Side.Top);
+            NodeSideInfo info = new NodeSideInfo();
+            if (BoardManager.GetNodeSideInfoAtMouse(ref info))
+            {
+                DestroyObjectAtNode(info.Node, info.Side);
+            }
         }
 
         private void AddRotation()
