@@ -15,7 +15,7 @@ public class BoardWalk : BoardMoveBase
         Node node = BoardManager.Instance.CurrentBoard.GetNodeAt(x, y, z);
         _targetPosition = node.GetWorldPositionBySide(Side.Bottom);
 
-        if (_targetPosition != _startPosition)
+        if (_targetPosition != _sittingPosition)
         {
             _moving = true;
             _object.OnMovementStart();
@@ -95,7 +95,7 @@ public class BoardWalk : BoardMoveBase
         if (_moving)
         {
             bool isTick = _timer.Tick(Time.deltaTime * _speed);
-            Vector3 currentPosition = Vector3.Lerp(_startPosition, _targetPosition, _timer.Percent);
+            Vector3 currentPosition = Vector3.Lerp(_sittingPosition, _targetPosition, _timer.Percent);
             if (isTick)
             {
                 transform.position = _targetPosition;
@@ -104,10 +104,6 @@ public class BoardWalk : BoardMoveBase
 
                 _object.OnMovementDone();
                 //만약 플레이어가 죽거나 출구에 도착한다면 true를 반환한다
-                if (GameStateManager.Instance.CheckMovement(_targetPosition.ToVector3Int()))
-                {
-                    return;
-                }
             }
             else
             {

@@ -66,7 +66,7 @@ namespace Level
             }
         }
 
-        public void InstallObjectAtNode(Node node, int prefabIndex, Side side)
+        public void InstallObjectAtNode(Node node, Side side, int prefabIndex)
         {
             if (prefabIndex > InstallObjects.Count - 1)
             {
@@ -82,7 +82,7 @@ namespace Level
                 {
                     //오브젝트를 설치하고 노드의 속성을 업데이트 한다.
                     Quaternion rot = Quaternion.Euler(0, _yRotation, 0);
-                    GameObject go = Instantiate(InstallObjects[prefabIndex], node.WorldPosition, rot);
+                    GameObject go = Instantiate(InstallObjects[prefabIndex], node.GetWorldPositionBySide(side), rot);
                     LevelObject levelObject = go.GetComponent<LevelObject>();
                     levelObject.PrefabIndex = prefabIndex;
                     levelObject.SittingNode = node;
@@ -99,11 +99,10 @@ namespace Level
             }
         }
 
-        public void DestroyObjectAtBoardPosition(int x, int y, int z, Side side)
+        public void DestroyObjectAtNode(Node node, Side side)
         {
-            Node node = GameStateManager.Instance.CurrentBoard.GetNodeAt(x, y, z);
             if (node != null &&
-                node.InstalledObjects != null)
+                node.GetInstalledObjectAt(side) != null)
             {
                 LevelObject levelObject = node.GetInstalledObjectAt(side).GetComponent<LevelObject>();
 
@@ -122,14 +121,14 @@ namespace Level
             Side side = Side.Top;
             Node node = BoardManager.GetNodeAtMouse(ref side);
             Vector3 worldPosition = node.GetWorldPositionBySide(side);
-            InstallObjectAtNode(node, prefabIndex, side);
+            InstallObjectAtNode(node, side, prefabIndex);
         }
 
         public void DestroyObjectAtMousePosition()
         {
-            //Node node = BoardManager.GetNodeAtMouse();
-            //Vector3Int boardPos = BoardManager.WorldPosToBoardPos(objectUnder.transform.position);
-            //DestroyObjectAtBoardPosition(boardPos.x, boardPos.y, boardPos.z, Side.Top);
+            Side side = Side.Top;
+            Node node = BoardManager.GetNodeAtMouse(ref side);
+            DestroyObjectAtNode(node, Side.Top);
         }
 
         private void AddRotation()

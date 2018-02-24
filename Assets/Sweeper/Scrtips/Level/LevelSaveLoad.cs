@@ -84,7 +84,8 @@ namespace Level
             foreach (var l in data._levelObjectDatas)
             {
                 GameObject go = Instantiate(LevelCreator.Instance.InstallObjects[l.PrefabIndex]);
-                LevelCreator.Instance.InstallObjectAtBoardPosition(l.BoardX, l.BoardY, l.BoardZ, l.PrefabIndex, l.InstalledSide);
+                Node node = BoardManager.Instance.CurrentBoard.GetNodeAt(l.BoardX, l.BoardY, l.BoardZ);
+                LevelCreator.Instance.InstallObjectAtNode(node, l.InstalledSide, l.PrefabIndex);
             }
         }
 

@@ -8,7 +8,10 @@ public class BoardMoveBase : MonoBehaviour
     protected bool _moving;
 
     protected Vector3 _targetPosition = Vector3.zero;
-    protected Vector3 _startPosition = Vector3.zero;
+    protected Vector3 _sittingPosition = Vector3.zero;
+
+    protected NodeSideInfo _sittingNodeInfo;
+    protected NodeSideInfo _targetNodeInfo;
 
     protected Utils.Timer _timer = new Utils.Timer(1.0f);
     public float _speed = 1.0f;
@@ -40,6 +43,6 @@ public class BoardMoveBase : MonoBehaviour
     public virtual void UpdatePositionInfos(Vector3 position)
     {
         _targetPosition = position;
-        _startPosition = position;
+        _sittingPosition = position;
     }
 }

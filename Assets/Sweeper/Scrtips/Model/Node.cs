@@ -40,11 +40,10 @@ public class Node
 
     public enum NodeType
     {
-        Empty,
         Normal,
         Start,
         Exit,
-        Wall,
+        Empty,
         Count
     }
 
@@ -115,6 +114,14 @@ public class Node
         }
     }
 
+    public static Vector2[,] BlockUVs =
+    {
+        { new Vector2(0.0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.0f, 1.0f), new Vector2(0.5f, 1.0f) }, 
+        { new Vector2(0.0f, 0.0f), new Vector2(0.5f, 0.0f), new Vector2(0.0f, 0.5f), new Vector2(0.5f, 0.5f) }, 
+        { new Vector2(0.5f, 0.0f), new Vector2(1.0f, 0.0f), new Vector2(0.5f, 0.5f), new Vector2(1.0f, 0.5f) }, 
+        { new Vector2(0.5f, 0.5f), new Vector2(1.0f, 0.5f), new Vector2(0.5f, 1.0f), new Vector2(1.0f, 1.0f) }, 
+    };
+
     public Node(int x, int y, int z, Vector3 worldPos, NodeType type, GameObject parent, Board owner)
     {
         _x = x;
@@ -174,34 +181,28 @@ public class Node
         Vector2 uv01 = new Vector2(0.0f, 1.0f);
         Vector2 uv11 = new Vector2(1.0f, 1.0f);
 
-        //if (_blockType == BlockType.Grass && side == CubeSide.Top)
-        //{
-        //    uv00 = blockUVs[0, 0];
-        //    uv10 = blockUVs[0, 1];
-        //    uv01 = blockUVs[0, 2];
-        //    uv11 = blockUVs[0, 3];
-        //}
-        //else if (_blockType == BlockType.Grass && side != CubeSide.Top)
-        //{
-        //    uv00 = blockUVs[1, 0];
-        //    uv10 = blockUVs[1, 1];
-        //    uv01 = blockUVs[1, 2];
-        //    uv11 = blockUVs[1, 3];
-        //}
-        //else if (_blockType == BlockType.Dirt)
-        //{
-        //    uv00 = blockUVs[(int)(_blockType) + 1, 0];
-        //    uv10 = blockUVs[(int)(_blockType) + 1, 1];
-        //    uv01 = blockUVs[(int)(_blockType) + 1, 2];
-        //    uv11 = blockUVs[(int)(_blockType) + 1, 3];
-        //}
-        //else
-        //{
-        //    uv00 = blockUVs[(int)(_blockType) + 2, 0];
-        //    uv10 = blockUVs[(int)(_blockType) + 2, 1];
-        //    uv01 = blockUVs[(int)(_blockType) + 2, 2];
-        //    uv11 = blockUVs[(int)(_blockType) + 2, 3];
-        //}
+        if (_type == NodeType.Normal)
+        {
+            Debug.Log("normal");
+            uv00 = BlockUVs[(int)(_type), 0];
+            uv10 = BlockUVs[(int)(_type), 1];
+            uv01 = BlockUVs[(int)(_type), 2];
+            uv11 = BlockUVs[(int)(_type), 3];
+        }
+        else if (_type == NodeType.Start)
+        {
+            uv00 = BlockUVs[(int)(_type), 0];
+            uv10 = BlockUVs[(int)(_type), 1];
+            uv01 = BlockUVs[(int)(_type), 2];
+            uv11 = BlockUVs[(int)(_type), 3];
+        }
+        else if(_type == NodeType.Exit)
+        {
+            uv00 = BlockUVs[(int)(_type), 0];
+            uv10 = BlockUVs[(int)(_type), 1];
+            uv01 = BlockUVs[(int)(_type), 2];
+            uv11 = BlockUVs[(int)(_type), 3];
+        }
 
         switch (side)
         {
@@ -297,5 +298,10 @@ public class Node
     {
         return WorldPosition + BoardManager.SideToVector3Offset(side);
     }
+}
 
+public struct NodeSideInfo
+{
+    public Node Node { get; set; }
+    public Side Side { get; set; }
 }

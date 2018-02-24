@@ -77,14 +77,14 @@ public class GameStateManager : SingletonBase<GameStateManager>
     public void SetupNextBoard()
     {
         _boardManager.BuildNewBoard();
-        Player.SetPosition(_boardManager.CurrentBoard.StartCellCoord + Vector3Int.up);
+        Player.SetSittingNode(_boardManager.CurrentBoard.GetNodeAt(_boardManager.CurrentBoard.StartCellCoord), Side.Top);
         RemoveExclamations();
 
     }
 
     public void RespawnPlayer()
     {
-        Player.SetPosition(_boardManager.CurrentBoard.StartCellCoord);
+        Player.SetSittingNode(_boardManager.CurrentBoard.GetNodeAt(_boardManager.CurrentBoard.StartCellCoord), Side.Top);
     }
 
     public void SpawnExclamation(int x, int y, int z)
@@ -109,24 +109,19 @@ public class GameStateManager : SingletonBase<GameStateManager>
     }
 
     //만약 플레이어가 죽거나 출구에 도착한다면 true를 반환한다
-    public bool CheckMovement(Vector3Int pos)
-    {
-        return CheckMovement(pos.x, pos.y, pos.z);
-    }
-    public bool CheckMovement(int x, int y, int z)
+    public bool CheckMovement(Node sittingNode)
     {
         bool result = false;
-        Node currentNode = _boardManager.CurrentBoard.GetNodeAt(x, y, z);
-        if (currentNode.IsHazard)
+        if (sittingNode.IsHazard)
         {
             RespawnPlayer();
             result = true;
         }
-        //else if (currentNode.IsExit)
-        //{
-        //    SetupNextBoard();
-        //    result = true;
-        //}
+        else if (sittingNode.Type == Node.NodeType.Exit)
+        {
+            SetupNextBoard();
+            result = true;
+        }
         return result;
     }
 

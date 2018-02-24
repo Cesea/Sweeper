@@ -37,9 +37,9 @@ public class BoardJump : BoardMoveBase
 
         Node node = BoardManager.Instance.CurrentBoard.GetNodeAt(x, y, z);
         _targetPosition = node.GetWorldPositionBySide(Side.Bottom);
-        _middlePosition = ((_targetPosition + _startPosition) / 2.0f) + new Vector3(0, _jumpHeight, 0);
+        _middlePosition = ((_targetPosition + _sittingPosition) / 2.0f) + new Vector3(0, _jumpHeight, 0);
 
-        if (_targetPosition != _startPosition)
+        if (_targetPosition != _sittingPosition)
         {
             _moving = true;
             _object.OnMovementStart();
@@ -54,7 +54,7 @@ public class BoardJump : BoardMoveBase
 
             float t = _timer.Percent;
             float oneMinusT = 1.0f - _timer.Percent;
-            Vector3 currentPosition = (_startPosition * oneMinusT * oneMinusT) +
+            Vector3 currentPosition = (_sittingPosition * oneMinusT * oneMinusT) +
                                 (2.0f * _middlePosition * oneMinusT * _timer.Percent) +
                                 (_targetPosition * t * t);
             if (isTick)
@@ -64,11 +64,6 @@ public class BoardJump : BoardMoveBase
                 _timer.Reset();
 
                 _object.OnMovementDone();
-                //만약 플레이어가 죽거나 출구에 도착한다면 true를 반환한다
-                if (GameStateManager.Instance.CheckMovement((int)_targetPosition.x, (int)_targetPosition.y, (int)_targetPosition.z))
-                {
-                    return;
-                }
             }
             else
             {

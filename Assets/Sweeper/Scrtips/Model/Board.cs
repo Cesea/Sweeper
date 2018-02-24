@@ -92,15 +92,14 @@ public class Board
         //    }
         //}
 
+
         Nodes[Index3D(5, 1, 3)].Type = Node.NodeType.Normal;
 
         StartCellCoord = new Vector3Int(0, 0, 0);
         ExitCellCoord = new Vector3Int(5, 0, 5);
 
         Nodes[Index3D(StartCellCoord.x, StartCellCoord.y, StartCellCoord.z)].Type = Node.NodeType.Start;
-        Nodes[Index3D(ExitCellCoord.x, ExitCellCoord.y, ExitCellCoord.y)].Type = Node.NodeType.Exit;
-        //Nodes[Index3D(0, 0, 0)].Type = Node.NodeType.Start;
-        //Nodes[Index3D(5, 0, 5)].Type = Node.NodeType.Exit;
+        Nodes[Index3D(ExitCellCoord.x, ExitCellCoord.y, ExitCellCoord.z)].Type = Node.NodeType.Exit;
     }
 
     public void BuildMesh()

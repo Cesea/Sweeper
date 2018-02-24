@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -263,7 +263,7 @@ RectTransform:
   m_GameObject: {fileID: 271119612}
   m_LocalRotation: {x: 0.41453433, y: 0, z: 0, w: 0.9100337}
   m_LocalPosition: {x: 3.8295333, y: -67.448044, z: 62.729397}
-  m_LocalScale: {x: 0.12830006, y: 0.12830006, z: 0.12830006}
+  m_LocalScale: {x: 0.12830007, y: 0.12830007, z: 0.12830007}
   m_Children:
   - {fileID: 467049053}
   m_Father: {fileID: 0}
@@ -893,7 +893,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bc6e3ca7f3bbb544a0f8afe91e0c087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _material: {fileID: 2100000, guid: 5f08124ec09cb7d4385683479282e5e4, type: 2}
+  _material: {fileID: 2100000, guid: 61ab23c0dc812f54aa23dc11440e5fa1, type: 2}
   WorldSize: {x: 10, y: 4, z: 10}
   NodeRadius: 0.5
 --- !u!114 &1933234233

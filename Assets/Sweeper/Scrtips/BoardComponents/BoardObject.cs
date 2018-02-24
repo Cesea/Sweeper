@@ -9,7 +9,6 @@ public class BoardObject : MonoBehaviour
 
     private List<BoardMoveBase> _movementComponents = new List<BoardMoveBase>();
 
-
     private Node[] _upperCells;
     public Node[] UpperCells
     {
@@ -20,12 +19,19 @@ public class BoardObject : MonoBehaviour
     {
         get { return _lowerCells; }
     }
-
     private Node[] _adjacentCells;
     public Node[] AdjacentCells
     {
         get { return _adjacentCells; }
     }
+
+    private Node _sittingNode;
+    public Node SittingNode
+    {
+        get { return _sittingNode; }
+    }
+
+    public Side SittingSide;
 
     private void Awake()
     {
@@ -64,6 +70,13 @@ public class BoardObject : MonoBehaviour
     public void OnMovementDone()
     {
         UpdateNeighbourCells();
+
+        //만약 플레이어가 죽거나 출구에 도착한다면 true를 반환한다
+        if (GameStateManager.Instance.CheckMovement(SittingNode))
+        {
+            return;
+        }
+
         CheckAdjacentCells();
 
         foreach (var movement in _movementComponents)
@@ -72,10 +85,11 @@ public class BoardObject : MonoBehaviour
         }
     }
 
-    public void SetPosition(Vector3Int v)
+
+    public void SetSittingNode(Node node, Side side)
     {
-        Node node = BoardManager.Instance.CurrentBoard.GetNodeAt(v);
-        transform.position = node.GetWorldPositionBySide(Side.Bottom);
+        _sittingNode = node;
+        transform.position = node.GetWorldPositionBySide(side);
         OnMovementDone();
     }
 
