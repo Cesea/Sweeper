@@ -25,10 +25,10 @@ public class BoardObject : MonoBehaviour
         get { return _adjacentCells; }
     }
 
-    private Node _sittingNode;
-    public Node SittingNode
+    private NodeSideInfo _sittingNodeInfo;
+    public NodeSideInfo SittingNodeInfo
     {
-        get { return _sittingNode; }
+        get { return _sittingNodeInfo; }
     }
 
     public Side SittingSide;
@@ -67,12 +67,13 @@ public class BoardObject : MonoBehaviour
         GameStateManager.Instance.RemoveExclamations();
     }
 
-    public void OnMovementDone()
+    public void OnMovementDone(NodeSideInfo info)
     {
+        _sittingNodeInfo = info;
         UpdateNeighbourCells();
 
         //만약 플레이어가 죽거나 출구에 도착한다면 true를 반환한다
-        if (GameStateManager.Instance.CheckMovement(SittingNode))
+        if (GameStateManager.Instance.CheckMovement(_sittingNodeInfo.Node))
         {
             return;
         }
@@ -81,16 +82,18 @@ public class BoardObject : MonoBehaviour
 
         foreach (var movement in _movementComponents)
         {
-            movement.UpdatePositionInfos(transform.position);
+            movement.UpdateNodeSideInfo(_sittingNodeInfo);
         }
     }
 
 
     public void SetSittingNode(Node node, Side side)
     {
-        _sittingNode = node;
-        transform.position = node.GetWorldPositionBySide(side);
-        OnMovementDone();
+        _sittingNodeInfo = new NodeSideInfo();
+        _sittingNodeInfo.Node = node;
+        _sittingNodeInfo.Side = side;
+        transform.position = _sittingNodeInfo.GetWorldPosition();
+        OnMovementDone(_sittingNodeInfo);
     }
 
     private void CheckAdjacentCells()

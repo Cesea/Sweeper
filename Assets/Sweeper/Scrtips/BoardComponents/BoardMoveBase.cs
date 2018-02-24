@@ -28,7 +28,7 @@ public class BoardMoveBase : MonoBehaviour
     {
     }
 
-    public virtual void MoveTo(int x, int y, int z)
+    public virtual void MoveTo(NodeSideInfo info)
     {
     }
 
@@ -40,9 +40,11 @@ public class BoardMoveBase : MonoBehaviour
         }
     }
 
-    public virtual void UpdatePositionInfos(Vector3 position)
+    public virtual void UpdateNodeSideInfo(NodeSideInfo info)
     {
-        _targetPosition = position;
-        _sittingPosition = position;
+        _sittingNodeInfo = info;
+
+        _targetPosition = _sittingNodeInfo.GetWorldPosition();
+        _sittingPosition = _sittingNodeInfo.GetWorldPosition();
     }
 }

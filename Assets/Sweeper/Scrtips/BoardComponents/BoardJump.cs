@@ -24,19 +24,22 @@ public class BoardJump : BoardMoveBase
             return;
         }
 
-        Vector3Int targetPos = BoardManager.WorldPosToBoardPos(transform.position) + new Vector3Int(x, y, z);
-        MoveTo(targetPos.x, targetPos.y, targetPos.z);
+        NodeSideInfo targetNodeInfo = new NodeSideInfo();
+        targetNodeInfo.Node = BoardManager.Instance.CurrentBoard.GetOffsetedNode(_sittingNodeInfo.Node, x, y, z);
+        targetNodeInfo.Side = _sittingNodeInfo.Side;
+        MoveTo(targetNodeInfo);
     }
 
-    public override void MoveTo(int x, int y, int z)
+    public override void MoveTo(NodeSideInfo info )
     {
-        if (_moving || !GameStateManager.Instance.BoardManager.CurrentBoard.CanMoveTo(x, y, z))
+        if (_moving || (info.Node == null))
         {
             return;
         }
 
-        Node node = BoardManager.Instance.CurrentBoard.GetNodeAt(x, y, z);
-        _targetPosition = node.GetWorldPositionBySide(Side.Bottom);
+        _targetNodeInfo = info;
+        _targetPosition = info.Node.GetWorldPositionBySide(info.Side);
+
         _middlePosition = ((_targetPosition + _sittingPosition) / 2.0f) + new Vector3(0, _jumpHeight, 0);
 
         if (_targetPosition != _sittingPosition)
@@ -63,7 +66,7 @@ public class BoardJump : BoardMoveBase
                 _moving = false;
                 _timer.Reset();
 
-                _object.OnMovementDone();
+                _object.OnMovementDone(_targetNodeInfo);
             }
             else
             {

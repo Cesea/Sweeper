@@ -282,6 +282,11 @@ public class Board
         return new Vector3Int((int)Random.Range(0, XCount), (int)Random.Range(0, YCount), (int)Random.Range(0, ZCount));
     }
 
+    public Node GetOffsetedNode(Node node, int x, int y, int z)
+    {
+        return Nodes[Index3D(node.X + x, node.Y + y, node.Z + z)];
+    }
+
     public bool IsInBound(int x, int y, int z)
     {
         if (x < 0 || x > XCount - 1 ||
@@ -294,33 +299,5 @@ public class Board
     }
 
     #endregion
-
-    //public int GetAdjacentSum(int x, int z)
-    //{
-    //    int minX = x - 1;
-    //    int minZ = z - 1;
-    //    int maxX = x + 1;
-    //    int maxZ = z + 1;
-    //    minX = Mathf.Clamp(minX, 0, _width - 1);
-    //    minZ = Mathf.Clamp(minZ, 0, _height - 1);
-    //    maxX = Mathf.Clamp(maxX, 0, _width - 1);
-    //    maxZ = Mathf.Clamp(maxZ, 0, _height - 1);
-    //    int result = 0;
-    //    for (int iz = minZ; iz <= maxZ; ++iz)
-    //    {
-    //        for (int ix = minX; ix <= maxX; ++ix)
-    //        {
-    //            if (ix == x && iz == z)
-    //            {
-    //                continue;
-    //            }
-    //            if (GetValueAt(ix, iz))
-    //            {
-    //                result += 1;
-    //            }
-    //        }
-    //    }
-    //    return result;
-    //} 
 
 }

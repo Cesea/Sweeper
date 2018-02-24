@@ -5,15 +5,26 @@ using UnityEngine;
 [RequireComponent(typeof(BoardObject))]
 public class BoardWalk : BoardMoveBase
 {
-    public override void MoveTo(int x, int y, int z)
+    public override void MoveTo(NodeSideInfo info)
     {
-        if (_moving || !GameStateManager.Instance.BoardManager.CurrentBoard.CanMoveTo(x, y, z))
+        if (_moving || (info.Node == null) )
         {
             return;
         }
 
-        Node node = BoardManager.Instance.CurrentBoard.GetNodeAt(x, y, z);
-        _targetPosition = node.GetWorldPositionBySide(Side.Bottom);
+        //갈 수 있는곳인지 없는곳 인지 판단
+        if (info.Side == Side.Top)
+        {
+            Node nodeRespecteSide = BoardManager.Instance.CurrentBoard.GetOffsetedNode(info.Node, 0, 1, 0);
+            //갈 수 없는 곳 이다.
+            if (nodeRespecteSide.IsSolid)
+            {
+                return;
+            }
+        }
+
+        _targetNodeInfo = info;
+        _targetPosition = _targetNodeInfo.Node.GetWorldPositionBySide(_targetNodeInfo.Side);
 
         if (_targetPosition != _sittingPosition)
         {
@@ -28,8 +39,12 @@ public class BoardWalk : BoardMoveBase
         {
             return;
         }
-        Vector3Int tmpTarget = BoardManager.WorldPosToBoardPos(transform.position) + new Vector3Int(x, y, z);
-        MoveTo((int)tmpTarget.x, (int)tmpTarget.y, (int)tmpTarget.z);
+
+        NodeSideInfo targetNodeInfo = new NodeSideInfo();
+        targetNodeInfo.Node = BoardManager.Instance.CurrentBoard.GetOffsetedNode(_sittingNodeInfo.Node, x, y, z);
+        targetNodeInfo.Side = _sittingNodeInfo.Side;
+
+        MoveTo(targetNodeInfo);
     }
 
 
@@ -102,8 +117,7 @@ public class BoardWalk : BoardMoveBase
                 _moving = false;
                 _timer.Reset();
 
-                _object.OnMovementDone();
-                //만약 플레이어가 죽거나 출구에 도착한다면 true를 반환한다
+                _object.OnMovementDone(_targetNodeInfo);
             }
             else
             {

@@ -304,4 +304,9 @@ public struct NodeSideInfo
 {
     public Node Node { get; set; }
     public Side Side { get; set; }
+
+    public Vector3 GetWorldPosition()
+    {
+        return Node.GetWorldPositionBySide(Side);
+    }
 }

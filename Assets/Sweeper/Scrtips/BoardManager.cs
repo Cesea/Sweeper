@@ -55,26 +55,6 @@ public class BoardManager : SingletonBase<BoardManager>
         BuildBoardMesh();
     }
 
-    //public GameObject GetObjectAt(int x, int y, int z)
-    //{
-    //    GameObject result = null;
-    //    int index = Index3D(x, y, z);
-    //    if (index < _instantiatedCubes.Count)
-    //    {
-    //        result = _instantiatedCubes[index];
-    //    }
-    //    return result;
-    //}
-
-    //public void SetObjectAt(int x, int y, int z, GameObject obj)
-    //{
-    //    int index = Index3D(x, y, z);
-    //    if (index < _instantiatedCubes.Count)
-    //    {
-    //        _instantiatedCubes[index] = obj;
-    //    }
-    //}
-
     private void BuildBoard()
     {
         if (_currentBoard != null)
@@ -85,35 +65,6 @@ public class BoardManager : SingletonBase<BoardManager>
         _currentBoard = new Board(transform.position, WorldSize, NodeRadius, _material);
     }
 
-    //private void BuildObjects()
-    //{
-    //    if (_instantiatedCubes.Count > 0)
-    //    {
-    //        for (int i = _instantiatedCubes.Count - 1; i >= 0; --i)
-    //        {
-    //            Destroy(_instantiatedCubes[i]);
-    //        }
-    //        _instantiatedCubes.Clear();
-    //    }
-
-    //    for (int z = 0; z < _currentBoard.ZCount; ++z)
-    //    {
-    //        for (int y = 0; y < _currentBoard.YCount; ++y)
-    //        {
-    //            for (int x = 0; x < _currentBoard.XCount; ++x)
-    //            {
-    //                GameObject prefab = GetPrefabByType(CurrentBoard.GetNodeAt(x, y, z).Type);
-    //                if (prefab != null)
-    //                {
-    //                    GameObject go = Instantiate(prefab, new Vector3(x + NodeRadius, y + NodeRadius, z + NodeRadius), Quaternion.identity);
-    //                    go.name = "cube_" + x + "_" + z;
-    //                    go.transform.SetParent(transform);
-    //                    _instantiatedCubes.Add(go);
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
 
     private void BuildBoardMesh()
     {
