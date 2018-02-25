@@ -12,7 +12,7 @@ public class InstallObjectCommand : Command
     public int X { get; set; }
     public int Z { get; set; }
 
-    public InstallObjectCommand(GameObject prefab, int x, int z)
+    public InstallObjectCommand(GameObject prefab, NodeSideInfo info)
     {
         _installObjectPrefab = prefab;
         X = x;

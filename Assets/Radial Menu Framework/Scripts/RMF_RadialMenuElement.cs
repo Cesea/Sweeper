@@ -57,24 +57,23 @@ public class RMF_RadialMenuElement : MonoBehaviour {
         //If we're using lazy selection, we don't want our normal mouse-over effects interfering, so we turn raycasts off.
         if (parentRM.useLazySelection)
             cg.blocksRaycasts = false;
-        else {
-
+        else
+        {
             //Otherwise, we have to do some magic with events to get the label stuff working on mouse-over.
-
             EventTrigger t;
-
-            if (button.GetComponent<EventTrigger>() == null) {
+            if (button.GetComponent<EventTrigger>() == null)
+            {
                 t = button.gameObject.AddComponent<EventTrigger>();
                 t.triggers = new System.Collections.Generic.List<EventTrigger.Entry>();
-            } else
+            }
+            else
+            {
                 t = button.GetComponent<EventTrigger>();
-
-
+            }
 
             EventTrigger.Entry enter = new EventTrigger.Entry();
             enter.eventID = EventTriggerType.PointerEnter;
             enter.callback.AddListener((eventData) => { setParentMenuLable(label); });
-
 
             EventTrigger.Entry exit = new EventTrigger.Entry();
             exit.eventID = EventTriggerType.PointerExit;
@@ -82,9 +81,6 @@ public class RMF_RadialMenuElement : MonoBehaviour {
 
             t.triggers.Add(enter);
             t.triggers.Add(exit);
-
-
-
         }
 
     }
@@ -109,12 +105,13 @@ public class RMF_RadialMenuElement : MonoBehaviour {
     }
 
     //Sets the label of the parent menu. Is set to public so you can call this elsewhere if you need to show a special label for something.
-    public void setParentMenuLable(string l) {
+    public void setParentMenuLable(string l)
+    {
 
         if (parentRM.textLabel != null)
+        {
             parentRM.textLabel.text = l;
-
-
+        }
     }
 
 
