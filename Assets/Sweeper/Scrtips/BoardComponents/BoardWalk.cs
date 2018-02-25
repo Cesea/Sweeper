@@ -76,23 +76,6 @@ public class BoardWalk : BoardMoveBase
     {
         Move();
 
-        if (Input.GetKeyUp(KeyCode.UpArrow))
-        {
-            MoveUp();
-        }
-        if (Input.GetKeyUp(KeyCode.DownArrow))
-        {
-            MoveDown();
-        }
-        if (Input.GetKeyUp(KeyCode.LeftArrow))
-        {
-            MoveLeft();
-        }
-        if (Input.GetKeyUp(KeyCode.RightArrow))
-        {
-            MoveRight();
-        }
-
         if (Input.GetKeyDown(KeyCode.Keypad1))
         {
             UseRadarSkill();

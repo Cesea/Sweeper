@@ -35,6 +35,9 @@ public class GameStateManager : SingletonBase<GameStateManager>
     public LayerMask _nodeMask;
     public LayerMask _objectMask;
 
+    public CameraController _cameraController;
+
+
     private void Start()
     {
         _boardManager = GetComponent<BoardManager>();
@@ -79,6 +82,11 @@ public class GameStateManager : SingletonBase<GameStateManager>
         _boardManager.BuildNewBoard();
         Player.SetSittingNode(_boardManager.CurrentBoard.GetNodeAt(_boardManager.CurrentBoard.StartCellCoord), Side.Top);
         RemoveExclamations();
+
+        _cameraController.transform.position = new Vector3(
+            _boardManager.WorldSize.x / 2.0f,
+            _cameraController.transform.position.y,
+            _boardManager.WorldSize.z / 2.0f);
 
     }
 
