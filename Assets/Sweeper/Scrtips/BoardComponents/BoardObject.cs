@@ -73,7 +73,7 @@ public class BoardObject : MonoBehaviour
         UpdateNeighbourCells();
 
         //만약 플레이어가 죽거나 출구에 도착한다면 true를 반환한다
-        if (GameStateManager.Instance.CheckMovement(_sittingNodeInfo.Node))
+        if (GameStateManager.Instance.CheckMovement(_sittingNodeInfo._node))
         {
             return;
         }
@@ -90,8 +90,8 @@ public class BoardObject : MonoBehaviour
     public void SetSittingNode(Node node, Side side)
     {
         _sittingNodeInfo = new NodeSideInfo();
-        _sittingNodeInfo.Node = node;
-        _sittingNodeInfo.Side = side;
+        _sittingNodeInfo._node = node;
+        _sittingNodeInfo._side = side;
         transform.position = _sittingNodeInfo.GetWorldPosition();
         OnMovementDone(_sittingNodeInfo);
     }

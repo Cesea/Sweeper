@@ -18,9 +18,9 @@ public class Interactable : MonoBehaviour
         EventManager.Instance.RemoveListener<Events.RadialShutEvent>(ClearCommandBuffer);
     }
 
-    public Command[] GetAvailableCommands()
+    public Command[] GetAvailableCommands(NodeSideInfo info)
     {
-        _commandBuffer = CommandBuilder.BuildCommands(gameObject);
+        _commandBuffer = CommandBuilder.BuildCommands(info);
         return _commandBuffer.ToArray();
     }
 

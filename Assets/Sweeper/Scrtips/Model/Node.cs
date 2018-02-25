@@ -301,15 +301,21 @@ public class Node
 
 public struct NodeSideInfo
 {
-    public Node Node { get; set; }
-    public Side Side { get; set; }
+    public Node _node { get; set; }
+    public Side _side { get; set; }
+
+    public NodeSideInfo(Node node, Side side)
+    {
+        _node = node;
+        _side = side;
+    }
 
     public Vector3 GetWorldPosition()
     {
-        if (Node == null)
+        if (_node == null)
         {
             Debug.Log("null");
         }
-        return Node.GetWorldPositionBySide(Side);
+        return _node.GetWorldPositionBySide(_side);
     }
 }

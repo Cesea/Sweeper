@@ -69,7 +69,7 @@ public class GameStateManager : SingletonBase<GameStateManager>
                 NodeSideInfo info = new NodeSideInfo();
                 if (BoardManager.GetNodeSideInfoAtMouse(ref info))
                 {
-                    _selectingNode = info.Node;
+                    _selectingNode = info._node;
 
                     //RadialMenu.Show(Input.mousePosition, info);
                 }

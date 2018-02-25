@@ -25,20 +25,20 @@ public class BoardJump : BoardMoveBase
         }
 
         NodeSideInfo targetNodeInfo = new NodeSideInfo();
-        targetNodeInfo.Node = BoardManager.Instance.CurrentBoard.GetOffsetedNode(_sittingNodeInfo.Node, x, y, z);
-        targetNodeInfo.Side = _sittingNodeInfo.Side;
+        targetNodeInfo._node = BoardManager.Instance.CurrentBoard.GetOffsetedNode(_sittingNodeInfo._node, x, y, z);
+        targetNodeInfo._side = _sittingNodeInfo._side;
         MoveTo(targetNodeInfo);
     }
 
     public override void MoveTo(NodeSideInfo info )
     {
-        if (_moving || (info.Node == null))
+        if (_moving || (info._node == null))
         {
             return;
         }
 
         _targetNodeInfo = info;
-        _targetPosition = info.Node.GetWorldPositionBySide(info.Side);
+        _targetPosition = info._node.GetWorldPositionBySide(info._side);
 
         _middlePosition = ((_targetPosition + _sittingPosition) / 2.0f) + new Vector3(0, _jumpHeight, 0);
 

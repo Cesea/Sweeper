@@ -244,7 +244,6 @@ public class RadialMenu : MonoBehaviour
     {
         if (_elements[i]._active == false)
         {
-
             _elements[i].HighlightThisElement(_pointer); //Select this one
 
             if (_previousActiveIndex != i)

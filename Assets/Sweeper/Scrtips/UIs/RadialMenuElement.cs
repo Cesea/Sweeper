@@ -20,16 +20,14 @@ public class RadialMenuElement : MonoBehaviour
 
     [HideInInspector]
     public float _minAngle, _maxAngle;
-
     [HideInInspector]
     public float _angleOffset;
-
     [HideInInspector]
     public bool _active = false;
-
     [HideInInspector]
     public int _assignedIndex = 0;
-    // Use this for initialization
+
+    public Text _text;
 
     private CanvasGroup cg;
 
@@ -107,17 +105,14 @@ public class RadialMenuElement : MonoBehaviour
     //I would highly recommend not messing with this stuff unless you know what you're doing, if one event handler is wrong then the whole thing can break.
     public void HighlightThisElement(PointerEventData p)
     {
-
         ExecuteEvents.Execute(_button.gameObject, p, ExecuteEvents.selectHandler);
         _active = true;
         SetParentMenuLable(_label);
-
     }
 
     //Sets the label of the parent menu. Is set to public so you can call this elsewhere if you need to show a special label for something.
     public void SetParentMenuLable(string l)
     {
-
         if (_parentMenu._textLabel != null)
         {
             _parentMenu._textLabel.text = l;
@@ -142,6 +137,4 @@ public class RadialMenuElement : MonoBehaviour
     {
         Debug.Log(_assignedIndex);
     }
-
-
 }

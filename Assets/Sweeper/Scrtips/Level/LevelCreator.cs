@@ -120,7 +120,7 @@ namespace Level
             NodeSideInfo nodeInfo = new NodeSideInfo();
             if (BoardManager.GetNodeSideInfoAtMouse(ref nodeInfo))
             {
-                InstallObjectAtNode(nodeInfo.Node, nodeInfo.Side, prefabIndex);
+                InstallObjectAtNode(nodeInfo._node, nodeInfo._side, prefabIndex);
             }
         }
 
@@ -129,7 +129,7 @@ namespace Level
             NodeSideInfo info = new NodeSideInfo();
             if (BoardManager.GetNodeSideInfoAtMouse(ref info))
             {
-                DestroyObjectAtNode(info.Node, info.Side);
+                DestroyObjectAtNode(info._node, info._side);
             }
         }
 

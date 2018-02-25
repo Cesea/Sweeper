@@ -22,12 +22,12 @@ namespace Level
             {
                 //TODO;
                 //RadialMenu.Show(Input.mousePosition, _selectingNode);
-                if (info.Node == null )
+                if (info._node == null )
                 {
                     Debug.Log("aaaaa");
                 }
                 worldPosition = info.GetWorldPosition();
-                rotation = BoardManager.SideToRotation(info.Side);
+                rotation = BoardManager.SideToRotation(info._side);
             }
             transform.position = worldPosition;
             transform.rotation = rotation;

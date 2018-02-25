@@ -214,8 +214,8 @@ public class BoardManager : SingletonBase<BoardManager>
                 tmp.z -= 1;
             }
 
-            info.Node = BoardManager.Instance.CurrentBoard.GetNodeAt(tmp.x, tmp.y, tmp.z);
-            info.Side = NormalToSide(hitInfo.normal);
+            info._node = BoardManager.Instance.CurrentBoard.GetNodeAt(tmp.x, tmp.y, tmp.z);
+            info._side = NormalToSide(hitInfo.normal);
 
             result = true;
         }

@@ -6,13 +6,13 @@ using Foundation;
 
 public static class CommandBuilder 
 {
-    public static List<Command> BuildCommands(Node targetNode, Side side)
+    public static List<Command> BuildCommands(NodeSideInfo info)
     {
         List<Command> result = new List<Command>();
 
         result.Add(new InspectCommand());
 
-        Vector3Int objectCellPosition = new Vector3Int(targetNode.X, targetNode.Y, targetNode.Z);
+        Vector3Int objectCellPosition = new Vector3Int(info._node.X, info._node.Y, info._node.Z);
         Vector3Int deltaGridToPlayer = GameStateManager.Instance.Player.transform.position.ToVector3Int() - objectCellPosition;
 
         if ((deltaGridToPlayer.x == 0 && Mathf.Abs(deltaGridToPlayer.z) == 1) ||
@@ -33,9 +33,9 @@ public static class CommandBuilder
         if (deltaGridToPlayer.x >= -1 && deltaGridToPlayer.x <= 1 &&
            deltaGridToPlayer.y >= -1 && deltaGridToPlayer.y <= 1)
         {
-            if (targetNode.GetInstalledObjectAt(side))
+            if (info._node.GetInstalledObjectAt(info._side))
             {
-                result.Add(new InstallObjectCommand(GameStateManager.Instance._dangerSignPrefab, objectCellPosition.x, objectCellPosition.y));
+                result.Add(new InstallObjectCommand(GameStateManager.Instance._dangerSignPrefab, info));
             }
         }
         return result;

@@ -54,13 +54,13 @@ public class RadialMenuEditor : Editor
                 }
                 RectTransform rectTransform = menu._elements[i].GetComponent<RectTransform>();
                 rectTransform.rotation = Quaternion.Euler(0, 0, 0);
+                RectTransform textTransform = menu._elements[i]._text.GetComponent<RectTransform>();
+                textTransform.rotation = Quaternion.Euler(0, 0, 0);
             }
-
             return;
         }
 
-
-        for (int i = 0; i < menu._elements.Count; i++)
+        for (int i = 0; i < menu._elements.Count; ++i)
         {
             if (menu._elements[i] == null)
             {
@@ -69,6 +69,11 @@ public class RadialMenuEditor : Editor
             }
             RectTransform rectTransform = menu._elements[i].GetComponent<RectTransform>();
             rectTransform.rotation = Quaternion.Euler(0, 0, -((360f / (float)menu._elements.Count) * i) - menu._globalOffset);
+
+            RectTransform textTransform = menu._elements[i]._text.GetComponent<RectTransform>();
+            textTransform.localRotation = Quaternion.Euler(0, 0, ((360f / (float)menu._elements.Count) * i) - menu._globalOffset);
+
+            int a = 0;
         }
 
     }

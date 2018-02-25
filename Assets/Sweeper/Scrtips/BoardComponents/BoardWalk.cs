@@ -7,15 +7,15 @@ public class BoardWalk : BoardMoveBase
 {
     public override void MoveTo(NodeSideInfo info)
     {
-        if (_moving || (info.Node == null) )
+        if (_moving || (info._node == null) )
         {
             return;
         }
 
         //갈 수 있는곳인지 없는곳 인지 판단
-        if (info.Side == Side.Top)
+        if (info._side == Side.Top)
         {
-            Node nodeRespecteSide = BoardManager.Instance.CurrentBoard.GetOffsetedNode(info.Node, 0, 1, 0);
+            Node nodeRespecteSide = BoardManager.Instance.CurrentBoard.GetOffsetedNode(info._node, 0, 1, 0);
             //갈 수 없는 곳 이다.
             if (nodeRespecteSide.IsSolid)
             {
@@ -24,7 +24,7 @@ public class BoardWalk : BoardMoveBase
         }
 
         _targetNodeInfo = info;
-        _targetPosition = _targetNodeInfo.Node.GetWorldPositionBySide(_targetNodeInfo.Side);
+        _targetPosition = _targetNodeInfo._node.GetWorldPositionBySide(_targetNodeInfo._side);
 
         if (_targetPosition != _sittingPosition)
         {
@@ -41,8 +41,8 @@ public class BoardWalk : BoardMoveBase
         }
 
         NodeSideInfo targetNodeInfo = new NodeSideInfo();
-        targetNodeInfo.Node = BoardManager.Instance.CurrentBoard.GetOffsetedNode(_sittingNodeInfo.Node, x, y, z);
-        targetNodeInfo.Side = _sittingNodeInfo.Side;
+        targetNodeInfo._node = BoardManager.Instance.CurrentBoard.GetOffsetedNode(_sittingNodeInfo._node, x, y, z);
+        targetNodeInfo._side = _sittingNodeInfo._side;
 
         MoveTo(targetNodeInfo);
     }
