@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(BoardObject))]
+[RequireComponent(typeof(BoardMovementManager))]
 public class BoardWalk : BoardMoveBase
 {
     public override void MoveTo(NodeSideInfo info)
@@ -26,10 +26,10 @@ public class BoardWalk : BoardMoveBase
         _targetNodeInfo = info;
         _targetPosition = _targetNodeInfo._node.GetWorldPositionBySide(_targetNodeInfo._side);
 
-        if (_targetPosition != _sittingPosition)
+        if (_targetPosition != _startPosition)
         {
             _moving = true;
-            _object.OnMovementStart();
+            _movementManager.OnMovementStart();
         }
     }
 
@@ -41,8 +41,8 @@ public class BoardWalk : BoardMoveBase
         }
 
         NodeSideInfo targetNodeInfo = new NodeSideInfo();
-        targetNodeInfo._node = BoardManager.Instance.CurrentBoard.GetOffsetedNode(_sittingNodeInfo._node, x, y, z);
-        targetNodeInfo._side = _sittingNodeInfo._side;
+        targetNodeInfo._node = BoardManager.Instance.CurrentBoard.GetOffsetedNode(_startNodeInfo._node, x, y, z);
+        targetNodeInfo._side = _startNodeInfo._side;
 
         MoveTo(targetNodeInfo);
     }
@@ -93,14 +93,14 @@ public class BoardWalk : BoardMoveBase
         if (_moving)
         {
             bool isTick = _timer.Tick(Time.deltaTime * _speed);
-            Vector3 currentPosition = Vector3.Lerp(_sittingPosition, _targetPosition, _timer.Percent);
+            Vector3 currentPosition = Vector3.Lerp(_startPosition, _targetPosition, _timer.Percent);
             if (isTick)
             {
                 transform.position = _targetPosition;
                 _moving = false;
                 _timer.Reset();
 
-                _object.OnMovementDone(_targetNodeInfo);
+                _movementManager.OnMovementDone(_targetNodeInfo);
             }
             else
             {

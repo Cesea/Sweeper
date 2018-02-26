@@ -318,21 +318,21 @@ public class Board
 
 
     //일단은 횡으로만
-    public List<Node> GetNeighbours(Node node)
+    public List<NodeSideInfo> GetNeighbours(NodeSideInfo info)
     {
-        List<Node> result = new List<Node>();
-        for (int z = node.Z - 1; z <= node.Z + 1; ++z)
+        List<NodeSideInfo> result = new List<NodeSideInfo>();
+        for (int z = info._node.Z - 1; z <= info._node.Z + 1; ++z)
         {
-            for (int x = node.X - 1; x <= node.X + 1; ++x)
+            for (int x = info._node.X - 1; x <= info._node.X + 1; ++x)
             {
                 if (IsInBound(x, 0, z))
                 {
                     Node currentNode = Nodes[Index3D(x, 0, z)];
-                    if ((x == node.X && z == node.Z) || !currentNode.IsSolid)
+                    if ((x == info._node.X && z == info._node.Z) || !currentNode.IsSolid)
                     {
                         continue;
                     }
-                    result.Add(currentNode);
+                    result.Add(new NodeSideInfo(currentNode, Side.Top));
                 }
             }
         }

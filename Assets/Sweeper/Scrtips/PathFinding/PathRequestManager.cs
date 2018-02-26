@@ -21,9 +21,9 @@ public class PathRequestManager : SingletonBase<PathRequestManager>
         
     }
 
-    public static void RequestPath(Node startPos, Node endPos, Action<Node[], bool> callback)
+    public static void RequestPath(NodeSideInfo startInfo, NodeSideInfo endInfo, Action<NodeSideInfo[], bool> callback)
     {
-        PathRequest newRequest = new PathRequest(startPos, endPos, callback);
+        PathRequest newRequest = new PathRequest(startInfo, endInfo, callback);
         Instance._requestQueue.Enqueue(newRequest);
         Instance.TryProcessNext();
     }
@@ -34,11 +34,11 @@ public class PathRequestManager : SingletonBase<PathRequestManager>
         {
             _currentRequest = _requestQueue.Dequeue();
             _isProcessing = true;
-            _finder.StartFindPath(_currentRequest._startNode, _currentRequest._endNode);
+            _finder.StartFindPath(_currentRequest._startNodeInfo, _currentRequest._endNodeInfo);
         }
     }
 
-    public void FinishedProcessingPath(Node[] path, bool success)
+    public void FinishedProcessingPath(NodeSideInfo[] path, bool success)
     {
         _currentRequest._callback(path, success);
         _isProcessing = false;
@@ -47,14 +47,14 @@ public class PathRequestManager : SingletonBase<PathRequestManager>
 
     public struct PathRequest
     {
-        public Node _startNode;
-        public Node _endNode;
-        public Action<Node[], bool> _callback;
+        public NodeSideInfo _startNodeInfo;
+        public NodeSideInfo _endNodeInfo;
+        public Action<NodeSideInfo[], bool> _callback;
 
-        public PathRequest(Node start, Node end, Action<Node[], bool> callback)
+        public PathRequest(NodeSideInfo start, NodeSideInfo end, Action<NodeSideInfo[], bool> callback)
         {
-            _startNode = start;
-            _endNode = end;
+            _startNodeInfo = start;
+            _endNodeInfo = end;
             _callback = callback;
         }
     }

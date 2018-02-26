@@ -4,7 +4,7 @@ using UnityEngine;
 
 using Utils;
 
-[RequireComponent(typeof(BoardObject))]
+[RequireComponent(typeof(BoardMovementManager))]
 public class BoardJump : BoardMoveBase
 {
     Vector3 _middlePosition = Vector3.zero;
@@ -25,8 +25,8 @@ public class BoardJump : BoardMoveBase
         }
 
         NodeSideInfo targetNodeInfo = new NodeSideInfo();
-        targetNodeInfo._node = BoardManager.Instance.CurrentBoard.GetOffsetedNode(_sittingNodeInfo._node, x, y, z);
-        targetNodeInfo._side = _sittingNodeInfo._side;
+        targetNodeInfo._node = BoardManager.Instance.CurrentBoard.GetOffsetedNode(_startNodeInfo._node, x, y, z);
+        targetNodeInfo._side = _startNodeInfo._side;
         MoveTo(targetNodeInfo);
     }
 
@@ -40,12 +40,12 @@ public class BoardJump : BoardMoveBase
         _targetNodeInfo = info;
         _targetPosition = info._node.GetWorldPositionBySide(info._side);
 
-        _middlePosition = ((_targetPosition + _sittingPosition) / 2.0f) + new Vector3(0, _jumpHeight, 0);
+        _middlePosition = ((_targetPosition + _startPosition) / 2.0f) + new Vector3(0, _jumpHeight, 0);
 
-        if (_targetPosition != _sittingPosition)
+        if (_targetPosition != _startPosition)
         {
             _moving = true;
-            _object.OnMovementStart();
+            _movementManager.OnMovementStart();
         }
     }
 
@@ -57,7 +57,7 @@ public class BoardJump : BoardMoveBase
 
             float t = _timer.Percent;
             float oneMinusT = 1.0f - _timer.Percent;
-            Vector3 currentPosition = (_sittingPosition * oneMinusT * oneMinusT) +
+            Vector3 currentPosition = (_startPosition * oneMinusT * oneMinusT) +
                                 (2.0f * _middlePosition * oneMinusT * _timer.Percent) +
                                 (_targetPosition * t * t);
             if (isTick)
@@ -66,7 +66,7 @@ public class BoardJump : BoardMoveBase
                 _moving = false;
                 _timer.Reset();
 
-                _object.OnMovementDone(_targetNodeInfo);
+                _movementManager.OnMovementDone(_targetNodeInfo);
             }
             else
             {

@@ -17,36 +17,37 @@ public class PathFinder : MonoBehaviour
     {
     }
 
-    public void StartFindPath(Node startNode, Node endNode)
+    public void StartFindPath(NodeSideInfo startNode, NodeSideInfo endNode)
     {
         StartCoroutine(FindPath(startNode, endNode));
     }
 
-    IEnumerator FindPath(Node start, Node end)
+    IEnumerator FindPath(NodeSideInfo start, NodeSideInfo end)
     {
 
-        if (start.IsSolid && end.IsSolid)
+        if (start._node.IsSolid && end._node.IsSolid)
         {
-            Node[] wayPoints = new Node[0];
+            NodeSideInfo[] wayPoints = new NodeSideInfo[0];
             bool findSuccess = false;
 
-            List<Node> openSet = new List<Node>();
-            HashSet<Node> closedSet = new HashSet<Node>();
+            List<NodeSideInfo> openSet = new List<NodeSideInfo>();
+            HashSet<NodeSideInfo> closedSet = new HashSet<NodeSideInfo>();
 
             openSet.Add(start);
             while (openSet.Count > 0)
             {
-                Node currentNode = openSet[0];
+                NodeSideInfo currentNode = openSet[0];
                 for (int i = 1; i < openSet.Count; ++i)
                 {
-                    if (openSet[i].TotalCost < currentNode.TotalCost ||
-                        openSet[i].TotalCost == currentNode.TotalCost && openSet[i].HCost < currentNode.HCost)
+                    if (openSet[i]._node.TotalCost < currentNode._node.TotalCost ||
+                        openSet[i]._node.TotalCost == currentNode._node.TotalCost && openSet[i]._node.HCost < currentNode._node.HCost)
                     {
                         currentNode = openSet[i];
                     }
                 }
                 openSet.Remove(currentNode);
                 closedSet.Add(currentNode);
+
                 if (currentNode == end)
                 {
                     findSuccess = true;
@@ -55,16 +56,16 @@ public class PathFinder : MonoBehaviour
 
                 foreach (var n in _boardManager.CurrentBoard.GetNeighbours(currentNode))
                 {
-                    if (!n.IsSolid || closedSet.Contains(n))
+                    if (!n._node.IsSolid || closedSet.Contains(n))
                     {
                         continue;
                     }
-                    int newMovementCost = currentNode.GCost + GetDistance(currentNode, n);
-                    if (newMovementCost < n.GCost || !openSet.Contains(n))
+                    int newMovementCost = currentNode._node.GCost + GetDistance(currentNode._node, n._node);
+                    if (newMovementCost < n._node.GCost || !openSet.Contains(n))
                     {
-                        n.GCost = newMovementCost;
-                        n.HCost = GetDistance(n, end);
-                        n.Parent = currentNode;
+                        n._node.GCost = newMovementCost;
+                        n._node.HCost = GetDistance(n._node, end._node);
+                        n._node.Parent = currentNode._node;
 
                         if (!openSet.Contains(n))
                         {
@@ -76,20 +77,20 @@ public class PathFinder : MonoBehaviour
             yield return null;
             if (findSuccess)
             {
-                wayPoints = RetracePath(start, end);
+                wayPoints = RetracePath(start._node, end._node);
             }
             _requestManager.FinishedProcessingPath(wayPoints, findSuccess);
         }
     }
 
-    Node[] RetracePath(Node start, Node end)
+    NodeSideInfo[] RetracePath(Node start, Node end)
     {
-        List<Node> path = new List<Node>();
+        List<NodeSideInfo> path = new List<NodeSideInfo>();
         Node current = end;
 
         while (current != start)
         {
-            path.Add(current);
+            path.Add(new NodeSideInfo(current, Side.Top));
             current = current.Parent;
         }
         path.Reverse();
