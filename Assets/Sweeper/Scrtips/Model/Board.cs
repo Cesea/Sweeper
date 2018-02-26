@@ -125,7 +125,7 @@ public class Board
     public bool CanMoveTo(int x, int y, int z)
     {
         bool result = true;
-        if (!IsInBound(ref x, ref y, ref z) || Nodes[Index3D(x, y, z)].IsSolid)
+        if (!IsInBoundRef(ref x, ref y, ref z) || Nodes[Index3D(x, y, z)].IsSolid)
         {
             result = false;
             Debug.Log("movement out of range");
@@ -165,7 +165,7 @@ public class Board
                     continue;
                 }
 
-                if (IsInBound(ref ix, ref y, ref iz))
+                if (IsInBoundRef(ref ix, ref y, ref iz))
                 {
                     cells[count] = Nodes[index];
                 }
@@ -249,7 +249,7 @@ public class Board
 
     public Node GetNodeAt(int x, int y, int z)
     {
-        if (!IsInBound(ref x, ref y, ref z))
+        if (!IsInBoundRef(ref x, ref y, ref z))
         {
             return Nodes[Index3D(x, y, z)];
         }
@@ -262,7 +262,7 @@ public class Board
         int indexY = (int)((worldPos.y - WorldStartPos.y) / _nodeDiameter);
         int indexZ = (int)((worldPos.z - WorldStartPos.z) / _nodeDiameter);
 
-        if (!IsInBound(ref indexX, ref indexY, ref indexZ))
+        if (!IsInBoundRef(ref indexX, ref indexY, ref indexZ))
         {
             return Nodes[Index3D(indexX, indexY, indexZ)];
             //return null;
@@ -273,7 +273,7 @@ public class Board
 
     public Node.NodeType GetTypeAt(int x, int y, int z)
     {
-        if (!IsInBound(ref x, ref y, ref z))
+        if (!IsInBoundRef(ref x, ref y, ref z))
         {
             return GetNodeAt(x, y, z).Type;
             //return Node.NodeType.Count;
@@ -291,7 +291,7 @@ public class Board
         return Nodes[Index3D(node.X + x, node.Y + y, node.Z + z)];
     }
 
-    public bool IsInBound(ref int x, ref int y, ref int z)
+    public bool IsInBoundRef(ref int x, ref int y, ref int z)
     {
         if (x < 0 || x > XCount - 1 ||
             y < 0 || y > YCount - 1 ||
@@ -303,6 +303,40 @@ public class Board
             return false;
         }
         return true;
+    }
+
+    public bool IsInBound(int x, int y, int z)
+    {
+        if (x < 0 || x > XCount - 1 ||
+               y < 0 || y > YCount - 1 ||
+               z < 0 || z > ZCount - 1)
+        {
+            return false;
+        }
+        return true;
+    }
+
+
+    //일단은 횡으로만
+    public List<Node> GetNeighbours(Node node)
+    {
+        List<Node> result = new List<Node>();
+        for (int z = node.Z - 1; z <= node.Z + 1; ++z)
+        {
+            for (int x = node.X - 1; x <= node.X + 1; ++x)
+            {
+                if (IsInBound(x, 0, z))
+                {
+                    Node currentNode = Nodes[Index3D(x, 0, z)];
+                    if ((x == node.X && z == node.Z) || !currentNode.IsSolid)
+                    {
+                        continue;
+                    }
+                    result.Add(currentNode);
+                }
+            }
+        }
+        return result;
     }
 
     #endregion

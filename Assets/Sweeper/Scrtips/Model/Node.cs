@@ -62,6 +62,12 @@ public class Node
     private GameObject _parent;
     private Board _owner;
 
+    public int GCost { get; set; }
+    public int HCost { get; set; }
+    public int TotalCost { get { return GCost + HCost; } }
+
+    public Node Parent { get; set; }
+
     public int X
     {
         get { return _x; }
