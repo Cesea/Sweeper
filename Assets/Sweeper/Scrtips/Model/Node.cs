@@ -84,6 +84,11 @@ public class Node
         set { _z = value; }
     }
 
+    public Vector3Int BoardPosition
+    {
+        get { return new Vector3Int(_x, _y, _z); }
+    }
+
     public NodeType Type
     {
         get { return _type; }
@@ -317,10 +322,18 @@ public class Node
     }
 }
 
-public struct NodeSideInfo
+public class NodeSideInfo
 {
     public Node _node { get; set; }
     public Side _side { get; set; }
+
+    public NodeSideInfo Parent;
+
+    public NodeSideInfo()
+    {
+        _node = null;
+        _side = Side.Count;
+    }
 
     public NodeSideInfo(Node node, Side side)
     {

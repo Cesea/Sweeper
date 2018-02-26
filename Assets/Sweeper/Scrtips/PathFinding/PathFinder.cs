@@ -53,9 +53,9 @@ public class PathFinder : MonoBehaviour
                     break;
                 }
 
-                foreach (var n in _boardManager.CurrentBoard.GetNeighbours(currentNodeInfo))
+                foreach (var n in _boardManager.CurrentBoard.GetReachables(currentNodeInfo))
                 {
-                    if (!n._node.IsSolid || closedSet.Contains(n))
+                    if (!n._node.IsSolid || n._side == Side.Count ||closedSet.Contains(n))
                     {
                         continue;
                     }
@@ -65,12 +65,12 @@ public class PathFinder : MonoBehaviour
                         continue;
                     }
 
-                    int newMovementCost = currentNodeInfo._node.GCost + GetDistance(currentNodeInfo._node, n._node);
+                    int newMovementCost = currentNodeInfo._node.GCost + GetDistance(currentNodeInfo, n);
                     if (newMovementCost < n._node.GCost || !openSet.Contains(n))
                     {
                         n._node.GCost = newMovementCost;
-                        n._node.HCost = GetDistance(n._node, end._node);
-                        n._node.Parent = currentNodeInfo._node;
+                        n._node.HCost = GetDistance(n, end);
+                        n.Parent = currentNodeInfo;
 
                         if (!openSet.Contains(n))
                         {
@@ -82,20 +82,20 @@ public class PathFinder : MonoBehaviour
             yield return null;
             if (findSuccess)
             {
-                wayPoints = RetracePath(start._node, end._node);
+                wayPoints = RetracePath(start, end);
             }
             _requestManager.FinishedProcessingPath(wayPoints, findSuccess);
         }
     }
 
-    NodeSideInfo[] RetracePath(Node start, Node end)
+    NodeSideInfo[] RetracePath(NodeSideInfo start, NodeSideInfo end)
     {
         List<NodeSideInfo> path = new List<NodeSideInfo>();
-        Node current = end;
+        NodeSideInfo current = end;
 
         while (current != start)
         {
-            path.Add(new NodeSideInfo(current, Side.Top));
+            path.Add(current);
             current = current.Parent;
         }
         path.Reverse();
@@ -103,18 +103,20 @@ public class PathFinder : MonoBehaviour
         return path.ToArray();
     }
 
-    int GetDistance(Node a, Node b)
+    int GetDistance(NodeSideInfo a, NodeSideInfo b)
     {
-        int distX = Mathf.Abs(a.X - b.X);
-        int distZ = Mathf.Abs(a.Z - b.Z);
-
-        if (distX > distZ)
+        if (a._node == b._node && 
+            a._side != b._side)
         {
-            return 10 * distZ + 10 * (distX- distZ);
+            return 10;
         }
         else
         {
-            return 10 * distX + 10 * (distZ - distX);
+            int distX = Mathf.Abs(a._node.X - b._node.X);
+            int distY = Mathf.Abs(a._node.X - b._node.X);
+            int distZ = Mathf.Abs(a._node.Z - b._node.Z);
+
+            return distX * 10 + distY * 10 + distZ * 10;
         }
     }
 

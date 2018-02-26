@@ -311,10 +311,204 @@ public class Board
         return true;
     }
 
+    //public List<NodeSideInfo> GetReachables(NodeSideInfo info)
+    //{
+    //    List<NodeSideInfo> result = new List<NodeSideInfo>();
+    //    Node node = info._node;
+    //    for (int z = node.Z - 1; z <= node.Z + 1; ++z)
+    //    {
+    //        for (int y = node.Y - 1; y <= node.Y + 1; ++y)
+    //        {
+    //            for (int x = node.X - 1; x <= node.X + 1; ++x)
+    //            {
+    //                if (IsInBound(x, y, z))
+    //                {
+    //                    Node currentNode = Nodes[Index3D(x, y, z)];
+    //                    Side currentSide = Side.Count;
+    //                    if ((x == info._node.X && y == info._node.Y && z == info._node.Z) ||
+    //                        !currentNode.IsSolid ||
+    //                        (x == node.X - 1 && y == node.Y - 1 && z == node.Z - 1) ||
+    //                        (x == node.X + 1 && y == node.Y - 1 && z == node.Z - 1) ||
+    //                        (x == node.X - 1 && y == node.Y + 1 && z == node.Z - 1) ||
+    //                        (x == node.X + 1 && y == node.Y + 1 && z == node.Z - 1) ||
+    //                        (x == node.X - 1 && y == node.Y - 1 && z == node.Z + 1) ||
+    //                        (x == node.X + 1 && y == node.Y - 1 && z == node.Z + 1) ||
+    //                        (x == node.X - 1 && y == node.Y + 1 && z == node.Z + 1) ||
+    //                        (x == node.X + 1 && y == node.Y + 1 && z == node.Z + 1) )
+    //                    {
+    //                        continue;
+    //                    }
 
-    //일단은 횡으로만
+    //                    int diffX = x - node.X;
+    //                    int diffY = y - node.Y;
+    //                    int diffZ = z - node.Z;
+
+    //                    if (info._side == Side.Top || info._side == Side.Bottom)
+    //                    {
+    //                        if (y < node.Y)
+    //                        {
+    //                            if (Mathf.Abs(diffX) > 0)
+    //                            {
+
+    //                            }
+    //                            else if (Mathf.Abs(diffZ) > 0)
+    //                            {
+    //                            }
+    //                        }
+    //                        else if (y > node.Y)
+    //                        {
+    //                            if (Mathf.Abs(diffX) > 0)
+    //                            {
+    //                                if (diffX > 0)
+    //                                {
+    //                                    currentSide = Side.Left;
+    //                                }
+    //                                else
+    //                                {
+    //                                    currentSide = Side.Right;
+    //                                }
+    //                            }
+    //                            else if (Mathf.Abs(diffZ) > 0)
+    //                            {
+    //                                if (diffZ > 0)
+    //                                {
+    //                                    currentSide = Side.Back;
+    //                                }
+    //                                else
+    //                                {
+    //                                    currentSide = Side.Front;
+    //                                }
+    //                            }
+    //                        }
+    //                    }
+    //                    else
+    //                    {
+
+    //                    }
+
+    //                    result.Add(new NodeSideInfo(currentNode, info._side));
+    //                }
+    //            }
+    //        }
+    //    }
+    //    return result;
+    //}
+
+    public List<NodeSideInfo> GetReachables(NodeSideInfo info)
+    {
+        List<NodeSideInfo> result = new List<NodeSideInfo>();
+        Node node = info._node;
+        int minX = node.X - 1;
+        int maxX = node.X + 1;
+        int minY = node.Y - 1;
+        int maxY = node.Y + 1;
+        int minZ = node.Z - 1;
+        int maxZ = node.Z + 1;
+
+        for (int z = minZ; z <= maxZ; ++z)
+        {
+            for (int y = minY; y <= maxY; ++y)
+            {
+                for (int x = minX; x <= maxX; ++x)
+                {
+                    if (!IsInBound(x, y, z) ||
+                        (x == node.X - 1 && y == node.Y - 1 && z == node.Z - 1) ||
+                         (x == node.X + 1 && y == node.Y - 1 && z == node.Z - 1) ||
+                         (x == node.X - 1 && y == node.Y + 1 && z == node.Z - 1) ||
+                         (x == node.X + 1 && y == node.Y + 1 && z == node.Z - 1) ||
+                         (x == node.X - 1 && y == node.Y - 1 && z == node.Z + 1) ||
+                         (x == node.X + 1 && y == node.Y - 1 && z == node.Z + 1) ||
+                         (x == node.X - 1 && y == node.Y + 1 && z == node.Z + 1) ||
+                         (x == node.X + 1 && y == node.Y + 1 && z == node.Z + 1) ||
+                         (x == node.X && y == node.Y && z == node.Z))
+                    {
+                        continue;
+                    }
+
+                    int diffX = x - node.X;
+                    int diffY = y - node.Y;
+                    int diffZ = z - node.Z;
+
+                    Node currentNode = Nodes[Index3D(x, y, z)];
+
+                    Node nodeToAdd = null;
+                    Side sideToAdd = Side.Count;
+
+                    if (currentNode.IsSolid)
+                    {
+                        if (node.Y < currentNode.Y)
+                        {
+                            if (Mathf.Abs(diffX) > 0)
+                            {
+                                if (diffX > 0)
+                                {
+                                    sideToAdd = Side.Left;
+                                }
+                                else if(diffX < 0)
+                                {
+                                    sideToAdd = Side.Right;
+                                }
+                            }
+                            else if (Mathf.Abs(diffZ) > 0)
+                            {
+                                if (diffZ > 0)
+                                {
+                                    sideToAdd = Side.Back;
+                                }
+                                else if (diffZ < 0)
+                                {
+                                    sideToAdd = Side.Front;
+                                }
+                            }
+                        }
+                        else if (node.Y == currentNode.Y)
+                        {
+                            sideToAdd = Side.Top;
+                        }
+                        nodeToAdd = currentNode;
+                    }
+                    else
+                    {
+                        nodeToAdd = info._node;
+                        if (node.Y == currentNode.Y)
+                        {
+                            if (Mathf.Abs(diffX) > 0)
+                            {
+                                if (diffX > 0)
+                                {
+                                    sideToAdd = Side.Right;
+                                }
+                                else if (diffX < 0)
+                                {
+                                    sideToAdd = Side.Left;
+                                }
+                            }
+                            else if (Mathf.Abs(diffZ) > 0)
+                            {
+                                if (diffX > 0)
+                                {
+                                    sideToAdd = Side.Front;
+                                }
+                                else if (diffX < 0)
+                                {
+                                    sideToAdd = Side.Back;
+                                }
+                            }
+                        }
+                    }
+
+                    result.Add(new NodeSideInfo(nodeToAdd, sideToAdd));
+                }
+            }
+        }
+
+        return result;
+    }
+
     public List<NodeSideInfo> GetNeighbours(NodeSideInfo info)
     {
+        List<NodeSideInfo> result = new List<NodeSideInfo>();
+
         int xDiff = 0;
         int yDiff = 0;
         int zDiff = 0;
@@ -337,68 +531,68 @@ public class Board
 
         Node node = info._node;
 
-        for (int z = node.Z - zDiff; z <= node.Z + zDiff; ++z)
+        int minX = node.X - xDiff;
+        int maxX = node.X + xDiff;
+        int minY = node.Y - yDiff;
+        int maxY = node.Y + yDiff;
+        int minZ = node.Z - zDiff;
+        int maxZ = node.Z + zDiff;
+
+        for (int z = minZ; z <= maxZ; ++z)
         {
-            for (int y = node.Y - yDiff; y <= node.Y + yDiff; ++y)
+            for (int y = minY; y <= maxY; ++y)
             {
-                for (int x = node.X - xDiff; x <= node.X + xDiff; ++x)
+                for (int x = minX; x <= maxX; ++x)
                 {
+                    switch (info._side)
+                    {
+                        case Side.Back:
+                        case Side.Front:
+                            {
+                                if ((x == minX && y == minY) || (x == maxX && y == minY) ||
+                                    (x == minX && y == maxY) || (x == maxX && y == maxY))
+                                {
+                                    continue;
+                                }
+                            }
+                            break;
+
+                        case Side.Left:
+                        case Side.Right:
+                            {
+                                if ((z == minZ && y == minY) || (z == maxZ && y == minY) ||
+                                     (z == minZ && y == maxY) || (z == maxZ && y == maxY))
+                                {
+                                    continue;
+                                }
+                            } break;
+
+                        case Side.Top:
+                        case Side.Bottom:
+                            {
+                                if ((x == minX && z == minZ) || (x == maxX && z == minZ) ||
+                                     (x == minX && z == maxZ) || (x == maxX && z == maxZ))
+                                {
+                                    continue;
+                                }
+                            } break;
+                    }
+
                     if (IsInBound(x, y, z))
                     {
-
-                        Node currentNode = Nodes[Index3D(x, 0, z)];
-                        if ((x == info._node.X && z == info._node.Z) || !currentNode.IsSolid)
+                        Node currentNode = Nodes[Index3D(x, y, z)];
+                        if ((x == info._node.X && y == info._node.Y && z == info._node.Z)
+                            || !currentNode.IsSolid)
                         {
                             continue;
                         }
-                        result.Add(new NodeSideInfo(currentNode, Side.Top));
-
+                        result.Add(new NodeSideInfo(currentNode, info._side));
                     }
                 }
             }
         }
 
-        //List<NodeSideInfo> result = new List<NodeSideInfo>();
-        ////forward
-        //if (IsInBound(info._node.X, info._node.Y, info._node.Z + 1))
-        //{
-        //    Node currentNode = Nodes[Index3D(info._node.X, info._node.Y, info._node.Z + 1)];
-        //    result.Add(new NodeSideInfo(currentNode, info._side));
-        //}
-        ////backward
-        //if (IsInBound(info._node.X, info._node.Y, info._node.Z - 1))
-        //{
-        //    Node currentNode = Nodes[Index3D(info._node.X, info._node.Y, info._node.Z - 1)];
-        //    result.Add(new NodeSideInfo(currentNode, info._side));
-        //}
-        ////left
-        //if (IsInBound(info._node.X - 1, info._node.Y, info._node.Z))
-        //{
-        //    Node currentNode = Nodes[Index3D(info._node.X - 1, info._node.Y, info._node.Z)];
-        //    result.Add(new NodeSideInfo(currentNode, info._side));
-        //}
-        ////right
-        //if (IsInBound(info._node.X + 1, info._node.Y, info._node.Z))
-        //{
-        //    Node currentNode = Nodes[Index3D(info._node.X + 1, info._node.Y, info._node.Z)];
-        //    result.Add(new NodeSideInfo(currentNode, info._side));
-        //}
-        //for (int z = info._node.Z - 1; z <= info._node.Z + 1; ++z)
-        //{
-        //    for (int x = info._node.X - 1; x <= info._node.X + 1; ++x)
-        //    {
-        //        if (IsInBound(x, 0, z))
-        //        {
-        //            Node currentNode = Nodes[Index3D(x, 0, z)];
-        //            if ((x == info._node.X && z == info._node.Z) || !currentNode.IsSolid)
-        //            {
-        //                continue;
-        //            }
-        //            result.Add(new NodeSideInfo(currentNode, Side.Top));
-        //        }
-        //    }
-        //}
-        //return result;
+        return result;
     }
 
     #endregion

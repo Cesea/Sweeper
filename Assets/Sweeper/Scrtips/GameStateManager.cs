@@ -136,27 +136,27 @@ public class GameStateManager : SingletonBase<GameStateManager>
 
     public void OnRadarSkillEvent(Events.RadarSkillEvent e)
     {
-        Node[] playerAdjacentCells = Player.AdjacentCells;
+        //Node[] playerAdjacentCells = Player.AdjacentCells;
 
-        int count = 0;
-        for (int z = 0; z < 3; ++z)
-        {
-            for (int x = 0; x < 3; ++x)
-            {
-                if (x == 1 && z == 1)
-                {
-                    continue;
-                }
-                Node currentNode = playerAdjacentCells[count];
-                if (currentNode != null)
-                {
-                    if (currentNode.IsHazard)
-                    {
-                        SpawnExclamation(currentNode.X, currentNode.Y, currentNode.Z);
-                    }
-                }
-                count++;
-            }
-        }
+        //int count = 0;
+        //for (int z = 0; z < 3; ++z)
+        //{
+        //    for (int x = 0; x < 3; ++x)
+        //    {
+        //        if (x == 1 && z == 1)
+        //        {
+        //            continue;
+        //        }
+        //        Node currentNode = playerAdjacentCells[count];
+        //        if (currentNode != null)
+        //        {
+        //            if (currentNode.IsHazard)
+        //            {
+        //                SpawnExclamation(currentNode.X, currentNode.Y, currentNode.Z);
+        //            }
+        //        }
+        //        count++;
+        //    }
+        //}
     }
 }

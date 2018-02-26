@@ -11,7 +11,7 @@ public class BoardMovementManager : MonoBehaviour
 
     public List<BoardMoveBase> _availableMovements = new List<BoardMoveBase>();
 
-    NodeSideInfo _sittingNodeInfo;
+    public NodeSideInfo _sittingNodeInfo;
 
     private BoardObject _boardObject;
 

@@ -7,8 +7,8 @@ public class BoardObject : MonoBehaviour
 {
     private BoardMovementManager _movementManager;
 
-    private Node[] _adjacentCells;
-    public Node[] AdjacentCells
+    private NodeSideInfo[] _adjacentCells;
+    public NodeSideInfo[] AdjacentCells
     {
         get { return _adjacentCells; }
     }
@@ -17,7 +17,7 @@ public class BoardObject : MonoBehaviour
     {
         _movementManager = GetComponent<BoardMovementManager>();
 
-        _adjacentCells = new Node[8];
+        _adjacentCells = new NodeSideInfo[8];
     }
 
     void Start ()
@@ -35,27 +35,18 @@ public class BoardObject : MonoBehaviour
         _movementManager.SetSittingNode(node, side);
     }
 
-    private void CheckAdjacentCells()
+    public void CheckAdjacentCells()
     {
         bool isHazardExist = false;
-        int count = 0;
-        for (int z = 0; z < 3; ++z)
+        foreach (var n in _adjacentCells)
         {
-            for (int x = 0; x < 3; ++x)
+            if (n != null)
             {
-                if (x == 1 && z == 1)
+                Node currentNode = n._node;
+                if (currentNode.IsHazard)
                 {
-                    continue;
+                    isHazardExist = true;
                 }
-                Node currentCell = _adjacentCells[count];
-                if (currentCell != null)
-                {
-                    if (currentCell.IsHazard)
-                    {
-                        isHazardExist = true;
-                    }
-                }
-                count++;
             }
         }
 
@@ -65,12 +56,9 @@ public class BoardObject : MonoBehaviour
         }
     }
 
-    private void UpdateNeighbourCells(Side side)
+    public void UpdateNeighbourCells(Side side)
     {
-        //center
-        GameStateManager.Instance.CurrentBoard.GetAdjacentCellsHorizontally(
-            transform.position.ToVector3Int(), false, ref _upperCells);
-        //lower
+        _adjacentCells = BoardManager.Instance.CurrentBoard.GetNeighbours(_movementManager._sittingNodeInfo).ToArray();
     }
 
 
