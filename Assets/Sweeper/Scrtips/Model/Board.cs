@@ -82,16 +82,6 @@ public class Board
             }
         }
 
-        //_startCell = GetRandomCellCoord();
-        //_exitCell = GetRandomCellCoord();
-        //if (_startCell == _exitCell)
-        //{
-        //    while (_startCell == _exitCell)
-        //    {
-        //        _exitCell = GetRandomCellCoord();
-        //    }
-        //}
-
 
         Nodes[Index3D(5, 1, 3)].Type = Node.NodeType.Normal;
 
@@ -247,6 +237,11 @@ public class Board
         }
     }
 
+    public Node GetNodeAt(Vector3Int v)
+    {
+        return GetNodeAt(v.x, v.y, v.z);
+    }
+
     public Node GetNodeAt(int x, int y, int z)
     {
         if (!IsInBoundRef(ref x, ref y, ref z))
@@ -321,21 +316,45 @@ public class Board
     public List<NodeSideInfo> GetNeighbours(NodeSideInfo info)
     {
         List<NodeSideInfo> result = new List<NodeSideInfo>();
-        for (int z = info._node.Z - 1; z <= info._node.Z + 1; ++z)
+        //forward
+        if (IsInBound(info._node.X, info._node.Y, info._node.Z + 1))
         {
-            for (int x = info._node.X - 1; x <= info._node.X + 1; ++x)
-            {
-                if (IsInBound(x, 0, z))
-                {
-                    Node currentNode = Nodes[Index3D(x, 0, z)];
-                    if ((x == info._node.X && z == info._node.Z) || !currentNode.IsSolid)
-                    {
-                        continue;
-                    }
-                    result.Add(new NodeSideInfo(currentNode, Side.Top));
-                }
-            }
+            Node currentNode = Nodes[Index3D(info._node.X, info._node.Y, info._node.Z + 1)];
+            result.Add(new NodeSideInfo(currentNode, info._side));
         }
+        //backward
+        if (IsInBound(info._node.X, info._node.Y, info._node.Z - 1))
+        {
+            Node currentNode = Nodes[Index3D(info._node.X, info._node.Y, info._node.Z - 1)];
+            result.Add(new NodeSideInfo(currentNode, info._side));
+        }
+        //left
+        if (IsInBound(info._node.X - 1, info._node.Y, info._node.Z))
+        {
+            Node currentNode = Nodes[Index3D(info._node.X - 1, info._node.Y, info._node.Z)];
+            result.Add(new NodeSideInfo(currentNode, info._side));
+        }
+        //right
+        if (IsInBound(info._node.X + 1, info._node.Y, info._node.Z))
+        {
+            Node currentNode = Nodes[Index3D(info._node.X + 1, info._node.Y, info._node.Z)];
+            result.Add(new NodeSideInfo(currentNode, info._side));
+        }
+        //for (int z = info._node.Z - 1; z <= info._node.Z + 1; ++z)
+        //{
+        //    for (int x = info._node.X - 1; x <= info._node.X + 1; ++x)
+        //    {
+        //        if (IsInBound(x, 0, z))
+        //        {
+        //            Node currentNode = Nodes[Index3D(x, 0, z)];
+        //            if ((x == info._node.X && z == info._node.Z) || !currentNode.IsSolid)
+        //            {
+        //                continue;
+        //            }
+        //            result.Add(new NodeSideInfo(currentNode, Side.Top));
+        //        }
+        //    }
+        //}
         return result;
     }
 

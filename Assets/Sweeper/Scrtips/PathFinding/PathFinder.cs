@@ -24,7 +24,6 @@ public class PathFinder : MonoBehaviour
 
     IEnumerator FindPath(NodeSideInfo start, NodeSideInfo end)
     {
-
         if (start._node.IsSolid && end._node.IsSolid)
         {
             NodeSideInfo[] wayPoints = new NodeSideInfo[0];
@@ -36,36 +35,42 @@ public class PathFinder : MonoBehaviour
             openSet.Add(start);
             while (openSet.Count > 0)
             {
-                NodeSideInfo currentNode = openSet[0];
+                NodeSideInfo currentNodeInfo = openSet[0];
                 for (int i = 1; i < openSet.Count; ++i)
                 {
-                    if (openSet[i]._node.TotalCost < currentNode._node.TotalCost ||
-                        openSet[i]._node.TotalCost == currentNode._node.TotalCost && openSet[i]._node.HCost < currentNode._node.HCost)
+                    if (openSet[i]._node.TotalCost < currentNodeInfo._node.TotalCost ||
+                        openSet[i]._node.TotalCost == currentNodeInfo._node.TotalCost && openSet[i]._node.HCost < currentNodeInfo._node.HCost)
                     {
-                        currentNode = openSet[i];
+                        currentNodeInfo = openSet[i];
                     }
                 }
-                openSet.Remove(currentNode);
-                closedSet.Add(currentNode);
+                openSet.Remove(currentNodeInfo);
+                closedSet.Add(currentNodeInfo);
 
-                if (currentNode == end)
+                if (currentNodeInfo == end)
                 {
                     findSuccess = true;
                     break;
                 }
 
-                foreach (var n in _boardManager.CurrentBoard.GetNeighbours(currentNode))
+                foreach (var n in _boardManager.CurrentBoard.GetNeighbours(currentNodeInfo))
                 {
                     if (!n._node.IsSolid || closedSet.Contains(n))
                     {
                         continue;
                     }
-                    int newMovementCost = currentNode._node.GCost + GetDistance(currentNode._node, n._node);
+
+                    if (n.GetNodeAtSide().IsSolid)
+                    {
+                        continue;
+                    }
+
+                    int newMovementCost = currentNodeInfo._node.GCost + GetDistance(currentNodeInfo._node, n._node);
                     if (newMovementCost < n._node.GCost || !openSet.Contains(n))
                     {
                         n._node.GCost = newMovementCost;
                         n._node.HCost = GetDistance(n._node, end._node);
-                        n._node.Parent = currentNode._node;
+                        n._node.Parent = currentNodeInfo._node;
 
                         if (!openSet.Contains(n))
                         {

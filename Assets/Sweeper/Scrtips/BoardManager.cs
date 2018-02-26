@@ -111,6 +111,39 @@ public class BoardManager : SingletonBase<BoardManager>
         return result;
     }
 
+    public static Vector3Int SideToOffset(Side side)
+    {
+        Vector3Int result = new Vector3Int();
+         switch (side)
+        {
+            case Side.Left:
+                {
+                    result.x = -1;
+                } break;
+            case Side.Right :
+                {
+                    result.x = 1;
+                } break;
+            case Side.Top :
+                {
+                    result.y = 1;
+                } break;
+            case Side.Bottom :
+                {
+                    result.y = -1;
+                } break;
+            case Side.Front :
+                {
+                    result.z = +1;
+                } break;
+            case Side.Back :
+                {
+                    result.z = -1;
+                } break;
+        }
+        return result;
+    }
+
     public static Vector3 SideToVector3Offset(Side side)
     {
         Vector3 result = Vector3.zero;

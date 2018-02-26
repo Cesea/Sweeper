@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(BoardMovementManager))]
-public class BoardWalk : BoardMoveBase
+[RequireComponent(typeof(BoardMoveBase))]
+public class BoardChangeSide : BoardMoveBase
 {
-    public override void MoveTo(NodeSideInfo info)
+  public override void MoveTo(NodeSideInfo info)
     {
         if (_moving || (info._node == null) )
         {
@@ -50,17 +50,6 @@ public class BoardWalk : BoardMoveBase
     private void Update()
     {
         Move();
-
-        if (Input.GetKeyDown(KeyCode.Keypad1))
-        {
-            UseRadarSkill();
-        }
-    }
-
-    //Temp
-    public void UseRadarSkill()
-    {
-        EventManager.Instance.TriggerEvent(new Events.RadarSkillEvent(transform.position));
     }
 
     protected override void Move()

@@ -101,7 +101,7 @@ public class Node
                 case NodeType.Normal:
                     {
                         IsHazard = false;
-                        IsPassable = true;
+                        IsPassable = false;
                         IsSolid = true;
                     } break;
                 case NodeType.Start:
@@ -303,6 +303,18 @@ public class Node
     {
         return WorldPosition + BoardManager.SideToVector3Offset(side);
     }
+
+    public Node GetNodeAtSide(Side side)
+    {
+        Node result = null;
+        Vector3Int offset = BoardManager.SideToOffset(side);
+        Vector3Int testPos = new Vector3Int(X + offset.x, Y + offset.y, Z + offset.z);
+        if (BoardManager.Instance.CurrentBoard.IsInBound(testPos.x, testPos.y, testPos.z))
+        {
+            result = BoardManager.Instance.CurrentBoard.GetNodeAt(testPos);
+        }
+        return result;
+    }
 }
 
 public struct NodeSideInfo
@@ -325,13 +337,19 @@ public struct NodeSideInfo
         return _node.GetWorldPositionBySide(_side);
     }
 
+    public static bool operator ==(NodeSideInfo a, NodeSideInfo b)
+    {
+        return a._node == b._node && a._side == b._side;
+    }
+
     public static bool operator !=(NodeSideInfo a, NodeSideInfo b)
     {
         return !(a == b);
     }
 
-    public static bool operator ==(NodeSideInfo a, NodeSideInfo b)
+    public Node GetNodeAtSide()
     {
-        return a._node == b._node && a._side == b._side;
+        return _node.GetNodeAtSide(_side);
     }
+
 }
