@@ -23,26 +23,11 @@ public class BoardManager : SingletonBase<BoardManager>
 
     private List<GameObject> _instantiatedCubes = new List<GameObject>();
 
-    public List<Node> Path;
-
     static float EPSILON = 0.001f;
 
     protected override void Awake()
     {
         base.Awake();
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (Path != null)
-        {
-            float diameter = NodeRadius * 2.0f;
-            Gizmos.color = Color.gray;
-            foreach (var n in Path)
-            {
-                Gizmos.DrawCube(n.WorldPosition, new Vector3(diameter, diameter, diameter));
-            }
-        }
     }
 
     public static Vector3 BoardPosToWorldPos(Vector3Int pos)
