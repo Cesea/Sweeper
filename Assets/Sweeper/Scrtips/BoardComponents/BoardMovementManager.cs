@@ -13,6 +13,14 @@ public class BoardMovementManager : MonoBehaviour
 
     NodeSideInfo _sittingNodeInfo;
 
+    private BoardObject _boardObject;
+
+
+    private void Awake()
+    {
+        _boardObject = GetComponent<BoardObject>();
+    }
+
     private void Start()
     {
         _sittingNodeInfo = new NodeSideInfo();
@@ -20,12 +28,19 @@ public class BoardMovementManager : MonoBehaviour
 
     private void Update()
     {
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    NodeSideInfo start = _sittingNodeInfo;
+        //    NodeSideInfo end = new NodeSideInfo(BoardManager.Instance.CurrentBoard.GetNodeAt(_targetTransform.position), Side.Top);
+        //    PathRequestManager.RequestPath(start, end, OnPathFind);
+        //}
+
         if (Input.GetMouseButtonDown(0))
         {
-            NodeSideInfo start = _sittingNodeInfo;
-            NodeSideInfo end = new NodeSideInfo(BoardManager.Instance.CurrentBoard.GetNodeAt(_targetTransform.position), Side.Top);
+            NodeSideInfo target = new NodeSideInfo();
+            BoardManager.GetNodeSideInfoAtMouse(ref target);
 
-            PathRequestManager.RequestPath(start, end, OnPathFind);
+            PathRequestManager.RequestPath(_sittingNodeInfo, target, OnPathFind);
         }
     }
 
@@ -45,14 +60,14 @@ public class BoardMovementManager : MonoBehaviour
     public void OnMovementDone(NodeSideInfo info)
     {
         _sittingNodeInfo = info;
-        //UpdateNeighbourCells();
+        _boardObject.UpdateNeighbourCells(info._side);
 
         //만약 플레이어가 죽거나 출구에 도착한다면 true를 반환한다
-        //if (GameStateManager.Instance.CheckMovement(_sittingNodeInfo._node))
-        //{
-        //    return;
-        //}
-        //CheckAdjacentCells();
+        if (GameStateManager.Instance.CheckMovement(_sittingNodeInfo._node))
+        {
+            return;
+        }
+        _boardObject.CheckAdjacentCells();
         foreach (var movement in _availableMovements)
         {
             movement.UpdateNodeSideInfo(_sittingNodeInfo);
@@ -71,21 +86,49 @@ public class BoardMovementManager : MonoBehaviour
 
     IEnumerator FollowPath()
     {
-        NodeSideInfo currentNode = _path[0];
-        while (true)
+        NodeSideInfo currentNodeInfo = _path[0];
+        if (_path.Length == 1)
         {
-            if (transform.position == _sittingNodeInfo.GetWorldPosition())
+            BoardMoveBase toUseMovement = null;
+            currentNodeInfo = _path[_targetIndex];
+            if (_sittingNodeInfo._side != currentNodeInfo._side)
             {
-                _targetIndex++;
-                if (_targetIndex >= _path.Length)
-                {
-                    _targetIndex = 0;
-                    yield break;
-                }
-                currentNode = _path[_targetIndex];
-                _availableMovements[0].MoveTo(currentNode);
+                toUseMovement = _availableMovements[2];
             }
-            yield return null;
+            else
+            {
+                toUseMovement = _availableMovements[0];
+            }
+            toUseMovement.MoveTo(currentNodeInfo);
+        }
+        else
+        {
+            while (true)
+            {
+                if (transform.position == _sittingNodeInfo.GetWorldPosition())
+                {
+                    BoardMoveBase toUseMovement = null;
+
+                    _targetIndex++;
+                    if (_targetIndex >= _path.Length)
+                    {
+                        _targetIndex = 0;
+                        yield break;
+                    }
+
+                    currentNodeInfo = _path[_targetIndex];
+                    if (_sittingNodeInfo._side != currentNodeInfo._side)
+                    {
+                        toUseMovement = _availableMovements[2];
+                    }
+                    else
+                    {
+                        toUseMovement = _availableMovements[0];
+                    }
+                    toUseMovement.MoveTo(currentNodeInfo);
+                }
+                yield return null;
+            }
         }
     }
 }

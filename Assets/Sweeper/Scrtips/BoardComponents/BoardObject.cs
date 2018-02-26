@@ -7,16 +7,6 @@ public class BoardObject : MonoBehaviour
 {
     private BoardMovementManager _movementManager;
 
-    private Node[] _upperCells;
-    public Node[] UpperCells
-    {
-        get { return _upperCells; }
-    }
-    private Node[] _lowerCells;
-    public Node[] LowerCells
-    {
-        get { return _lowerCells; }
-    }
     private Node[] _adjacentCells;
     public Node[] AdjacentCells
     {
@@ -28,8 +18,6 @@ public class BoardObject : MonoBehaviour
         _movementManager = GetComponent<BoardMovementManager>();
 
         _adjacentCells = new Node[8];
-        _upperCells = new Node[9];
-        _lowerCells = new Node[9];
     }
 
     void Start ()
@@ -77,17 +65,12 @@ public class BoardObject : MonoBehaviour
         }
     }
 
-    private void UpdateNeighbourCells()
+    private void UpdateNeighbourCells(Side side)
     {
-        //upper
-        GameStateManager.Instance.CurrentBoard.GetAdjacentCellsHorizontally(
-            transform.position.ToVector3Int(0, 1, 0), true, ref _upperCells);
         //center
         GameStateManager.Instance.CurrentBoard.GetAdjacentCellsHorizontally(
             transform.position.ToVector3Int(), false, ref _upperCells);
         //lower
-        GameStateManager.Instance.CurrentBoard.GetAdjacentCellsHorizontally(
-            transform.position.ToVector3Int(0, -1, 0), false, ref _upperCells);
     }
 
 

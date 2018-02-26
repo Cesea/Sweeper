@@ -83,7 +83,7 @@ public class Board
         }
 
 
-        Nodes[Index3D(5, 1, 3)].Type = Node.NodeType.Normal;
+        Nodes[Index3D(0, 1, 1)].Type = Node.NodeType.Normal;
 
         StartCellCoord = new Vector3Int(0, 0, 0);
         ExitCellCoord = new Vector3Int(5, 0, 5);
@@ -315,31 +315,74 @@ public class Board
     //일단은 횡으로만
     public List<NodeSideInfo> GetNeighbours(NodeSideInfo info)
     {
-        List<NodeSideInfo> result = new List<NodeSideInfo>();
-        //forward
-        if (IsInBound(info._node.X, info._node.Y, info._node.Z + 1))
+        int xDiff = 0;
+        int yDiff = 0;
+        int zDiff = 0;
+
+        if (info._side == Side.Left || info._side == Side.Right)
         {
-            Node currentNode = Nodes[Index3D(info._node.X, info._node.Y, info._node.Z + 1)];
-            result.Add(new NodeSideInfo(currentNode, info._side));
+            yDiff = 1;
+            zDiff = 1;
         }
-        //backward
-        if (IsInBound(info._node.X, info._node.Y, info._node.Z - 1))
+        else if (info._side == Side.Front || info._side == Side.Back)
         {
-            Node currentNode = Nodes[Index3D(info._node.X, info._node.Y, info._node.Z - 1)];
-            result.Add(new NodeSideInfo(currentNode, info._side));
+            xDiff = 1;
+            yDiff = 1;
         }
-        //left
-        if (IsInBound(info._node.X - 1, info._node.Y, info._node.Z))
+        else if (info._side == Side.Top || info._side == Side.Bottom)
         {
-            Node currentNode = Nodes[Index3D(info._node.X - 1, info._node.Y, info._node.Z)];
-            result.Add(new NodeSideInfo(currentNode, info._side));
+            xDiff = 1;
+            zDiff = 1;
         }
-        //right
-        if (IsInBound(info._node.X + 1, info._node.Y, info._node.Z))
+
+        Node node = info._node;
+
+        for (int z = node.Z - zDiff; z <= node.Z + zDiff; ++z)
         {
-            Node currentNode = Nodes[Index3D(info._node.X + 1, info._node.Y, info._node.Z)];
-            result.Add(new NodeSideInfo(currentNode, info._side));
+            for (int y = node.Y - yDiff; y <= node.Y + yDiff; ++y)
+            {
+                for (int x = node.X - xDiff; x <= node.X + xDiff; ++x)
+                {
+                    if (IsInBound(x, y, z))
+                    {
+
+                        Node currentNode = Nodes[Index3D(x, 0, z)];
+                        if ((x == info._node.X && z == info._node.Z) || !currentNode.IsSolid)
+                        {
+                            continue;
+                        }
+                        result.Add(new NodeSideInfo(currentNode, Side.Top));
+
+                    }
+                }
+            }
         }
+
+        //List<NodeSideInfo> result = new List<NodeSideInfo>();
+        ////forward
+        //if (IsInBound(info._node.X, info._node.Y, info._node.Z + 1))
+        //{
+        //    Node currentNode = Nodes[Index3D(info._node.X, info._node.Y, info._node.Z + 1)];
+        //    result.Add(new NodeSideInfo(currentNode, info._side));
+        //}
+        ////backward
+        //if (IsInBound(info._node.X, info._node.Y, info._node.Z - 1))
+        //{
+        //    Node currentNode = Nodes[Index3D(info._node.X, info._node.Y, info._node.Z - 1)];
+        //    result.Add(new NodeSideInfo(currentNode, info._side));
+        //}
+        ////left
+        //if (IsInBound(info._node.X - 1, info._node.Y, info._node.Z))
+        //{
+        //    Node currentNode = Nodes[Index3D(info._node.X - 1, info._node.Y, info._node.Z)];
+        //    result.Add(new NodeSideInfo(currentNode, info._side));
+        //}
+        ////right
+        //if (IsInBound(info._node.X + 1, info._node.Y, info._node.Z))
+        //{
+        //    Node currentNode = Nodes[Index3D(info._node.X + 1, info._node.Y, info._node.Z)];
+        //    result.Add(new NodeSideInfo(currentNode, info._side));
+        //}
         //for (int z = info._node.Z - 1; z <= info._node.Z + 1; ++z)
         //{
         //    for (int x = info._node.X - 1; x <= info._node.X + 1; ++x)
@@ -355,7 +398,7 @@ public class Board
         //        }
         //    }
         //}
-        return result;
+        //return result;
     }
 
     #endregion
