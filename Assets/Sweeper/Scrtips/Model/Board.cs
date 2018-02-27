@@ -511,8 +511,6 @@ public class Board
             case Side.Back:
             case Side.Front:
                 {
-                    //check Local up;
-
                     int localUp = info._side == Side.Back ? -1 : 1;
 
                     Bounds topBound = new Bounds(
@@ -560,7 +558,6 @@ public class Board
                                         BoardManager.NormalToSide(new Vector3(diffX, diffY, diffZ))));
                                 }
                             }
-
                         }
                     }
                 }
@@ -569,6 +566,55 @@ public class Board
             case Side.Left:
             case Side.Right:
                 {
+                    int localUp = info._side == Side.Left ? -1 : 1;
+
+                    Bounds topBound = new Bounds(
+                        info.GetWorldPosition() + BoardManager.SideToVector3Offset(info._side), 
+                        new Vector3(BoardManager.Instance.NodeRadius * 2.1f, BoardManager.Instance.NodeRadius * 2.1f, BoardManager.Instance.NodeRadius * 2.1f));
+                    for (int y = minY; y <= maxY; ++y)
+                    {
+                        for (int z = minZ; z <= maxZ; ++z)
+                        {
+                            bool topExist = false;
+
+                            int diffX = 0;
+                            int diffY = y - node.Y;
+                            int diffZ = z - node.Z;
+
+                            if (IsInBound(node.X + localUp, y, z))
+                            {
+                                Node currentNode = Nodes[Index3D(node.X + localUp, y, z)];
+                                NodeSideInfo closest = GetClosesetNodeSideInfo(info, currentNode);
+                                if (currentNode.IsSolid)
+                                {
+                                    topExist = true;
+                                    if (topBound.Contains(currentNode.GetWorldPositionBySide(closest._side)))
+                                    {
+                                        result.Add(closest);
+                                    }
+                                }
+                            }
+
+                            if (topExist)
+                            {
+                                continue;
+                            }
+
+                            if (IsInBound(node.X, y, z))
+                            {
+                                Node currentNode = Nodes[Index3D(node.X, y, z)];
+                                if (currentNode.IsSolid)
+                                {
+                                    result.Add(GetNodeInfoAt(currentNode.X, currentNode.Y, currentNode.Z, info._side));
+                                }
+                                else
+                                {
+                                    result.Add(GetNodeInfoAt(node.X, node.Y, node.Z,
+                                        BoardManager.NormalToSide(new Vector3(diffX, diffY, diffZ))));
+                                }
+                            }
+                        }
+                    }
                 }
                 break;
 
