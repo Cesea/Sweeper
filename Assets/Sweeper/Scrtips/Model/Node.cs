@@ -352,7 +352,7 @@ public class NodeSideInfo
 
     public static bool operator ==(NodeSideInfo a, NodeSideInfo b)
     {
-        return a._node == b._node && a._side == b._side;
+        return EqualityComparer<NodeSideInfo>.Default.Equals(a, b);
     }
 
     public static bool operator !=(NodeSideInfo a, NodeSideInfo b)

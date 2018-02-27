@@ -212,7 +212,6 @@ public class BoardManager : SingletonBase<BoardManager>
 
     public static bool GetNodeSideInfoAtMouse(ref NodeSideInfo info)
     {
-
         bool result = false;
         Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hitInfo;
@@ -247,9 +246,7 @@ public class BoardManager : SingletonBase<BoardManager>
                 tmp.z -= 1;
             }
 
-            info._node = BoardManager.Instance.CurrentBoard.GetNodeAt(tmp.x, tmp.y, tmp.z);
-            info._side = NormalToSide(hitInfo.normal);
-
+            info = Instance.CurrentBoard.GetNodeInfoAt(tmp.x, tmp.y, tmp.z, NormalToSide(hitInfo.normal));
             result = true;
         }
         return result;

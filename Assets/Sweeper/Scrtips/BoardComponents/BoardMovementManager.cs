@@ -38,16 +38,16 @@ public class BoardMovementManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             NodeSideInfo target = new NodeSideInfo();
-            BoardManager.GetNodeSideInfoAtMouse(ref target);
-
-            PathRequestManager.RequestPath(_sittingNodeInfo, target, OnPathFind);
+            if (BoardManager.GetNodeSideInfoAtMouse(ref target))
+            {
+                PathRequestManager.RequestPath(_sittingNodeInfo, target, OnPathFind);
+            }
         }
     }
 
     public void SetSittingNode(Node node, Side side)
     {
-        _sittingNodeInfo._node = node;
-        _sittingNodeInfo._side = side;
+        _sittingNodeInfo = BoardManager.Instance.CurrentBoard.GetNodeInfoAt(node.X, node.Y, node.Z, side);
         transform.position = _sittingNodeInfo.GetWorldPosition();
         OnMovementDone(_sittingNodeInfo);
     }
@@ -63,11 +63,11 @@ public class BoardMovementManager : MonoBehaviour
         _boardObject.UpdateNeighbourCells(info._side);
 
         //만약 플레이어가 죽거나 출구에 도착한다면 true를 반환한다
-        if (GameStateManager.Instance.CheckMovement(_sittingNodeInfo._node))
-        {
-            return;
-        }
-        _boardObject.CheckAdjacentCells();
+        //if (GameStateManager.Instance.CheckMovement(_sittingNodeInfo._node))
+        //{
+        //    return;
+        //}
+        //_boardObject.CheckAdjacentCells();
         foreach (var movement in _availableMovements)
         {
             movement.UpdateNodeSideInfo(_sittingNodeInfo);
