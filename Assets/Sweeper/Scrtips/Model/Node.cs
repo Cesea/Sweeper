@@ -324,6 +324,7 @@ public class Node
 
 public class NodeSideInfo
 {
+
     public Node _node { get; set; }
     public Side _side { get; set; }
 
@@ -363,6 +364,27 @@ public class NodeSideInfo
     public Node GetNodeAtSide()
     {
         return _node.GetNodeAtSide(_side);
+    }
+
+    public static Vector3 GetClosestEdge(NodeSideInfo a, NodeSideInfo b)
+    {
+        Vector3 result = Vector3.zero;
+        Vector3 aPos = a.GetWorldPosition();
+        Vector3 bPos = b.GetWorldPosition();
+
+        if (a._side == b._side)
+        {
+            Vector3 diffHalf = (bPos - aPos) * 0.5f;
+            result = aPos + diffHalf;
+        }
+        else
+        {
+            Vector3 diff = (bPos - aPos);
+            result = a._node.WorldPosition + diff;
+        }
+
+        return result;
+
     }
 
 }

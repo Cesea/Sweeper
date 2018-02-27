@@ -111,6 +111,7 @@ public class BoardManager : SingletonBase<BoardManager>
         return result;
     }
 
+
     public static Vector3Int SideToOffset(Side side)
     {
         Vector3Int result = new Vector3Int();

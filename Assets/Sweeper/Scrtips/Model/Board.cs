@@ -458,153 +458,297 @@ public class Board
     {
         List<NodeSideInfo> result = new List<NodeSideInfo>();
         Node node = info._node;
-        int minX = node.X - 1;
-        int maxX = node.X + 1;
-        int minY = node.Y - 1;
-        int maxY = node.Y + 1;
-        int minZ = node.Z - 1;
-        int maxZ = node.Z + 1;
 
-        if (info._side == Side.Top || info._side == Side.Bottom)
+        int minusX = 0;
+        int plusX = 0;
+        int minusY = 0;
+        int plusY = 0;
+        int minusZ = 0;
+        int plusZ = 0;
+
+        switch (info._side)
         {
-            for (int z = minZ; z <= maxZ; ++z)
-                for (int y = minY; y <= maxY; ++y)
-                    for (int x = minX; x <= maxX; ++x)
+            case Side.Back:
+            case Side.Front:
+                {
+                    minusX = -1;
+                    plusX = 1;
+                    minusY = -1;
+                    plusY = 1;
+                }
+                break;
+
+            case Side.Left:
+            case Side.Right:
+                {
+                    minusY = -1;
+                    plusY = 1;
+                    minusZ = -1;
+                    plusZ = 1;
+                }
+                break;
+
+            case Side.Top:
+            case Side.Bottom:
+                {
+                    minusX = -1;
+                    plusX = 1;
+                    minusZ = -1;
+                    plusZ = 1;
+                }
+                break;
+        }
+
+        int minX = node.X + minusX;
+        int maxX = node.X + plusX;
+        int minY = node.Y + minusY;
+        int maxY = node.Y + plusY;
+        int minZ = node.Z + minusZ;
+        int maxZ = node.Z + plusZ;
+
+        switch (info._side)
+        {
+            case Side.Back:
+            case Side.Front:
+                {
+                    //check Local up;
+
+                    int localUp = info._side == Side.Back ? -1 : 1;
+
+                    Bounds topBound = new Bounds(
+                        info.GetWorldPosition() + BoardManager.SideToVector3Offset(info._side), 
+                        new Vector3(BoardManager.Instance.NodeRadius * 2.1f, BoardManager.Instance.NodeRadius * 2.1f, BoardManager.Instance.NodeRadius * 2.1f));
+                    for (int y = minY; y <= maxY; ++y)
                     {
-                        if (!IsInBound(x, y, z) ||
-                            (x == node.X - 1 && z == node.Z - 1) ||
-                             (x == node.X + 1 && z == node.Z - 1) ||
-                             (x == node.X - 1 && z == node.Z - 1) ||
-                             (x == node.X + 1 && z == node.Z - 1) ||
-                             (x == node.X - 1 && z == node.Z + 1) ||
-                             (x == node.X + 1 && z == node.Z + 1) ||
-                             (x == node.X - 1 && z == node.Z + 1) ||
-                             (x == node.X + 1 && z == node.Z + 1) ||
-                             (x == node.X && y == node.Y && z == node.Z))
+                        for (int x = minX; x <= maxX; ++x)
                         {
-                            continue;
-                        }
+                            bool topExist = false;
 
-                        int diffX = x - node.X;
-                        int diffY = y - node.Y;
-                        int diffZ = z - node.Z;
+                            int diffX = x - node.X;
+                            int diffY = y - node.Y;
+                            int diffZ = 0;
 
-                        int toAddX = 0;
-                        int toAddY = 0;
-                        int toAddZ = 0;
-
-                        Node currentNode = Nodes[Index3D(x, y, z)];
-
-                        Side sideToAdd = Side.Count;
-
-                        if (currentNode.IsSolid)
-                        {
-                            toAddX = x;
-                            toAddY = y;
-                            toAddZ = z;
-
-                            if (node.Y < currentNode.Y)
+                            if (IsInBound(x, y, node.Z + localUp))
                             {
-                                if (Mathf.Abs(diffX) > 0)
+                                Node currentNode = Nodes[Index3D(x, y,  node.Z + localUp)];
+                                NodeSideInfo closest = GetClosesetNodeSideInfo(info, currentNode);
+                                if (currentNode.IsSolid)
                                 {
-                                    if (diffX > 0)
+                                    topExist = true;
+                                    if (topBound.Contains(currentNode.GetWorldPositionBySide(closest._side)))
                                     {
-                                        sideToAdd = Side.Left;
-                                    }
-                                    else if (diffX < 0)
-                                    {
-                                        sideToAdd = Side.Right;
-                                    }
-                                }
-                                else if (Mathf.Abs(diffZ) > 0)
-                                {
-                                    if (diffZ > 0)
-                                    {
-                                        sideToAdd = Side.Back;
-                                    }
-                                    else if (diffZ < 0)
-                                    {
-                                        sideToAdd = Side.Front;
+                                        result.Add(closest);
                                     }
                                 }
                             }
-                            else if (node.Y == currentNode.Y)
-                            {
-                                sideToAdd = Side.Top;
-                            }
-                            else if (node.Y > currentNode.Y)
-                            {
-                                toAddX = node.X;
-                                toAddY = node.Y;
-                                toAddZ = node.Z;
-                                if (Mathf.Abs(diffX) > 0)
-                                {
-                                    if (diffX > 0)
-                                    {
-                                        sideToAdd = Side.Right;
-                                    }
-                                    else if (diffX < 0)
-                                    {
-                                        sideToAdd = Side.Left;
-                                    }
-                                }
-                                else if (Mathf.Abs(diffZ) > 0)
-                                {
-                                    if (diffZ > 0)
-                                    {
-                                        sideToAdd = Side.Front;
-                                    }
-                                    else if (diffZ < 0)
-                                    {
-                                        sideToAdd = Side.Back;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            toAddX = node.X;
-                            toAddY = node.Y;
-                            toAddZ = node.Z;
 
-                            if (node.Y == currentNode.Y)
-                            {
-                                if (Mathf.Abs(diffX) > 0)
-                                {
-                                    if (diffX > 0)
-                                    {
-                                        sideToAdd = Side.Right;
-                                    }
-                                    else if (diffX < 0)
-                                    {
-                                        sideToAdd = Side.Left;
-                                    }
-                                }
-                                else if (Mathf.Abs(diffZ) > 0)
-                                {
-                                    if (diffZ > 0)
-                                    {
-                                        sideToAdd = Side.Front;
-                                    }
-                                    else if (diffZ < 0)
-                                    {
-                                        sideToAdd = Side.Back;
-                                    }
-                                }
-                            }
-                            else
+                            if (topExist)
                             {
                                 continue;
                             }
-                        }
-                        result.Add(_nodeSideInfos[Index3D(toAddX, toAddY, toAddZ), (int)sideToAdd]);
-                    }
-        }
-        else if (info._side == Side.Left || info._side == Side.Right ||
-            info._side == Side.Front || info._side == Side.Back)
-        {
 
+                            if (IsInBound(x, y, node.Z))
+                            {
+                                Node currentNode = Nodes[Index3D(x, y, node.Z)];
+                                if (currentNode.IsSolid)
+                                {
+                                    result.Add(GetNodeInfoAt(currentNode.X, currentNode.Y, currentNode.Z, info._side));
+                                }
+                                else
+                                {
+                                    result.Add(GetNodeInfoAt(node.X, node.Y, node.Z,
+                                        BoardManager.NormalToSide(new Vector3(diffX, diffY, diffZ))));
+                                }
+                            }
+
+                        }
+                    }
+                }
+                break;
+
+            case Side.Left:
+            case Side.Right:
+                {
+                }
+                break;
+
+            case Side.Top:
+            case Side.Bottom:
+                {
+                    //check Local up;
+                    Bounds topBound = new Bounds(
+                        info.GetWorldPosition() + BoardManager.SideToVector3Offset(info._side), 
+                        new Vector3(BoardManager.Instance.NodeRadius * 2.1f, BoardManager.Instance.NodeRadius * 2.1f, BoardManager.Instance.NodeRadius * 2.1f));
+                    for (int z = minZ; z <= maxZ; ++z)
+                    {
+                        for (int x = minX; x <= maxX; ++x)
+                        {
+                            bool topExist = false;
+
+                            int diffX = x - node.X;
+                            int diffY = 0;    
+                            int diffZ = z - node.Z;
+
+                            if (IsInBound(x, node.Y + 1, z))
+                            {
+                                Node currentNode = Nodes[Index3D(x, node.Y + 1, z)];
+                                NodeSideInfo closest = GetClosesetNodeSideInfo(info, currentNode);
+                                if (currentNode.IsSolid)
+                                {
+                                    topExist = true;
+                                    if (topBound.Contains(currentNode.GetWorldPositionBySide(closest._side)))
+                                    {
+                                        result.Add(closest);
+                                    }
+                                }
+                            }
+
+                            if (topExist)
+                            {
+                                continue;
+                            }
+
+                            if (IsInBound(x, node.Y, z))
+                            {
+                                Node currentNode = Nodes[Index3D(x, node.Y, z)];
+                                if (currentNode.IsSolid)
+                                {
+                                    result.Add(GetNodeInfoAt(currentNode.X, currentNode.Y, currentNode.Z, info._side));
+                                }
+                                else
+                                {
+                                    result.Add(GetNodeInfoAt(node.X, node.Y, node.Z,
+                                        BoardManager.NormalToSide(new Vector3(diffX, diffY, diffZ))));
+                                }
+                            }
+                        }
+                    }
+
+                }
+                break;
         }
+
+        //for (int z = minZ; z <= maxZ; ++z)
+        //    for (int y = minY; y <= maxY; ++y)
+        //        for (int x = minX; x <= maxX; ++x)
+        //        {
+        //            if (!IsInBound(x, y, z) || (x == node.X && y == node.Y && z == node.Z))
+        //            {
+        //                continue;
+        //            }
+
+        //            int diffX = x - node.X;
+        //            int diffY = y - node.Y;
+        //            int diffZ = z - node.Z;
+
+        //            int toAddX = 0;
+        //            int toAddY = 0;
+        //            int toAddZ = 0;
+
+        //            Node currentNode = Nodes[Index3D(x, y, z)];
+
+        //            if (currentNode.IsSolid)
+        //            {
+
+        //                NodeSideInfo toAdd = GetClosesetNodeSideInfo(info, currentNode);
+        //            }
+        //            else
+        //            {
+
+        //            }
+        //if (node.Y < currentNode.Y)
+        //{
+        //    if (Mathf.Abs(diffX) > 0)
+        //    {
+        //        if (diffX > 0)
+        //        {
+        //            sideToAdd = Side.Left;
+        //        }
+        //        else if (diffX < 0)
+        //        {
+        //            sideToAdd = Side.Right;
+        //        }
+        //    }
+        //    else if (Mathf.Abs(diffZ) > 0)
+        //    {
+        //        if (diffZ > 0)
+        //        {
+        //            sideToAdd = Side.Back;
+        //        }
+        //        else if (diffZ < 0)
+        //        {
+        //            sideToAdd = Side.Front;
+        //        }
+        //    }
+        //}
+        //else if (node.Y == currentNode.Y)
+        //{
+        //    sideToAdd = Side.Top;
+        //}
+        //else if (node.Y > currentNode.Y)
+        //{
+        //    toAddX = node.X;
+        //    toAddY = node.Y;
+        //    toAddZ = node.Z;
+        //    if (Mathf.Abs(diffX) > 0)
+        //    {
+        //        if (diffX > 0)
+        //        {
+        //            sideToAdd = Side.Right;
+        //        }
+        //        else if (diffX < 0)
+        //        {
+        //            sideToAdd = Side.Left;
+        //        }
+        //    }
+        //    else if (Mathf.Abs(diffZ) > 0)
+        //    {
+        //        if (diffZ > 0)
+        //        {
+        //            sideToAdd = Side.Front;
+        //        }
+        //        else if (diffZ < 0)
+        //        {
+        //            sideToAdd = Side.Back;
+        //        }
+        //    }
+        //}
+        //else
+        //{
+        //    toAddX = node.X;
+        //    toAddY = node.Y;
+        //    toAddZ = node.Z;
+        //    if (node.Y == currentNode.Y)
+        //    {
+        //        if (Mathf.Abs(diffX) > 0)
+        //        {
+        //            if (diffX > 0)
+        //            {
+        //                sideToAdd = Side.Right;
+        //            }
+        //            else if (diffX < 0)
+        //            {
+        //                sideToAdd = Side.Left;
+        //            }
+        //        }
+        //        else if (Mathf.Abs(diffZ) > 0)
+        //        {
+        //            if (diffZ > 0)
+        //            {
+        //                sideToAdd = Side.Front;
+        //            }
+        //            else if (diffZ < 0)
+        //            {
+        //                sideToAdd = Side.Back;
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        continue;
+        //    }
+        //}
+        //result.Add(_nodeSideInfos[Index3D(toAddX, toAddY, toAddZ), (int)sideToAdd]);
 
         return result;
     }

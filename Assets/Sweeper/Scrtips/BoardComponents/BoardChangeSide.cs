@@ -28,31 +28,31 @@ public class BoardChangeSide : BoardMoveBase
             Vector3Int start = new Vector3Int(_startNodeInfo._node.X, _startNodeInfo._node.Y, _startNodeInfo._node.Z);
             Vector3Int target = new Vector3Int(info._node.X, info._node.Y, info._node.Z);
 
-            Vector3 diff = Vector3.zero;
+            //Vector3 diff = Vector3.zero;
 
-            if (start.x == target.x)
-            {
-                if (start.z > target.z)
-                {
-                    diff.z = -BoardManager.Instance.NodeRadius;
-                }
-                else
-                {
-                    diff.z = BoardManager.Instance.NodeRadius;
-                }
-            }
-            else if(start.z == target.z)
-            {
-                if (start.x > target.x)
-                {
-                    diff.x = -BoardManager.Instance.NodeRadius;
-                }
-                else
-                {
-                    diff.x = BoardManager.Instance.NodeRadius;
-                }
-            }
-            _cornerPosition = _startPosition + diff;
+            //if (start.x == target.x)
+            //{
+            //    if (start.z > target.z)
+            //    {
+            //        diff.z = -BoardManager.Instance.NodeRadius;
+            //    }
+            //    else
+            //    {
+            //        diff.z = BoardManager.Instance.NodeRadius;
+            //    }
+            //}
+            //else if(start.z == target.z)
+            //{
+            //    if (start.x > target.x)
+            //    {
+            //        diff.x = -BoardManager.Instance.NodeRadius;
+            //    }
+            //    else
+            //    {
+            //        diff.x = BoardManager.Instance.NodeRadius;
+            //    }
+            //}
+            _cornerPosition = NodeSideInfo.GetClosestEdge(_startNodeInfo, info);
         }
 
         _targetNodeInfo = info;
