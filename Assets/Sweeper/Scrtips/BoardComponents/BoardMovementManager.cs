@@ -112,13 +112,6 @@ public class BoardMovementManager : MonoBehaviour
                 {
                     BoardMoveBase toUseMovement = null;
 
-                    _targetIndex++;
-                    if (_targetIndex >= _path.Length)
-                    {
-                        _targetIndex = 0;
-                        yield break;
-                    }
-
                     currentNodeInfo = _path[_targetIndex];
                     if (_sittingNodeInfo._side != currentNodeInfo._side)
                     {
@@ -129,6 +122,13 @@ public class BoardMovementManager : MonoBehaviour
                         toUseMovement = _availableMovements[0];
                     }
                     toUseMovement.MoveTo(currentNodeInfo);
+
+                    _targetIndex++;
+                    if (_targetIndex >= _path.Length)
+                    {
+                        _targetIndex = 0;
+                        yield break;
+                    }
                 }
                 yield return null;
             }

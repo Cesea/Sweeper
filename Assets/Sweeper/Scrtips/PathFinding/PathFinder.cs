@@ -38,8 +38,8 @@ public class PathFinder : MonoBehaviour
                 NodeSideInfo currentNodeInfo = openSet[0];
                 for (int i = 1; i < openSet.Count; ++i)
                 {
-                    if (openSet[i]._node.TotalCost < currentNodeInfo._node.TotalCost ||
-                        openSet[i]._node.TotalCost == currentNodeInfo._node.TotalCost && openSet[i]._node.HCost < currentNodeInfo._node.HCost)
+                    if (openSet[i].TotalCost < currentNodeInfo.TotalCost ||
+                        openSet[i].TotalCost == currentNodeInfo.TotalCost && openSet[i].HCost < currentNodeInfo.HCost)
                     {
                         currentNodeInfo = openSet[i];
                     }
@@ -65,11 +65,11 @@ public class PathFinder : MonoBehaviour
                         continue;
                     }
 
-                    int newMovementCost = currentNodeInfo._node.GCost + GetDistance(currentNodeInfo, n);
-                    if (newMovementCost < n._node.GCost || !openSet.Contains(n))
+                    int newMovementCost = currentNodeInfo.GCost + 10;
+                    if (newMovementCost < n.GCost || !openSet.Contains(n))
                     {
-                        n._node.GCost = newMovementCost;
-                        n._node.HCost = GetDistance(n, end);
+                        n.GCost = newMovementCost;
+                        n.HCost = GetDistanceCost(n, end);
                         n.Parent = currentNodeInfo;
 
                         if (!openSet.Contains(n))
@@ -103,21 +103,13 @@ public class PathFinder : MonoBehaviour
         return path.ToArray();
     }
 
-    int GetDistance(NodeSideInfo a, NodeSideInfo b)
+    private int GetDistanceCost(NodeSideInfo a, NodeSideInfo b)
     {
-        if (a._node == b._node && 
-            a._side != b._side)
-        {
-            return 10;
-        }
-        else
-        {
-            int distX = Mathf.Abs(a._node.X - b._node.X);
-            int distY = Mathf.Abs(a._node.X - b._node.X);
-            int distZ = Mathf.Abs(a._node.Z - b._node.Z);
+        int distX = Mathf.Abs(a._node.X - b._node.X);
+        int distY = Mathf.Abs(a._node.Y - b._node.Y);
+        int distZ = Mathf.Abs(a._node.Z - b._node.Z);
 
-            return distX * 10 + distY * 10 + distZ * 10;
-        }
+        return distX * 10 + distY * 10 + distZ * 10;
     }
 
 
