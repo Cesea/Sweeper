@@ -27,7 +27,7 @@ public class BoardManager : SingletonBase<BoardManager>
 
     protected override void Awake()
     {
-        base.Awake();
+        _instance = this;
     }
 
     public static Vector3 BoardPosToWorldPos(Vector3Int pos)

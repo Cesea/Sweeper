@@ -5,11 +5,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
+using Foundation;
+
 public class RadialMenu : Menu<RadialMenu>
 {
-    [Header("Elements")]
-    public List<RadialMenuElement> _elements = new List<RadialMenuElement>();
-    [Header("Follower")]
+    public GameObject _elementPrefab;
+    public GameObject _background;
+    public GameObject _elementsParent;
+
     public RectTransform _selectinFollowContainer;
 
     public float _globalAngleOffset = 0.0f;
@@ -21,26 +24,72 @@ public class RadialMenu : Menu<RadialMenu>
     private int _prevSelectingIndex = 0;
 
     private PointerEventData _pointerEventData;
+    private List<RadialMenuElement> _elements = new List<RadialMenuElement>();
 
     [HideInInspector]
     public RectTransform _rectTransform;
 
-    public static void Show()
+    public static void Show(NodeSideInfo info)
     {
         Open();
+        Instance.CreateAndShowRadialMenu(info);
     }
 
     public static void Shut()
     {
+        EventManager.Instance.TriggerEvent(new Events.RadialShutEvent());
         Close();
+    }
+
+    private void CreateAndShowRadialMenu(NodeSideInfo info)
+    {
+        _rectTransform = _background.GetComponent<RectTransform>();
+
+        List<Command> commands = CommandBuilder.BuildCommands(info);
+
+        _elementAngleGap = 360.0f / commands.Count;
+
+        for (int i = 0; i < commands.Count; ++i)
+        {
+            Command currentCommand = commands[i];
+
+            GameObject go = Instantiate(_elementPrefab, _elementsParent.transform);
+
+            RadialMenuElement element = go.GetComponent<RadialMenuElement>();
+            element._assignedIndex = i;
+            element._parent = this;
+
+            RectTransform rectTrans = element.GetComponent<RectTransform>();
+            rectTrans.localRotation = Quaternion.Euler(0, 0, _elementAngleGap * i + _globalAngleOffset);
+
+            Button currentButton = element._button;
+            currentButton.GetComponent<Image>().fillAmount = (1.0f / (commands.Count));
+
+            Text currentText = element._text;
+            currentText.text = commands[i].ToString();
+
+            float diffAngle = (_elementAngleGap * i + 180 + _globalAngleOffset + _elementAngleGap * 0.25f) * Mathf.Deg2Rad;
+            element.SetAngles(NormalizeAngle(diffAngle * Mathf.Rad2Deg), _elementAngleGap);
+
+            Vector3 offset = new Vector3(Mathf.Cos(diffAngle), Mathf.Sin(diffAngle), 0) * _rectTransform.rect.size.x * 0.4f;
+            currentText.GetComponent<RectTransform>().position = _rectTransform.position + offset;
+            currentText.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0, 0, -(_elementAngleGap * i + _globalAngleOffset));
+
+            int localI = i;
+            currentButton.onClick.AddListener(() => CallCommand(localI));
+
+            _elements.Add(element);
+        }
+    }
+
+    public void CallCommand(int i)
+    {
+        GameStateManager.Instance.Player.DoCommand(i);
     }
 
     void Start ()
     {
         _pointerEventData = new PointerEventData(EventSystem.current);
-
-
-        SetElementsRotation();
 	}
 	
 	void Update ()
@@ -72,9 +121,6 @@ public class RadialMenu : Menu<RadialMenu>
 
     public void SetElementsRotation()
     {
-        _rectTransform = GetComponent<RectTransform>();
-        _elementAngleGap = 360.0f / _elements.Count;
-
         for (int i = 0; i < _elements.Count; ++i)
         {
             RadialMenuElement currentElement = _elements[i];
@@ -126,7 +172,5 @@ public class RadialMenu : Menu<RadialMenu>
         }
         return angle;
     }
-
-
 
 }

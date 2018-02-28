@@ -28,19 +28,18 @@ public class BoardMovementManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            NodeSideInfo target = new NodeSideInfo();
-            if (BoardManager.GetNodeSideInfoAtMouse(ref target))
-            {
-                PathRequestManager.RequestPath(_sittingNodeInfo, target, OnPathFind);
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            StopFindPath();
-        }
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    NodeSideInfo target = new NodeSideInfo();
+        //    if (BoardManager.GetNodeSideInfoAtMouse(ref target))
+        //    {
+        //        PathRequestManager.RequestPath(_sittingNodeInfo, target, OnPathFind);
+        //    }
+        //}
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    StopFindPath();
+        //}
     }
 
     public void SetSittingNode(Node node, Side side)

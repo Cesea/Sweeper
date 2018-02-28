@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 224821424268168684}
   - component: {fileID: 114164375140600366}
   m_Layer: 5
-  m_Name: Element
+  m_Name: RadialElement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

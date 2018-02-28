@@ -390,10 +390,6 @@ public class Board
         int minZ = node.Z + minusZ;
         int maxZ = node.Z + plusZ;
 
-        int deltaX = 0;
-        int deltaY = 0;
-        int deltaZ = 0;
-
         Bounds upBound = new Bounds(
                         info.GetWorldPosition() + BoardManager.SideToVector3Offset(info._side),
                         new Vector3(BoardManager.Instance.NodeRadius * 2.1f,

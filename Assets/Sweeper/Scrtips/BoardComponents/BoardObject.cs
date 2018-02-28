@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Foundation;
+
 [RequireComponent(typeof(BoardMovementManager))]
 public class BoardObject : MonoBehaviour
 {
     private BoardMovementManager _movementManager;
+
+    private List<Command> _commandBuffer = new List<Command>();
 
     private NodeSideInfo[] _adjacentCells;
     public NodeSideInfo[] AdjacentCells
@@ -18,6 +22,16 @@ public class BoardObject : MonoBehaviour
         _movementManager = GetComponent<BoardMovementManager>();
 
         _adjacentCells = new NodeSideInfo[8];
+    }
+
+    private void OnEnable()
+    {
+        EventManager.Instance.AddListener<Events.RadialShutEvent>(ClearCommandBuffer);
+    }
+
+    private void OnDisable()
+    {
+        EventManager.Instance.RemoveListener<Events.RadialShutEvent>(ClearCommandBuffer);
     }
 
     void Start ()
@@ -61,5 +75,18 @@ public class BoardObject : MonoBehaviour
         _adjacentCells = BoardManager.Instance.CurrentBoard.GetNeighbours(_movementManager._sittingNodeInfo).ToArray();
     }
 
+    public void ClearCommandBuffer(Events.RadialShutEvent e)
+    {
+        _commandBuffer.Clear();
+    }
 
+    public void DoCommand(int index)
+    {
+        if (index > _commandBuffer.Count - 1)
+        {
+            return;
+        }
+        _commandBuffer[index].Execute(gameObject);
+        _commandBuffer.Clear();
+    }
 }

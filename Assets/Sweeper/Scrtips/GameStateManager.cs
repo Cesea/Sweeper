@@ -16,38 +16,17 @@ public class GameStateManager : SingletonBase<GameStateManager>
 
     private List<GameObject> _exclamations;
 
-    //마우스 우클릭시 정보를 보여줄 오브젝트이다.
-    private Node _selectingNode;
-    public Node SelectingNode
-    {
-        get { return _selectingNode; }
-        set { _selectingNode = value; }
-    }
-    private Timer _rightMouseClickTimer;    
-
-    public Board CurrentBoard
-    {
-        get { return BoardManager.Instance.CurrentBoard; }
-    }
-
     public BoardObject Player;
-
-    public LayerMask _nodeMask;
-    public LayerMask _objectMask;
 
     public CameraController _cameraController;
 
-
     private void Start()
     {
-        _boardManager = GetComponent<BoardManager>();
+        _boardManager = BoardManager.Instance;
 
         _exclamations = new List<GameObject>();
 
         SetupNextBoard();
-
-        _rightMouseClickTimer = new Timer(0.5f);
-
     }
 
     private void OnEnable()
@@ -58,23 +37,6 @@ public class GameStateManager : SingletonBase<GameStateManager>
     private void OnDisable()
     {
         EventManager.Instance.AddListener<Events.RadarSkillEvent>(OnRadarSkillEvent);
-    }
-
-    public void Update()
-    {
-        if (_selectingNode == null)
-        {
-            if (Input.GetMouseButton(1) && _rightMouseClickTimer.Tick(Time.deltaTime))
-            {
-                NodeSideInfo info = new NodeSideInfo();
-                if (BoardManager.GetNodeSideInfoAtMouse(ref info))
-                {
-                    _selectingNode = info._node;
-
-                    //RadialMenu.Show(Input.mousePosition, info);
-                }
-            }
-        }
     }
 
     public void SetupNextBoard()

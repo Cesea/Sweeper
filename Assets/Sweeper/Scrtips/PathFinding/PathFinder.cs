@@ -13,10 +13,6 @@ public class PathFinder : MonoBehaviour
         _requestManager = GetComponent<PathRequestManager>();
     }
 
-    private void Update()
-    {
-    }
-
     public void StartFindPath(NodeSideInfo startNode, NodeSideInfo endNode)
     {
         StartCoroutine(FindPath(startNode, endNode));

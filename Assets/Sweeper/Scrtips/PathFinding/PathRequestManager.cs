@@ -15,10 +15,9 @@ public class PathRequestManager : SingletonBase<PathRequestManager>
 
     private bool _isProcessing;
 
-    private void Awake()
+    protected override void Awake()
     {
         _finder = GetComponent<PathFinder>();
-        
     }
 
     public static void RequestPath(NodeSideInfo startInfo, NodeSideInfo endInfo, Action<NodeSideInfo[], bool> callback)

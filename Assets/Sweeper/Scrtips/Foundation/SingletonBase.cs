@@ -21,14 +21,14 @@ namespace Foundation
 
         protected virtual void Awake()
         {   
-            if (_instance != null)
-            {
-                Destroy(gameObject);
-            }
-            else
-            {
+            //if (_instance != null)
+            //{
+            //    Destroy(gameObject);
+            //}
+            //else
+            //{
                 _instance = (T)this;
-            }
+            //}
         }
 
         protected virtual void OnDestory()
