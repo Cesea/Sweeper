@@ -22,10 +22,6 @@ namespace Level
             {
                 //TODO;
                 //RadialMenu.Show(Input.mousePosition, _selectingNode);
-                if (info._node == null )
-                {
-                    Debug.Log("aaaaa");
-                }
                 worldPosition = info.GetWorldPosition();
                 rotation = BoardManager.SideToRotation(info._side);
             }
