@@ -86,6 +86,8 @@ public class Board
         }
 
         Nodes[Index3D(0, 1, 1)].Type = Node.NodeType.Normal;
+        Nodes[Index3D(0, 1, 2)].Type = Node.NodeType.Normal;
+        Nodes[Index3D(0, 2, 2)].Type = Node.NodeType.Normal;
 
         StartCellCoord = new Vector3Int(0, 0, 0);
         ExitCellCoord = new Vector3Int(5, 0, 5);
@@ -93,7 +95,7 @@ public class Board
         Nodes[Index3D(StartCellCoord.x, StartCellCoord.y, StartCellCoord.z)].Type = Node.NodeType.Start;
         Nodes[Index3D(ExitCellCoord.x, ExitCellCoord.y, ExitCellCoord.z)].Type = Node.NodeType.Exit;
 
-        //SideInfo Building
+        //SideInfo Building ////////////////////
         _nodeSideInfos = new NodeSideInfo[TotalCount, 6];
 
         for (int z = 0; z < ZCount; ++z)

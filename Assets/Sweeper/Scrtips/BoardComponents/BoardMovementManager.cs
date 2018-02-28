@@ -28,13 +28,6 @@ public class BoardMovementManager : MonoBehaviour
 
     private void Update()
     {
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    NodeSideInfo start = _sittingNodeInfo;
-        //    NodeSideInfo end = new NodeSideInfo(BoardManager.Instance.CurrentBoard.GetNodeAt(_targetTransform.position), Side.Top);
-        //    PathRequestManager.RequestPath(start, end, OnPathFind);
-        //}
-
         if (Input.GetMouseButtonDown(0))
         {
             NodeSideInfo target = new NodeSideInfo();
@@ -42,6 +35,11 @@ public class BoardMovementManager : MonoBehaviour
             {
                 PathRequestManager.RequestPath(_sittingNodeInfo, target, OnPathFind);
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            StopFindPath();
         }
     }
 
@@ -63,15 +61,20 @@ public class BoardMovementManager : MonoBehaviour
         _boardObject.UpdateNeighbourCells(info._side);
 
         //만약 플레이어가 죽거나 출구에 도착한다면 true를 반환한다
-        //if (GameStateManager.Instance.CheckMovement(_sittingNodeInfo._node))
-        //{
-        //    return;
-        //}
-        //_boardObject.CheckAdjacentCells();
+        if (GameStateManager.Instance.CheckMovement(_sittingNodeInfo._node))
+        {
+            return;
+        }
+        _boardObject.CheckAdjacentCells();
         foreach (var movement in _availableMovements)
         {
             movement.UpdateNodeSideInfo(_sittingNodeInfo);
         }
+    }
+
+    public void StopFindPath()
+    {
+        StopCoroutine("FollowPath");
     }
 
     public void OnPathFind(NodeSideInfo[] nodeInfos, bool success)
