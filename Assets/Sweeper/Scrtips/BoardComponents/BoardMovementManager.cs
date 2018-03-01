@@ -45,8 +45,9 @@ public class BoardMovementManager : MonoBehaviour
         _boardObject.UpdateNeighbourCells();
 
         //만약 플레이어가 죽거나 출구에 도착한다면 true를 반환한다
-        if (GameStateManager.Instance.CheckMovement(_sittingNodeInfo))
+        if (_boardObject.CheckMovement(_sittingNodeInfo))
         {
+            StopFindPath();
             return;
         }
 
@@ -60,6 +61,7 @@ public class BoardMovementManager : MonoBehaviour
             movement.UpdateNodeSideInfo(_sittingNodeInfo);
         }
     }
+
 
     public void StopFindPath()
     {

@@ -9,6 +9,9 @@ public class BoardObject : MonoBehaviour
 {
     private BoardMovementManager _movementManager;
 
+    private bool _alive = true;
+    public bool Alive { get { return _alive; }  set { _alive = value; } }
+
     [HideInInspector]
     public List<Command> _commandBuffer = new List<Command>();
 
@@ -17,6 +20,11 @@ public class BoardObject : MonoBehaviour
     {
         get { return _adjacentCells; }
     }
+
+    [SerializeField]
+    private bool _canReceiveCommand = false; 
+    public bool CanReceiveCommand { get { return _canReceiveCommand; } set { _canReceiveCommand = value; } }
+
 
     private void Awake()
     {
@@ -86,11 +94,28 @@ public class BoardObject : MonoBehaviour
 
     public void DoCommand(int index)
     {
-        if (index > _commandBuffer.Count - 1)
+        if (!_canReceiveCommand && index > _commandBuffer.Count - 1)
         {
             return;
         }
         _commandBuffer[index].Execute(gameObject);
         _commandBuffer.Clear();
+    }
+
+    public bool CheckMovement(NodeSideInfo sittingNodeInfo)
+    {
+        bool result = false;
+        if (sittingNodeInfo.IsHazard)
+        {
+            result = true;
+            _alive = false;
+        }
+        else if (sittingNodeInfo._node.Type == Node.NodeType.Exit)
+        {
+            result = true;
+            GameStateManager.Instance.IsGameOver = true;
+            GameStateManager.Instance.LevelFinished = true;
+        }
+        return result;
     }
 }

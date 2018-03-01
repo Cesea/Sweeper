@@ -30,4 +30,9 @@ public class SceneLoader : SingletonBase<SceneLoader>
     {
         SceneManager.LoadScene(sceneName);
     }
+
+    public Scene GetCurrentScene()
+    {
+        return SceneManager.GetActiveScene();
+    }
 }

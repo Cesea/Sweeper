@@ -62,8 +62,8 @@ public class BoardManager : SingletonBase<BoardManager>
         if (_currentBoard != null)
         {
             _currentBoard.DestoryAllLevelObjects();
+            GameObject.Destroy(_currentBoard.BoardObject);
         }
-
         _currentBoard = new Board(transform.position, WorldSize, NodeRadius, _material);
     }
 

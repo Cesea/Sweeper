@@ -2,31 +2,148 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using UnityEngine.Events;
+
 using Foundation;
 using Utils;
 
 public class GameStateManager : SingletonBase<GameStateManager>
 {
     private BoardManager _boardManager;
-    public BoardManager BoardManager { get { return _boardManager; } }
 
     [Header("Prefabs")]
     public GameObject _exclamationPrefab;
-    public GameObject _dangerSignPrefab;
+
+    public float _delayTime = 1.0f;
+
 
     private List<GameObject> _exclamations;
 
-    public BoardObject Player;
+    [SerializeField]
+    private BoardObject _player;
+    public BoardObject Player { get { return _player; }  set { _player = value; } }
 
     public CameraController _cameraController;
+
+    public Level.LevelCursor _levelCursor;
+
+    private bool _levelStarted = false;
+    public bool LevelStarted { get { return _levelStarted; } set { _levelStarted = value; } }
+    private bool _isGamePlaying = false;
+    public bool IsGamePlaying { get { return _isGamePlaying; }  set { _isGamePlaying = value; } } 
+    private bool _isGameOver = false;
+    public bool IsGameOver { get { return _isGameOver; }  set { _isGameOver = value; } }
+    private bool _levelFinished = false;
+    public bool LevelFinished { get { return _levelFinished; }  set { _levelFinished = value; } }
+
+    public UnityEvent StartLevelEvent;
+    public UnityEvent PlayLevelEvent;
+    public UnityEvent EndLevelEvent;
+
 
     private void Start()
     {
         _boardManager = BoardManager.Instance;
-
         _exclamations = new List<GameObject>();
 
+        _levelCursor.gameObject.SetActive(false);
+
+        if (_exclamationPrefab != null &&
+            _boardManager != null)
+        {
+            StartCoroutine("RunGameLoop");
+        }
+        else
+        {
+            Debug.LogWarning("Cannot start game");
+        }
+    }
+
+    private IEnumerator RunGameLoop()
+    {
+        yield return StartCoroutine("StartLevelRoutine"); 
+        yield return StartCoroutine("PlayLevelRoutine"); 
+        yield return StartCoroutine("EndLevelRoutine"); 
+    }
+
+    private IEnumerator StartLevelRoutine()
+    {
+        _player.CanReceiveCommand = false;
         SetupNextBoard();
+        while (!_levelStarted)
+        {
+            yield return null;
+        }
+
+        if (StartLevelEvent != null)
+        {
+            StartLevelEvent.Invoke();
+        }
+
+        _levelStarted = false;
+    }
+
+    private IEnumerator PlayLevelRoutine()
+    {
+        _isGamePlaying = true;
+        yield return new WaitForSeconds(_delayTime);
+
+        _levelCursor.gameObject.SetActive(true);
+
+        if (PlayLevelEvent != null)
+        {
+            PlayLevelEvent.Invoke();
+        } 
+
+        _player.CanReceiveCommand = true;
+        while (!_isGameOver)
+        {
+            //check for game over condition
+            //win
+            //reach the end
+            if (_levelFinished)
+            {
+                break;
+            }
+            //lose
+            //player dies
+            if (!_player.Alive)
+            {
+                break;
+            }
+
+            //_isGameOver = true
+            yield return null;
+        }
+
+        _isGamePlaying = false;
+        _isGameOver = false;
+    }
+
+    private IEnumerator EndLevelRoutine()
+    {
+        _player.CanReceiveCommand = false;
+
+        if (EndLevelEvent != null)
+        {
+            //NOTE : true value is temp
+            EndLevelEvent.Invoke();
+        }
+        //show end screen
+        while (!_levelFinished)
+        {
+            //user presses button to continue
+            _levelFinished = true;
+            yield return null;
+        }
+
+        RestartLevel();
+        _levelFinished = false;
+    }
+
+    void RestartLevel()
+    {
+        SceneLoader.Instance.LoadScene(SceneLoader.Instance.GetCurrentScene().buildIndex);
     }
 
     private void OnEnable()
@@ -37,6 +154,11 @@ public class GameStateManager : SingletonBase<GameStateManager>
     private void OnDisable()
     {
         EventManager.Instance.AddListener<Events.RadarSkillEvent>(OnRadarSkillEvent);
+    }
+
+    public void PlayLevel()
+    {
+        _levelStarted = true;
     }
 
     public void SetupNextBoard()
@@ -75,24 +197,6 @@ public class GameStateManager : SingletonBase<GameStateManager>
             _exclamations.Clear();
         }
     }
-
-    //만약 플레이어가 죽거나 출구에 도착한다면 true를 반환한다
-    public bool CheckMovement(NodeSideInfo sittingNodeInfo)
-    {
-        bool result = false;
-        if (sittingNodeInfo.IsHazard)
-        {
-            RespawnPlayer();
-            result = true;
-        }
-        else if (sittingNodeInfo._node.Type == Node.NodeType.Exit)
-        {
-            SetupNextBoard();
-            result = true;
-        }
-        return result;
-    }
-
 
     public void OnRadarSkillEvent(Events.RadarSkillEvent e)
     {

@@ -24,7 +24,7 @@ public static class CommandBuilder
         {
             if (target._node.GetInstalledObjectAt(target._side) != null)
             {
-                result.Add(new InstallObjectCommand(GameStateManager.Instance._dangerSignPrefab, target));
+                result.Add(new InstallObjectCommand(target));
             }
         }
         subject._commandBuffer = result;

@@ -7,13 +7,11 @@ using Foundation;
 [System.Serializable]
 public class InstallObjectCommand : Command
 {
-    public GameObject _installObjectPrefab;
-
     public NodeSideInfo _nodeInfo;
+    public int PrefabIndex { get; set; }
 
-    public InstallObjectCommand(GameObject prefab, NodeSideInfo info)
+    public InstallObjectCommand(NodeSideInfo info)
     {
-        _installObjectPrefab = prefab;
         _nodeInfo = info;
         _cost = 2;
     }
@@ -21,10 +19,7 @@ public class InstallObjectCommand : Command
     public override void Execute(GameObject target)
     {
         base.Execute(target);
-        GameObject instantiaedObject = GameObject.Instantiate(_installObjectPrefab);
-        instantiaedObject.name = _installObjectPrefab.name;
-        instantiaedObject.transform.position = _nodeInfo.GetWorldPosition();
-        //instantiaedObject.transform.SetParent(target.transform);
+        Level.LevelCreator.Instance.InstallObjectAtNode(_nodeInfo, PrefabIndex);
     }
 
 }
