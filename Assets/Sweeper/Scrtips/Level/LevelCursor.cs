@@ -30,6 +30,7 @@ namespace Level
                     BoardManager.GetNodeSideInfoAtMouse(ref _selectingInfo))
                 {
                     RadialMenu.Show(_selectingInfo);
+                    _rightMouseClickTimer.Reset();
                 }
             }
 

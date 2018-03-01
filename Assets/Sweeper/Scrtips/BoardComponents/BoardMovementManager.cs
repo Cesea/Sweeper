@@ -5,8 +5,6 @@ using UnityEngine;
 [RequireComponent(typeof(BoardObject))]
 public class BoardMovementManager : MonoBehaviour
 {
-    public Transform _targetTransform;
-
     private NodeSideInfo[] _path;
     private int _targetIndex = 0;
 

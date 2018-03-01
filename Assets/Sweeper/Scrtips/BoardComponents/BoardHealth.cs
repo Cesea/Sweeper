@@ -2,15 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BoardHealth : MonoBehaviour {
+public class BoardHealth : MonoBehaviour
+{
+    public int _maxHealth;
+    public int _currentHealth;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public bool Alive { get { return _currentHealth > 0; } }
+
 }

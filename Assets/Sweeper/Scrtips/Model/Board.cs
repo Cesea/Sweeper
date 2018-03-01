@@ -647,15 +647,16 @@ public class Board
                             break;
                     }
 
-                    if (IsInBound(x, y, z))
+                    if (IsInBound(x, y, z) &&
+                        Nodes[Index3D(x, y, z)].IsSolid)
                     {
                         NodeSideInfo currentInfo = _nodeSideInfos[Index3D(x, y, z), (int)info._side];
-                        if ((x == info._node.X && y == info._node.Y && z == info._node.Z)
-                            || !currentInfo._node.IsSolid)
+                        if ((currentInfo.Equals(null)) ||
+                            (x == info._node.X && y == info._node.Y && z == info._node.Z) ||
+                            (!currentInfo._node.IsSolid))
                         {
                             continue;
                         }
-                        //TODO : Correct this
                         result.Add(currentInfo);
                     }
                 }

@@ -14,6 +14,7 @@ public enum Side
     Count
 }
 
+[System.Serializable]
 public class Node
 {
     //LevelObject

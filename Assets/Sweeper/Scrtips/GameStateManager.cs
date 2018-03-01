@@ -164,7 +164,7 @@ public class GameStateManager : SingletonBase<GameStateManager>
     public void SetupNextBoard()
     {
         _boardManager.BuildNewBoard();
-        Player.SetSittingNode(_boardManager.CurrentBoard.GetNodeAt(_boardManager.CurrentBoard.StartCellCoord), Side.Top);
+        RespawnPlayer();
         RemoveExclamations();
 
         _cameraController.transform.position = new Vector3(
