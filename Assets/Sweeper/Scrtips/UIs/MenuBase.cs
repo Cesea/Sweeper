@@ -15,6 +15,7 @@ public abstract class MenuBase :MonoBehaviour
 public abstract class Menu<T> : MenuBase where T : Menu<T>
 {
     public static T Instance { get; private set; }
+    public static bool _opened;
 
     protected virtual void Awake()
     {
@@ -43,6 +44,7 @@ public abstract class Menu<T> : MenuBase where T : Menu<T>
         }
 
         MenuManager.Instance.OpenMenu(Instance);
+        _opened = true;
     }
 
     protected static void Close()
@@ -52,5 +54,6 @@ public abstract class Menu<T> : MenuBase where T : Menu<T>
             return;
         }
         MenuManager.Instance.CloseMenu(Instance);
+        _opened = false;
     }
 }

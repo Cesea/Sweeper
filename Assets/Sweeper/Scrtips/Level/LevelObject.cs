@@ -6,33 +6,32 @@ namespace Level
 {
     public class LevelObject : MonoBehaviour
     {
-        public bool IsHazard = true;
-        public bool IsWalkable = true;
-        public bool CanInstallVertical = false;
+        public bool _isHazard = true;
+        public bool _isWalkable = true;
+        public bool _canInstallSide = false;
 
         [HideInInspector]
-        public Node SittingNode = null;
+        public Node _sittingNode = null;
         [HideInInspector]
-        public Side InstalledSide;
+        public Side _installedSide;
 
         [HideInInspector]
-        public int PrefabIndex;
+        public int _prefabIndex;
 
         public LevelObjectSaveData ToSaveData()
         {
             LevelObjectSaveData result = new LevelObjectSaveData();
-            result.IsHazard = IsHazard;
-            result.IsWalkable = IsWalkable;
-            result.PrefabIndex = PrefabIndex;
-            result.InstalledSide = InstalledSide;
+            result._isHazard = _isHazard;
+            result._isWalkable = _isWalkable;
+            result._prefabIndex = _prefabIndex;
+            result._installedSide = _installedSide;
 
-            if (SittingNode != null)
+            if (_sittingNode != null)
             {
-                result.BoardX = SittingNode.X;
-                result.BoardY = SittingNode.Y;
-                result.BoardZ = SittingNode.Z;
+                result._boardX = _sittingNode.X;
+                result._boardY = _sittingNode.Y;
+                result._boardZ = _sittingNode.Z;
 
-                result.YRotation = transform.rotation.eulerAngles.y;
             }
             return result;
         }
@@ -41,15 +40,13 @@ namespace Level
     [System.Serializable]
     public class LevelObjectSaveData
     {
-        public int PrefabIndex;
-        public int BoardX;
-        public int BoardY;
-        public int BoardZ;
+        public int _prefabIndex;
+        public int _boardX;
+        public int _boardY;
+        public int _boardZ;
 
-        public float YRotation;
-
-        public Side InstalledSide;
-        public bool IsHazard = true;
-        public bool IsWalkable = true;
+        public Side _installedSide;
+        public bool _isHazard = true;
+        public bool _isWalkable = true;
     }
 }

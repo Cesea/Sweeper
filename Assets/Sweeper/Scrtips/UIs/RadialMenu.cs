@@ -45,7 +45,7 @@ public class RadialMenu : Menu<RadialMenu>
     {
         _rectTransform = _background.GetComponent<RectTransform>();
 
-        List<Command> commands = CommandBuilder.BuildCommands(info);
+        List<Command> commands = CommandBuilder.BuildCommands(GameStateManager.Instance.Player, info);
 
         _elementAngleGap = 360.0f / commands.Count;
 
@@ -97,8 +97,6 @@ public class RadialMenu : Menu<RadialMenu>
         float rawAngle = Mathf.Atan2(Input.mousePosition.y - _rectTransform.position.y,
                                      Input.mousePosition.x - _rectTransform.position.x) * Mathf.Rad2Deg;
         _currentAngle = NormalizeAngle(rawAngle);
-
-        Debug.Log(_currentAngle);
 
         foreach (var e in _elements)
         {

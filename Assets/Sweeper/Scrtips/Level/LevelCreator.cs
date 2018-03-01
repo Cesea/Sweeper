@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using UnityEngine.EventSystems;
+
 using Foundation;
+using Utils;
 
 namespace Level
 {
@@ -11,56 +14,76 @@ namespace Level
         public BoardObject _player;
         public LevelCursor _buildCursor;
 
-        private GameObject _objectToInstall;
+        private GameObject _previewObject;
 
-        public List<GameObject> InstallObjects;
+        public List<GameObject> _installObjectPrefabs;
 
         public int _selectingIndex = 0;
         private int _prevIndex = 0; 
         
-
-        public bool CanBuild = false;
+        public bool _canBuild = false;
 
         private float _yRotation = 0;
 
         private void Start()
         {
-            RecreateObjectToInstall();
         }
 
         private void Update()
         {
-            if (_selectingIndex != _prevIndex)
+            _canBuild = LevelCreateMenu._opened;
+
+            if (!_canBuild)
             {
-                RecreateObjectToInstall();
+                if (Input.GetKeyDown(KeyCode.Tab))
+                {
+                    LevelCreateMenu.Show();
+                    RecreateObjectToInstall();
+                    return;
+                }
             }
 
-            MakeObjectToInstallFollowCursor();
+            if (_canBuild)
+            {
 
-            HandleInput();
+                HandleInput();
 
-            _prevIndex = _selectingIndex;
+                if (Input.GetKeyDown(KeyCode.Tab))
+                {
+                    LevelCreateMenu.Shut();
+                    GameObject.Destroy(_previewObject);
+                    return;
+                }
+
+                if (_selectingIndex != _prevIndex)
+                {
+                    RecreateObjectToInstall();
+                }
+
+                MakeObjectToInstallFollowCursor();
+
+                _prevIndex = _selectingIndex;
+            }
         }
 
         private void HandleInput()
         {
-            if (CanBuild)
+            if (_canBuild)
             {
+                if (EventSystem.current.IsPointerOverGameObject())
+                {
+                    return;
+                }
+
                 if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftShift))
                 {
-                    DestroyObjectAtMousePosition();
+                    DestroyObjectAtNode(_buildCursor._selectingInfo._node, _buildCursor._selectingInfo._side);
                     return;
                 }
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    InstallObjectAtMousePosition(_selectingIndex);
-                    return;
-                }
-
-                if (Input.GetMouseButtonDown(1))
-                {
-                    AddRotation();
+                    InstallObjectAtNode(_buildCursor._selectingInfo._node, _buildCursor._selectingInfo._side, _selectingIndex);
                     return;
                 }
             }
@@ -68,7 +91,7 @@ namespace Level
 
         public void InstallObjectAtNode(Node node, Side side, int prefabIndex)
         {
-            if (prefabIndex > InstallObjects.Count - 1)
+            if (prefabIndex > _installObjectPrefabs.Count - 1)
             {
                 return;
             }
@@ -82,15 +105,16 @@ namespace Level
                 {
                     //오브젝트를 설치하고 노드의 속성을 업데이트 한다.
                     Quaternion rot = Quaternion.Euler(0, _yRotation, 0);
-                    GameObject go = Instantiate(InstallObjects[prefabIndex], node.GetWorldPositionBySide(side), rot);
+                    GameObject go = Instantiate(_installObjectPrefabs[prefabIndex], node.GetWorldPositionBySide(side), rot);
                     LevelObject levelObject = go.GetComponent<LevelObject>();
-                    levelObject.PrefabIndex = prefabIndex;
-                    levelObject.SittingNode = node;
-                    if (levelObject.IsHazard)
+                    levelObject._prefabIndex = prefabIndex;
+                    levelObject._sittingNode = node;
+                    levelObject._installedSide = side;
+                    if (levelObject._isHazard)
                     {
                         node.IsHazard = true;
                     }
-                    if (!levelObject.IsWalkable)
+                    if (!levelObject._isWalkable)
                     {
                         node.IsPassable = false;
                     }
@@ -104,66 +128,42 @@ namespace Level
             if (node != null &&
                 node.GetInstalledObjectAt(side) != null)
             {
-                LevelObject levelObject = node.GetInstalledObjectAt(side).GetComponent<LevelObject>();
+                //LevelObject levelObject = info._node.GetInstalledObjectAt(info._side).GetComponent<LevelObject>();
 
                 Destroy(node.GetInstalledObjectAt(side));
-                node.IsHazard = false;
+                node.SetInstalledObjectAt(side, null);
             }
-        }
-
-        public void InstallObjectAtMousePosition(int prefabIndex)
-        {
-            if (prefabIndex > InstallObjects.Count - 1)
-            {
-                return;
-            }
-            NodeSideInfo nodeInfo = new NodeSideInfo();
-            if (BoardManager.GetNodeSideInfoAtMouse(ref nodeInfo))
-            {
-                InstallObjectAtNode(nodeInfo._node, nodeInfo._side, prefabIndex);
-            }
-        }
-
-        public void DestroyObjectAtMousePosition()
-        {
-            NodeSideInfo info = new NodeSideInfo();
-            if (BoardManager.GetNodeSideInfoAtMouse(ref info))
-            {
-                DestroyObjectAtNode(info._node, info._side);
-            }
-        }
-
-        private void AddRotation()
-        {
-            _yRotation += 90.0f;
-            if (_yRotation >= 360.0f)
-            {
-                _yRotation -= 360.0f;
-            }
-            _objectToInstall.transform.rotation = Quaternion.Euler(0, _yRotation, 0);
         }
 
         private void RecreateObjectToInstall()
         {
-            if (_objectToInstall != null)
+            if (_previewObject != null)
             {
-                Destroy(_objectToInstall);
-                _objectToInstall = null;
+                Destroy(_previewObject);
+                _previewObject = null;
             }
 
-            if (_objectToInstall == null)
+            if (_previewObject == null)
             {
-                _objectToInstall = Instantiate(InstallObjects[_selectingIndex]);
+                _previewObject = Instantiate(_installObjectPrefabs[_selectingIndex]);
             }
         }
 
         private void MakeObjectToInstallFollowCursor()
         {
-            if (_objectToInstall != null)
+            if (_previewObject != null)
             {
-                _objectToInstall.transform.position = _buildCursor.transform.position;
+                _previewObject.transform.position = _buildCursor.transform.position;
             }
         }
 
+        public void SetSelectingIndex(int i)
+        {
+            if (i >= _installObjectPrefabs.Count)
+            {
+                return;
+            }
+            _selectingIndex = i;
+        }
     }
 }

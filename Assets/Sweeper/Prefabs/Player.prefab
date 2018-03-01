@@ -38,8 +38,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4788323994552550}
   - component: {fileID: 114104658427102900}
+  - component: {fileID: 114209501548299872}
   - component: {fileID: 114112273224066182}
-  - component: {fileID: 114009358770554494}
+  - component: {fileID: 114676755747622260}
   - component: {fileID: 114091638414195652}
   m_Layer: 9
   m_Name: Player
@@ -128,19 +129,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114009358770554494
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1975037907248704}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1335e90e80dc124997a186136c953d5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _speed: 1
-  _jumpHeight: 1
 --- !u!114 &114091638414195652
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -165,8 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b247928dd781b64187b1b1b71460938, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxStamina: 0
-  CurrentStamina: 0
+  _commandBuffer: []
 --- !u!114 &114112273224066182
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -179,3 +166,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 2.5
+--- !u!114 &114209501548299872
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1975037907248704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 635a8b60b4777ba4098627ce5f14e632, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetTransform: {fileID: 0}
+  _availableMovements:
+  - {fileID: 114112273224066182}
+  - {fileID: 114676755747622260}
+--- !u!114 &114676755747622260
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1975037907248704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09962098518c9cf4bbc4052644b25df2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _speed: 1

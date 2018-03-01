@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(BoardObject))]
 public class BoardMovementManager : MonoBehaviour
 {
     public Transform _targetTransform;
@@ -26,22 +27,6 @@ public class BoardMovementManager : MonoBehaviour
         _sittingNodeInfo = new NodeSideInfo();
     }
 
-    private void Update()
-    {
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    NodeSideInfo target = new NodeSideInfo();
-        //    if (BoardManager.GetNodeSideInfoAtMouse(ref target))
-        //    {
-        //        PathRequestManager.RequestPath(_sittingNodeInfo, target, OnPathFind);
-        //    }
-        //}
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //{
-        //    StopFindPath();
-        //}
-    }
-
     public void SetSittingNode(Node node, Side side)
     {
         _sittingNodeInfo = BoardManager.Instance.CurrentBoard.GetNodeInfoAt(node.X, node.Y, node.Z, side);
@@ -64,7 +49,12 @@ public class BoardMovementManager : MonoBehaviour
         {
             return;
         }
-        _boardObject.CheckAdjacentCells();
+
+        if (_boardObject.CheckAdjacentCells())
+        {
+            StopFindPath();
+        }
+
         foreach (var movement in _availableMovements)
         {
             movement.UpdateNodeSideInfo(_sittingNodeInfo);
@@ -74,6 +64,11 @@ public class BoardMovementManager : MonoBehaviour
     public void StopFindPath()
     {
         StopCoroutine("FollowPath");
+    }
+
+    public void StartFindPath(NodeSideInfo target)
+    {
+        PathRequestManager.RequestPath(_sittingNodeInfo, target, OnPathFind);
     }
 
     public void OnPathFind(NodeSideInfo[] nodeInfos, bool success)
@@ -95,7 +90,7 @@ public class BoardMovementManager : MonoBehaviour
             currentNodeInfo = _path[_targetIndex];
             if (_sittingNodeInfo._side != currentNodeInfo._side)
             {
-                toUseMovement = _availableMovements[2];
+                toUseMovement = _availableMovements[1];
             }
             else
             {
@@ -114,7 +109,7 @@ public class BoardMovementManager : MonoBehaviour
                     currentNodeInfo = _path[_targetIndex];
                     if (_sittingNodeInfo._side != currentNodeInfo._side)
                     {
-                        toUseMovement = _availableMovements[2];
+                        toUseMovement = _availableMovements[1];
                     }
                     else
                     {

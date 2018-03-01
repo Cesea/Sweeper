@@ -9,7 +9,8 @@ public class BoardObject : MonoBehaviour
 {
     private BoardMovementManager _movementManager;
 
-    private List<Command> _commandBuffer = new List<Command>();
+    [HideInInspector]
+    public List<Command> _commandBuffer = new List<Command>();
 
     private NodeSideInfo[] _adjacentCells;
     public NodeSideInfo[] AdjacentCells
@@ -49,7 +50,9 @@ public class BoardObject : MonoBehaviour
         _movementManager.SetSittingNode(node, side);
     }
 
-    public void CheckAdjacentCells()
+
+    // NOTE : if there is hazard then return true
+    public bool CheckAdjacentCells()
     {
         bool isHazardExist = false;
         foreach (var n in _adjacentCells)
@@ -68,6 +71,8 @@ public class BoardObject : MonoBehaviour
         {
             GameStateManager.Instance.SpawnExclamation((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);
         }
+
+        return isHazardExist;
     }
 
     public void UpdateNeighbourCells(Side side)

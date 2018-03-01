@@ -8,52 +8,42 @@ namespace Level
 {
     public class LevelCursor : MonoBehaviour
     {
-        private NodeSideInfo _selectingInfo;
+        [HideInInspector]
+        public NodeSideInfo _selectingInfo;
         private Timer _rightMouseClickTimer;
-
-        private bool _showMenu;
 
         private void Start()
         {
             _rightMouseClickTimer = new Timer(0.5f); 
         }
 
-        private void OnEnable()
-        {
-            EventManager.Instance.AddListener<Events.RadialShutEvent>(OnRadialShutEvent); 
-        }
-        private void OnDisable()
-        {
-            EventManager.Instance.RemoveListener<Events.RadialShutEvent>(OnRadialShutEvent); 
-        }
-        public void OnRadialShutEvent(Events.RadialShutEvent e)
-        {
-            _showMenu = false;
-        }
 
-        void Update()
+        private void Update()
         {
             LocateCursor();
 
+            /////////////////
             if (Input.GetMouseButton(1) && _rightMouseClickTimer.Tick(Time.deltaTime))
             {
                 if (_selectingInfo != null && 
-                    !_showMenu &&
+                    !RadialMenu._opened &&
                     BoardManager.GetNodeSideInfoAtMouse(ref _selectingInfo))
                 {
-                    _showMenu = true;
                     RadialMenu.Show(_selectingInfo);
                 }
             }
 
-            if (_showMenu &&
+            if (RadialMenu._opened &&
                 Input.GetMouseButtonUp(1))
             {
                 RadialMenu.Shut();
             }
+            /////////////////
+
+
         }
 
-        void LocateCursor()
+        private void LocateCursor()
         {
             Quaternion rotation = transform.rotation;
             Vector3 worldPosition = transform.position;
@@ -66,5 +56,7 @@ namespace Level
             transform.position = worldPosition;
             transform.rotation = rotation;
         }
+
+
     }
 }

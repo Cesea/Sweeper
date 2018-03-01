@@ -6,38 +6,28 @@ using Foundation;
 
 public static class CommandBuilder 
 {
-    public static List<Command> BuildCommands(NodeSideInfo info)
+    public static List<Command> BuildCommands(BoardObject subject, NodeSideInfo target)
     {
         List<Command> result = new List<Command>();
 
         result.Add(new InspectCommand());
 
-        Vector3Int objectCellPosition = new Vector3Int(info._node.X, info._node.Y, info._node.Z);
-        Vector3Int deltaGridToPlayer = GameStateManager.Instance.Player.transform.position.ToVector3Int() - objectCellPosition;
-
-        if ((deltaGridToPlayer.x == 0 && Mathf.Abs(deltaGridToPlayer.z) == 1) ||
-            (Mathf.Abs(deltaGridToPlayer.x) == 1 && deltaGridToPlayer.z == 0))
+        BoardMovementManager movementManager = subject.GetComponent<BoardMovementManager>();
+        Vector3Int deltaGridToPlayer = movementManager._sittingNodeInfo._node.BoardPosition - target._node.BoardPosition;
+        if (movementManager != null)
         {
-            result.Add(new WalkCommand(-deltaGridToPlayer.x, -deltaGridToPlayer.z));
+            result.Add(new MoveCommand(target));
         }
-
-        //In jump range
-        if (deltaGridToPlayer.x >= -2 && deltaGridToPlayer.x <= 2 &&
-           deltaGridToPlayer.z >= -2 && deltaGridToPlayer.z <= 2)
-        {
-            result.Add(new JumpCommand(-deltaGridToPlayer.x, -deltaGridToPlayer.y, -deltaGridToPlayer.y));
-        }
-
-        //In build range
 
         if (deltaGridToPlayer.x >= -1 && deltaGridToPlayer.x <= 1 &&
-           deltaGridToPlayer.y >= -1 && deltaGridToPlayer.y <= 1)
+           deltaGridToPlayer.y >= -1 && deltaGridToPlayer.y <= 1 )
         {
-            if (info._node.GetInstalledObjectAt(info._side))
+            if (target._node.GetInstalledObjectAt(target._side) != null)
             {
-                result.Add(new InstallObjectCommand(GameStateManager.Instance._dangerSignPrefab, info));
+                result.Add(new InstallObjectCommand(GameStateManager.Instance._dangerSignPrefab, target));
             }
         }
+        subject._commandBuffer = result;
         return result;
     }
 }

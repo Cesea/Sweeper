@@ -36,7 +36,6 @@ namespace Level
             string savePath = GetFullPath(levelName);
 
             LevelSaveData toSave = new LevelSaveData();
-
             {
                 LevelObject[] levelObjects = GameObject.FindObjectsOfType<LevelObject>();
                 if (levelObjects.Length > 0)
@@ -83,9 +82,8 @@ namespace Level
         {
             foreach (var l in data._levelObjectDatas)
             {
-                GameObject go = Instantiate(LevelCreator.Instance.InstallObjects[l.PrefabIndex]);
-                Node node = BoardManager.Instance.CurrentBoard.GetNodeAt(l.BoardX, l.BoardY, l.BoardZ);
-                LevelCreator.Instance.InstallObjectAtNode(node, l.InstalledSide, l.PrefabIndex);
+                Node node = BoardManager.Instance.CurrentBoard.GetNodeAt(l._boardX, l._boardY, l._boardZ);
+                LevelCreator.Instance.InstallObjectAtNode(node, l._installedSide, l._prefabIndex);
             }
         }
 
