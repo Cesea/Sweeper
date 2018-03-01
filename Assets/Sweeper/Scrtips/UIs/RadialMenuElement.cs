@@ -50,13 +50,29 @@ public class RadialMenuElement : MonoBehaviour
         _angleOffset = offset;
         _minAngle = offset - (baseOffset / 2f);
         _maxAngle = offset + (baseOffset / 2f);
+
+        _minAngle = _parent.NormalizeAngle(_minAngle);
+        _maxAngle = _parent.NormalizeAngle(_maxAngle);
+
+        Debug.Log("min : " + _minAngle + " max : " + _maxAngle);
     }
 
     public bool IsInAngle(float angle)
     {
-        if (angle > _minAngle && angle < _maxAngle)
+        //4, 1, 사분면에 걸쳐 있는 경우
+        if (_minAngle > _maxAngle)
         {
-            return true;
+            if (angle > _minAngle || angle < _maxAngle)
+            {
+                return true;
+            }
+        }
+        else
+        {
+            if (angle > _minAngle && angle < _maxAngle)
+            {
+                return true;
+            }
         }
         return false;
     }

@@ -60,7 +60,7 @@ public class RadialMenu : Menu<RadialMenu>
             element._parent = this;
 
             RectTransform rectTrans = element.GetComponent<RectTransform>();
-            rectTrans.localRotation = Quaternion.Euler(0, 0, _elementAngleGap * i + _globalAngleOffset);
+            rectTrans.localRotation = Quaternion.Euler(0, 0, -_elementAngleGap * i + _globalAngleOffset);
 
             Button currentButton = element._button;
             currentButton.GetComponent<Image>().fillAmount = (1.0f / (commands.Count));
@@ -68,12 +68,12 @@ public class RadialMenu : Menu<RadialMenu>
             Text currentText = element._text;
             currentText.text = commands[i].ToString();
 
-            float diffAngle = (_elementAngleGap * i + 180 + _globalAngleOffset + _elementAngleGap * 0.25f) * Mathf.Deg2Rad;
+            float diffAngle = (270.0f - _elementAngleGap * i + _globalAngleOffset - (_elementAngleGap * 0.5f)) * Mathf.Deg2Rad;
             element.SetAngles(NormalizeAngle(diffAngle * Mathf.Rad2Deg), _elementAngleGap);
 
             Vector3 offset = new Vector3(Mathf.Cos(diffAngle), Mathf.Sin(diffAngle), 0) * _rectTransform.rect.size.x * 0.4f;
             currentText.GetComponent<RectTransform>().position = _rectTransform.position + offset;
-            currentText.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0, 0, -(_elementAngleGap * i + _globalAngleOffset));
+            currentText.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0, 0, (_elementAngleGap * i + _globalAngleOffset));
 
             int localI = i;
             currentButton.onClick.AddListener(() => CallCommand(localI));
@@ -117,31 +117,25 @@ public class RadialMenu : Menu<RadialMenu>
         _selectinFollowContainer.rotation = Quaternion.Euler(0, 0, rawAngle + 270.0f);
 	}
 
-    public void SetElementsRotation()
-    {
-        for (int i = 0; i < _elements.Count; ++i)
-        {
-            RadialMenuElement currentElement = _elements[i];
-            currentElement._assignedIndex = i;
-            currentElement._parent = this;
-
-            RectTransform trans = currentElement.GetComponent<RectTransform>();
-            trans.localRotation = Quaternion.Euler(0, 0, _elementAngleGap * i + _globalAngleOffset);
-
-            Button currentButton = currentElement._button;
-            Text currentText = currentElement._text;
-
-            currentButton.GetComponent<Image>().fillAmount = (1.0f / (_elements.Count));
-
-            float diffAngle = (_elementAngleGap * i + 180 + _elementAngleGap * 0.5f + _globalAngleOffset) * Mathf.Deg2Rad;
-            currentElement.SetAngles(NormalizeAngle(diffAngle * Mathf.Rad2Deg), _elementAngleGap);
-
-            Vector3 offset = new Vector3(Mathf.Cos(diffAngle), Mathf.Sin(diffAngle), 0) * (_rectTransform.rect.width + 30);
-            currentElement._text.GetComponent<RectTransform>().position = trans.position + offset;
-            currentElement._text.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0, 0, -(_elementAngleGap * i + _globalAngleOffset));
-
-        }
-    }
+    //public void SetElementsRotation()
+    //{
+    //    for (int i = 0; i < _elements.Count; ++i)
+    //    {
+    //        RadialMenuElement currentElement = _elements[i];
+    //        currentElement._assignedIndex = i;
+    //        currentElement._parent = this;
+    //        RectTransform trans = currentElement.GetComponent<RectTransform>();
+    //        trans.localRotation = Quaternion.Euler(0, 0, _elementAngleGap * i + _globalAngleOffset);
+    //        Button currentButton = currentElement._button;
+    //        Text currentText = currentElement._text;
+    //        currentButton.GetComponent<Image>().fillAmount = (1.0f / (_elements.Count));
+    //        float diffAngle = (_elementAngleGap * i + 180 + _elementAngleGap * 0.5f + _globalAngleOffset) * Mathf.Deg2Rad;
+    //        currentElement.SetAngles(NormalizeAngle(diffAngle * Mathf.Rad2Deg), _elementAngleGap);
+    //        Vector3 offset = new Vector3(Mathf.Cos(diffAngle), Mathf.Sin(diffAngle), 0) * (_rectTransform.rect.width + 30);
+    //        currentElement._text.GetComponent<RectTransform>().position = trans.position + offset;
+    //        currentElement._text.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0, 0, -(_elementAngleGap * i + _globalAngleOffset));
+    //    }
+    //}
 
     private void SelectButton(int i)
     {
@@ -158,7 +152,7 @@ public class RadialMenu : Menu<RadialMenu>
     } 
 
 
-    private float NormalizeAngle(float angle)
+    public float NormalizeAngle(float angle)
     {
         if (angle > 360.0f)
         {

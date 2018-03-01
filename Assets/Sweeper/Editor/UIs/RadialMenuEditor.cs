@@ -22,16 +22,6 @@ public class RadialMenuEditor : Editor
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
-
-        GUIContent visualize = new GUIContent("Visualize Arrangement", "Press this to preview what the radial menu will look like ingame.");
-
-        if (!Application.isPlaying)
-        {
-            if (GUILayout.Button(visualize))
-            {
-                _target.SetElementsRotation();
-            }
-        }
     }
 
 }

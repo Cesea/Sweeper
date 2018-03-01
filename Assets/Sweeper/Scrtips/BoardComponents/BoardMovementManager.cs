@@ -42,10 +42,10 @@ public class BoardMovementManager : MonoBehaviour
     public void OnMovementDone(NodeSideInfo info)
     {
         _sittingNodeInfo = info;
-        _boardObject.UpdateNeighbourCells(info._side);
+        _boardObject.UpdateNeighbourCells();
 
         //만약 플레이어가 죽거나 출구에 도착한다면 true를 반환한다
-        if (GameStateManager.Instance.CheckMovement(_sittingNodeInfo._node))
+        if (GameStateManager.Instance.CheckMovement(_sittingNodeInfo))
         {
             return;
         }
@@ -63,6 +63,7 @@ public class BoardMovementManager : MonoBehaviour
 
     public void StopFindPath()
     {
+        _targetIndex = 0;
         StopCoroutine("FollowPath");
     }
 
@@ -76,7 +77,7 @@ public class BoardMovementManager : MonoBehaviour
         _path = nodeInfos;
         if (success)
         {
-            StopCoroutine("FollowPath");
+            StopFindPath();
             StartCoroutine("FollowPath");
         }
     }

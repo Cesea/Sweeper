@@ -77,27 +77,27 @@ namespace Level
 
                 if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftShift))
                 {
-                    DestroyObjectAtNode(_buildCursor._selectingInfo._node, _buildCursor._selectingInfo._side);
+                    DestroyObjectAtNode(_buildCursor._selectingInfo);
                     return;
                 }
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    InstallObjectAtNode(_buildCursor._selectingInfo._node, _buildCursor._selectingInfo._side, _selectingIndex);
+                    InstallObjectAtNode(_buildCursor._selectingInfo, _selectingIndex);
                     return;
                 }
             }
         }
 
-        public void InstallObjectAtNode(Node node, Side side, int prefabIndex)
+        public void InstallObjectAtNode(NodeSideInfo info, int prefabIndex)
         {
             if (prefabIndex > _installObjectPrefabs.Count - 1)
             {
                 return;
             }
-            if (node != null)
+            if (info != null)
             {
-                if (node.GetInstalledObjectAt(side) != null)
+                if (info._node.GetInstalledObjectAt(info._side) != null)
                 {
                     //설치하려는 자리에 이미 노드가 있다.... 어떻게 처리 할까??
                 }
@@ -105,33 +105,33 @@ namespace Level
                 {
                     //오브젝트를 설치하고 노드의 속성을 업데이트 한다.
                     Quaternion rot = Quaternion.Euler(0, _yRotation, 0);
-                    GameObject go = Instantiate(_installObjectPrefabs[prefabIndex], node.GetWorldPositionBySide(side), rot);
+                    GameObject go = Instantiate(_installObjectPrefabs[prefabIndex], info.GetWorldPosition(), rot);
                     LevelObject levelObject = go.GetComponent<LevelObject>();
                     levelObject._prefabIndex = prefabIndex;
-                    levelObject._sittingNode = node;
-                    levelObject._installedSide = side;
+                    levelObject._sittingNode = info._node;
+                    levelObject._installedSide = info._side;
                     if (levelObject._isHazard)
                     {
-                        node.IsHazard = true;
+                        info.IsHazard = true;
                     }
                     if (!levelObject._isWalkable)
                     {
-                        node.IsPassable = false;
+                        info.IsPassable = false;
                     }
-                    node.SetInstalledObjectAt(side, go);
+                    info._node.SetInstalledObjectAt(info._side, go);
                 }
             }
         }
 
-        public void DestroyObjectAtNode(Node node, Side side)
+        public void DestroyObjectAtNode(NodeSideInfo info)
         {
-            if (node != null &&
-                node.GetInstalledObjectAt(side) != null)
+            if (info != null &&
+                info._node.GetInstalledObjectAt(info._side) != null)
             {
                 //LevelObject levelObject = info._node.GetInstalledObjectAt(info._side).GetComponent<LevelObject>();
 
-                Destroy(node.GetInstalledObjectAt(side));
-                node.SetInstalledObjectAt(side, null);
+                Destroy(info._node.GetInstalledObjectAt(info._side));
+                info._node.SetInstalledObjectAt(info._side, null);
             }
         }
 

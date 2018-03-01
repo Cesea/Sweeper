@@ -52,9 +52,6 @@ public class Node
     private int _y;
     private int _z;
 
-    public bool IsHazard { get; set; }
-    public bool IsPassable { get; set; }
-
     public bool IsSolid { get; set; }
 
     public Vector3 WorldPosition;
@@ -93,26 +90,18 @@ public class Node
             {
                 case NodeType.Empty:
                     {
-                        IsHazard = true;
-                        IsPassable = true;
                         IsSolid = false;
                     } break;
                 case NodeType.Normal:
                     {
-                        IsHazard = false;
-                        IsPassable = false;
                         IsSolid = true;
                     } break;
                 case NodeType.Start:
                     {
-                        IsHazard = false;
-                        IsPassable = true;
                         IsSolid = true;
                     } break;
                 case NodeType.Exit:
                     {
-                        IsHazard = false;
-                        IsPassable = true;
                         IsSolid = true;
                     } break;
             }
@@ -326,7 +315,17 @@ public class NodeSideInfo
     public Node _node { get; set; }
     public Side _side { get; set; }
 
+    public bool IsHazard { get; set; }
+    public bool IsPassable { get; set; }
+
     public NodeSideInfo Parent;
+
+    public override bool Equals(object obj)
+    {
+        if (obj == null || GetType() != obj.GetType()) return false;
+        NodeSideInfo info = (NodeSideInfo)obj;
+        return ((_node == info._node) && (_side == info._side));
+    }
 
     public NodeSideInfo()
     {
@@ -351,12 +350,12 @@ public class NodeSideInfo
 
     public static bool operator ==(NodeSideInfo a, NodeSideInfo b)
     {
-        return EqualityComparer<NodeSideInfo>.Default.Equals(a, b);
+        return a.Equals(b);
     }
 
     public static bool operator !=(NodeSideInfo a, NodeSideInfo b)
     {
-        return !(a == b);
+        return !(a.Equals(b));
     }
 
     public Node GetNodeAtSide()

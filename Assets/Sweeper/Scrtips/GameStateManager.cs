@@ -57,11 +57,9 @@ public class GameStateManager : SingletonBase<GameStateManager>
         Player.SetSittingNode(_boardManager.CurrentBoard.GetNodeAt(_boardManager.CurrentBoard.StartCellCoord), Side.Top);
     }
 
-    public void SpawnExclamation(int x, int y, int z)
+    public void SpawnExclamation(Transform playerTransform)
     {
-        Vector3 position = BoardManager.BoardPosToWorldPos(new Vector3Int(x, y, z));
-        position.y = 1.0f;
-        GameObject go = Instantiate(_exclamationPrefab, position, Quaternion.identity);
+        GameObject go = Instantiate(_exclamationPrefab, playerTransform.position + Vector3.up, Quaternion.identity);
         go.transform.SetParent(transform);
         _exclamations.Add(go);
     }
@@ -79,15 +77,15 @@ public class GameStateManager : SingletonBase<GameStateManager>
     }
 
     //만약 플레이어가 죽거나 출구에 도착한다면 true를 반환한다
-    public bool CheckMovement(Node sittingNode)
+    public bool CheckMovement(NodeSideInfo sittingNodeInfo)
     {
         bool result = false;
-        if (sittingNode.IsHazard)
+        if (sittingNodeInfo.IsHazard)
         {
             RespawnPlayer();
             result = true;
         }
-        else if (sittingNode.Type == Node.NodeType.Exit)
+        else if (sittingNodeInfo._node.Type == Node.NodeType.Exit)
         {
             SetupNextBoard();
             result = true;

@@ -82,8 +82,8 @@ namespace Level
         {
             foreach (var l in data._levelObjectDatas)
             {
-                Node node = BoardManager.Instance.CurrentBoard.GetNodeAt(l._boardX, l._boardY, l._boardZ);
-                LevelCreator.Instance.InstallObjectAtNode(node, l._installedSide, l._prefabIndex);
+                NodeSideInfo info = BoardManager.Instance.CurrentBoard.GetNodeInfoAt(l._boardX, l._boardY, l._boardZ, l._installedSide);
+                LevelCreator.Instance.InstallObjectAtNode(info, l._prefabIndex);
             }
         }
 

@@ -59,8 +59,7 @@ public class BoardObject : MonoBehaviour
         {
             if (n != null)
             {
-                Node currentNode = n._node;
-                if (currentNode.IsHazard)
+                if (n.IsHazard)
                 {
                     isHazardExist = true;
                 }
@@ -69,13 +68,13 @@ public class BoardObject : MonoBehaviour
 
         if (isHazardExist)
         {
-            GameStateManager.Instance.SpawnExclamation((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);
+            GameStateManager.Instance.SpawnExclamation(transform);
         }
 
         return isHazardExist;
     }
 
-    public void UpdateNeighbourCells(Side side)
+    public void UpdateNeighbourCells()
     {
         _adjacentCells = BoardManager.Instance.CurrentBoard.GetNeighbours(_movementManager._sittingNodeInfo).ToArray();
     }

@@ -649,13 +649,14 @@ public class Board
 
                     if (IsInBound(x, y, z))
                     {
-                        Node currentNode = Nodes[Index3D(x, y, z)];
+                        NodeSideInfo currentInfo = _nodeSideInfos[Index3D(x, y, z), (int)info._side];
                         if ((x == info._node.X && y == info._node.Y && z == info._node.Z)
-                            || !currentNode.IsSolid)
+                            || !currentInfo._node.IsSolid)
                         {
                             continue;
                         }
-                        result.Add(new NodeSideInfo(currentNode, info._side));
+                        //TODO : Correct this
+                        result.Add(currentInfo);
                     }
                 }
             }
