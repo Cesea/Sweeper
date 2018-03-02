@@ -15,11 +15,17 @@ public class MoveCommand : Command
         _cost = 1;
     } 
 
-    public override void Execute(GameObject target)
+    public override bool Execute(GameObject target)
     {
-        base.Execute(target);
-
-        BoardMovementManager manager = target.GetComponent<BoardMovementManager>();
-        manager.StartFindPath(_targetNode);
+        if (base.Execute(target))
+        {
+            BoardMovementManager manager = target.GetComponent<BoardMovementManager>();
+            manager.StartFindPath(_targetNode);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

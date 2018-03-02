@@ -7,7 +7,6 @@ using Foundation;
 [System.Serializable]
 public class RadarCommand : Command
 {
-
     public int X { get; set; }
     public int Z { get; set; }
 
@@ -18,9 +17,13 @@ public class RadarCommand : Command
         _cost = 1;
     } 
 
-    public override void Execute(GameObject target)
+    public override bool Execute(GameObject target)
     {
-        base.Execute(target);
+        if (base.Execute(target))
+        {
+            return true;
+        }
+        return false;
         //Instantiate particle prefab;
     }
 }

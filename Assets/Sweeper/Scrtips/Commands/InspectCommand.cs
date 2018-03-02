@@ -13,7 +13,7 @@ public class InspectCommand : Command
         _cost = 1;
     }
 
-    public override void Execute(GameObject target)
+    public override bool Execute(GameObject target)
     {
         DialogContent content = new DialogContent();
         content._content = "Objet Name : " + target.name;
@@ -22,5 +22,7 @@ public class InspectCommand : Command
         //RadialMenu.Shut();
 
         ModalDialog.Show(content);
+
+        return true;
     }
 }

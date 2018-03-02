@@ -12,7 +12,7 @@ namespace Foundation
         public virtual bool Execute(GameObject target)
         {
             BoardStamina stamina = target.GetComponent<BoardStamina>();
-            if (stamina.Consume(_cost))
+            if (stamina != null && stamina.Consume(_cost))
             {
                 return true;
             }

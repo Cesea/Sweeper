@@ -16,10 +16,17 @@ public class InstallObjectCommand : Command
         _cost = 2;
     }
 
-    public override void Execute(GameObject target)
+    public override bool Execute(GameObject target)
     {
-        base.Execute(target);
-        Level.LevelCreator.Instance.InstallObjectAtNode(_nodeInfo, PrefabIndex);
+        if (base.Execute(target))
+        {
+            Level.LevelCreator.Instance.InstallObjectAtNode(_nodeInfo, PrefabIndex);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
 }
