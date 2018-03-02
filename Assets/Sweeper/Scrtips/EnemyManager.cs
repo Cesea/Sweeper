@@ -16,6 +16,16 @@ public class EnemyManager : SingletonBase<EnemyManager>
         
     }
 
+    private void OnEnable()
+    {
+        EventManager.Instance.AddListener<Events.EnemyTurnEvent>(OnEnemyTurnEvent);
+    }
+
+    private void OnDisable()
+    {
+        EventManager.Instance.RemoveListener<Events.EnemyTurnEvent>(OnEnemyTurnEvent);
+    }
+
     public bool SpawnEnemy(Vector3Int pos, Side side)
     {
         return SpawnEnemy(pos.x, pos.y, pos.z, side);
@@ -32,6 +42,21 @@ public class EnemyManager : SingletonBase<EnemyManager>
         EnemyBoardObject boardObject = go.GetComponent<EnemyBoardObject>();
         boardObject.SetSittingNode(x, y, z, side);
 
+        _enemies.Add(boardObject);
         return result;
+    }
+
+    public void OnEnemyTurnEvent(Events.EnemyTurnEvent e)
+    {
+        StartCoroutine(EnemiesThinkAndAct());
+        GameStateManager.Instance.TurnChanged = true;
+    }
+
+    IEnumerator EnemiesThinkAndAct()
+    {
+        foreach (var e in _enemies)
+        {
+            yield return null;
+        }
     }
 }

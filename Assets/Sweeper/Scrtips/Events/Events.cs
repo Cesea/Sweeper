@@ -39,8 +39,16 @@ namespace Events
         {
             _value = value;
         }
-
     }
+
+    public class PlayerTurnEvent : GameEvent
+    {
+    }
+
+    public class EnemyTurnEvent : GameEvent
+    {
+    }
+
 
 }
 

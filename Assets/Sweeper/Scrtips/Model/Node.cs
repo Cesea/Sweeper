@@ -89,11 +89,30 @@ public class Node
 
     public static Vector2[,] BlockUVs =
     {
-        { new Vector2(0.0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.0f, 1.0f), new Vector2(0.5f, 1.0f) }, 
-        { new Vector2(0.0f, 0.0f), new Vector2(0.5f, 0.0f), new Vector2(0.0f, 0.5f), new Vector2(0.5f, 0.5f) }, 
-        { new Vector2(0.5f, 0.0f), new Vector2(1.0f, 0.0f), new Vector2(0.5f, 0.5f), new Vector2(1.0f, 0.5f) }, 
-        { new Vector2(0.5f, 0.5f), new Vector2(1.0f, 0.5f), new Vector2(0.5f, 1.0f), new Vector2(1.0f, 1.0f) }, 
+        { new Vector2(0.0f, 0.5f), new Vector2(0.0f, 1.0f), new Vector2(0.5f, 1.0f), new Vector2(0.5f, 0.5f) }, 
+        { new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.0f) }, 
+        { new Vector2(0.5f, 0.0f), new Vector2(0.5f, 0.5f), new Vector2(1.0f, 0.5f), new Vector2(1.0f, 0.0f) }, 
+        { new Vector2(0.5f, 0.5f), new Vector2(0.5f, 1.0f), new Vector2(1.0f, 1.0f), new Vector2(1.0f, 0.5f) } 
     };
+
+    public static bool IsAdjacent(Node a, Node b)
+    {
+        Vector3Int diff = a.BoardPosition - b.BoardPosition;
+        diff.x = Mathf.Abs(diff.x);
+        diff.y = Mathf.Abs(diff.y);
+        diff.z = Mathf.Abs(diff.z);
+
+        if ((diff.x == 1 && diff.y == 0 && diff.z == 0) ||
+            (diff.x == 0 && diff.y == 1 && diff.z == 0) ||
+            (diff.x == 0 && diff.y == 0 && diff.z == 1))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    } 
 
     public Node(int x, int y, int z, Vector3 worldPos, NodeType type, GameObject parent, Board owner)
     {
@@ -104,7 +123,6 @@ public class Node
         WorldPosition = worldPos;
         _parent = parent;
         _owner = owner;
-
     }
 
     public void BuildMesh()
@@ -141,26 +159,26 @@ public class Node
         if (_type == NodeType.Normal)
         {
             uv00 = BlockUVs[(int)(_type), 0];
-            uv10 = BlockUVs[(int)(_type), 1];
-            uv01 = BlockUVs[(int)(_type), 2];
-            uv11 = BlockUVs[(int)(_type), 3];
+            uv01 = BlockUVs[(int)(_type), 1];
+            uv11 = BlockUVs[(int)(_type), 2];
+            uv10 = BlockUVs[(int)(_type), 3];
         }
         else if (_type == NodeType.Start)
         {
             uv00 = BlockUVs[(int)(_type), 0];
-            uv10 = BlockUVs[(int)(_type), 1];
-            uv01 = BlockUVs[(int)(_type), 2];
-            uv11 = BlockUVs[(int)(_type), 3];
+            uv01 = BlockUVs[(int)(_type), 1];
+            uv11 = BlockUVs[(int)(_type), 2];
+            uv10 = BlockUVs[(int)(_type), 3];
         }
         else if(_type == NodeType.Exit)
         {
             uv00 = BlockUVs[(int)(_type), 0];
-            uv10 = BlockUVs[(int)(_type), 1];
-            uv01 = BlockUVs[(int)(_type), 2];
-            uv11 = BlockUVs[(int)(_type), 3];
+            uv01 = BlockUVs[(int)(_type), 1];
+            uv11 = BlockUVs[(int)(_type), 2];
+            uv10 = BlockUVs[(int)(_type), 3];
         }
 
-        uvs = new Vector2[] { uv00, uv10, uv11, uv01 };
+        uvs = new Vector2[] { uv00, uv01, uv11, uv10 };
 
         mesh.uv = uvs;
 

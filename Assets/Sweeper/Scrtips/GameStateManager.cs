@@ -36,6 +36,12 @@ public class GameStateManager : SingletonBase<GameStateManager>
     private bool _levelFinished = false;
     public bool LevelFinished { get { return _levelFinished; } set { _levelFinished = value; } }
 
+    private bool _isPlayerTurn = true;
+    public bool IsPlayerTurn { get { return _isPlayerTurn; } set { _isPlayerTurn = value; } }
+
+    private bool _turnChanged;
+    public bool TurnChanged { get { return _turnChanged; }  set { _turnChanged = value; } }
+
     //private bool _playerDied = false;
 
     public UnityEvent StartLevelEvent;
@@ -122,6 +128,20 @@ public class GameStateManager : SingletonBase<GameStateManager>
         _player.CanReceiveCommand = true;
         while (!_isGameOver)
         {
+            if (_turnChanged)
+            {
+                _isPlayerTurn = !_isPlayerTurn;
+                _turnChanged = false;
+                if (_isPlayerTurn)
+                {
+                    EventManager.Instance.TriggerEvent(new Events.PlayerTurnEvent());
+                }
+                else
+                {
+                    EventManager.Instance.TriggerEvent(new Events.EnemyTurnEvent());
+                }
+            }
+
             //check for game over condition
             //win
             //reach the end

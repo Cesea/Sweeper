@@ -9,12 +9,17 @@ public class InGameHUD : Menu<InGameHUD>
     public Text _healthText;
     public Text _staminaText;
 
+    public Button _endTurnButton;
+
+    public Text _turnLabel;
+
     public static void Show(PlayerBoardObject boardObject)
     {
         Open();
 
         Instance._healthText.text =  boardObject.GetComponent<BoardHealth>().CurrentHealth.ToString();
         Instance._staminaText.text = boardObject.GetComponent<BoardStamina>().CurrentStamina.ToString();
+
     }
 
     public static void Shut()
@@ -26,12 +31,16 @@ public class InGameHUD : Menu<InGameHUD>
     {
         EventManager.Instance.AddListener<Events.PlayerHealthChanged>(OnHealthChanged);
         EventManager.Instance.AddListener<Events.PlayerStaminaChanged>(OnStaminaChanged);
+        EventManager.Instance.AddListener<Events.PlayerTurnEvent>(OnPlayerTurnEvent);
+        EventManager.Instance.AddListener<Events.EnemyTurnEvent>(OnEnemyTurnEvent);
     }
 
     private void OnDisable()
     {
         EventManager.Instance.RemoveListener<Events.PlayerHealthChanged>(OnHealthChanged);
         EventManager.Instance.RemoveListener<Events.PlayerStaminaChanged>(OnStaminaChanged);
+        EventManager.Instance.AddListener<Events.PlayerTurnEvent>(OnPlayerTurnEvent);
+        EventManager.Instance.AddListener<Events.EnemyTurnEvent>(OnEnemyTurnEvent);
     }
 
     public void OnHealthChanged(Events.PlayerHealthChanged e)
@@ -44,4 +53,18 @@ public class InGameHUD : Menu<InGameHUD>
         _staminaText.text = e._value.ToString();
     }
 
+    public void OnPlayerTurnEvent(Events.PlayerTurnEvent e)
+    {
+        _turnLabel.text = "Player Turn";
+    }
+
+    public void OnEnemyTurnEvent(Events.EnemyTurnEvent e)
+    {
+        _turnLabel.text = "Enemy Turn";
+    }
+
+    public void OnEndTurnButtonPressed()
+    {
+        GameStateManager.Instance.TurnChanged = true;
+    }
 }

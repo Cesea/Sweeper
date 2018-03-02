@@ -36,9 +36,9 @@ namespace Utils
                     break;
                 case Side.Left:
                     {
-                        vertices = new Vector3[] { p1, p5, p6, p2 };
+                        vertices = new Vector3[] { p1, p2, p6, p5 };
                         normals = new Vector3[] { Vector3.left, Vector3.left, Vector3.left, Vector3.left };
-                        triangles = new int[] { 0, 1, 2, 0, 2, 3 };
+                        triangles = new int[] { 0, 3, 2, 0, 2, 1 };
                     }
                     break;
                 case Side.Right:
@@ -50,9 +50,9 @@ namespace Utils
                     break;
                 case Side.Front:
                     {
-                        vertices = new Vector3[] { p5, p8, p7, p6 };
+                        vertices = new Vector3[] { p5, p6, p7, p8 };
                         normals = new Vector3[] { Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward };
-                        triangles = new int[] { 0, 1, 2, 0, 2, 3 };
+                        triangles = new int[] { 0, 3, 2, 0, 2, 1 };
                     }
                     break;
                 case Side.Back:
@@ -99,38 +99,76 @@ namespace Utils
             List<Vector3> normals = new List<Vector3>();
             List<int> triangles = new List<int>();
 
-            for (int i = 0; i < list.Count - 1; ++i)
+            Vector3[] localVertices = new Vector3[4];
+            Vector3[] localNormals = new Vector3[4];
+
+            int[] localTriangles = new int[6];
+
+            if (list.Count == 1)
             {
-                NodeSideInfo current = list[i];
-                NodeSideInfo next = list[i + 1];
 
-                Vector3Int boardDiff = next._node.BoardPosition - current._node.BoardPosition;
-                Side currentRelativeSide = BoardManager.NormalToSide(boardDiff.ToVector3());
+                NodeSideInfo current = list[0];
 
-                Vector3[] localVertices = new Vector3[4];
-                Vector3[] localNormals = new Vector3[4];
+                Vector3 offset = BoardManager.SideToVector3Offset(current._side);
 
-                int[] localTriangles = new int[6];
-
-                BuildQuadData(current._side, 
-                                BoardManager.Instance.NodeRadius, 
-                                -BoardManager.SideToVector3Offset(current._side),
+                BuildQuadData(current._side,
+                                BoardManager.Instance.NodeRadius,
+                                -offset,
                                 ref localVertices,
                                 ref localNormals,
                                 ref localTriangles);
 
-                for(int j = 0; j < 4; ++j)
+                for (int j = 0; j < 4; ++j)
                 {
-                    localVertices[j] += current.GetWorldPosition();
+                    localVertices[j] += current.GetWorldPosition() + offset * 0.1f;
                 }
-                for (int j = 0; j < 6; ++j)
-                {
-                    localTriangles[j] += 4 * i;
-                }
-
                 vertices.AddRange(localVertices);
                 normals.AddRange(localNormals);
                 triangles.AddRange(localTriangles);
+            }
+            else
+            {
+                for (int i = 0; i < list.Count; ++i)
+                {
+                    NodeSideInfo current; 
+                    NodeSideInfo next;
+                    if (i == list.Count - 1)
+                    {
+                        current = list[i];
+                        next = list[i - 1];
+                    }
+                    else
+                    {
+                        current = list[i];
+                        next = list[i + 1];
+                    }
+
+                    Vector3Int boardDiff = next._node.BoardPosition - current._node.BoardPosition;
+                    Side currentRelativeSide = BoardManager.NormalToSide(boardDiff.ToVector3());
+
+                    Vector3 offset = BoardManager.SideToVector3Offset(current._side);
+
+                    BuildQuadData(current._side,
+                                    BoardManager.Instance.NodeRadius,
+                                    -offset,
+                                    ref localVertices,
+                                    ref localNormals,
+                                    ref localTriangles);
+
+                    for (int j = 0; j < 4; ++j)
+                    {
+                        localVertices[j] += current.GetWorldPosition() + offset * 0.1f;
+                    }
+                    for (int j = 0; j < 6; ++j)
+                    {
+                        localTriangles[j] += 4 * i;
+                    }
+
+                    vertices.AddRange(localVertices);
+                    normals.AddRange(localNormals);
+                    triangles.AddRange(localTriangles);
+                }
+
             }
 
             mesh.vertices = vertices.ToArray();

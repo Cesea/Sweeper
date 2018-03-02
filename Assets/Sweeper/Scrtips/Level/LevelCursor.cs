@@ -112,7 +112,7 @@ namespace Level
         {
             if (Input.GetMouseButton(0) &&
                 _leftMouseClockTimer.Tick(Time.deltaTime) &&
-                Object.ReferenceEquals(_selectingInfo, null))
+                !Object.ReferenceEquals(_selectingInfo, null))
             {
                 GameObject sittingObject = _selectingInfo._sittingObject;
                 if (sittingObject != null)
@@ -120,6 +120,7 @@ namespace Level
                     ChangeState(CursorState.Move);
                 }
             }
+
 
             if (Input.GetMouseButton(1) && _rightMouseClickTimer.Tick(Time.deltaTime))
             {
@@ -145,9 +146,10 @@ namespace Level
 
         private void MoveUpdate()
         {
-            if (_selectingNodeChanged)
+            if (_selectingNodeChanged )
             {
-                if (_selectedNodeInfoList.Count >= 2)
+                if (_selectedNodeInfoList.Count >= 2 &&
+                    Node.IsAdjacent(_selectedNodeInfoList[_selectedNodeInfoList.Count - 1]._node, _selectingInfo._node))
                 {
                     if (_selectingInfo == _selectedNodeInfoList[_selectedNodeInfoList.Count - 2])
                     {
@@ -187,8 +189,18 @@ namespace Level
                     _selectingNodeChanged = true;
                 }
             }
-            transform.position = worldPosition;
-            transform.rotation = rotation;
+
+            if (_state == CursorState.Create ||
+                _state == CursorState.Select)
+            {
+                transform.position = worldPosition;
+                transform.rotation = rotation;
+            }
+            else
+            {
+                transform.position = Vector3.zero;
+                transform.rotation = Quaternion.identity;
+            }
         }
 
         private void BuildSelecMesh()
@@ -204,7 +216,7 @@ namespace Level
 
         private void BuildLineMesh()
         {
-            if (_selectedNodeInfoList.Count > 1)
+            if (_selectedNodeInfoList.Count > 0)
             {
                 _lineMesh = MeshBuilder.BuildQuadsFromNodeInfoList(_selectedNodeInfoList, _cursorUVs);
                 _meshFilter.mesh = _lineMesh;
@@ -240,6 +252,7 @@ namespace Level
                     } break;
                 case CursorState.Move:
                     {
+                        _selectedNodeInfoList.Add(_selectingInfo);
                         BuildLineMesh();
                     } break;
                 case CursorState.Select:
