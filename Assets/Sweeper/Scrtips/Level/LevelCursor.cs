@@ -29,13 +29,14 @@ namespace Level
         public NodeSideInfo _prevSelectingInfo;
 
         [HideInInspector]
-        public List<NodeSideInfo> _nodeInfoList = new List<NodeSideInfo>();
+        public List<NodeSideInfo> _selectedNodeInfoList = new List<NodeSideInfo>();
 
-        private bool _locationChanged = false;
+        private bool _selectingNodeChanged = false;
 
         public Material _cursorMaterial;
 
         private Timer _rightMouseClickTimer;
+        private Timer _leftMouseClockTimer;   
 
         private CursorState _state;
 
@@ -55,6 +56,7 @@ namespace Level
         private void Start()
         {
             _rightMouseClickTimer = new Timer(0.5f);
+            _leftMouseClockTimer = new Timer(0.5f);
             _state = CursorState.Select;
 
             _prevSelectingInfo = 
@@ -67,6 +69,23 @@ namespace Level
 
         private void Update()
         {
+            //NOTE : Temp code
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                ChangeState(CursorState.Select);
+                Debug.Log("select");
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                ChangeState(CursorState.Move);
+                Debug.Log("move");
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                ChangeState(CursorState.Create);
+                Debug.Log("create");
+            }
+
             LocateCursor();
             switch (_state)
             {
@@ -88,15 +107,17 @@ namespace Level
             }
         }
 
+
         private void SelectUpdate()
         {
             if (Input.GetMouseButton(0) &&
+                _leftMouseClockTimer.Tick(Time.deltaTime) &&
                 Object.ReferenceEquals(_selectingInfo, null))
             {
                 GameObject sittingObject = _selectingInfo._sittingObject;
                 if (sittingObject != null)
                 {
-                    //GameStateManager.Instance._selectingObject  = sittingObject;
+                    ChangeState(CursorState.Move);
                 }
             }
 
@@ -124,6 +145,26 @@ namespace Level
 
         private void MoveUpdate()
         {
+            if (_selectingNodeChanged)
+            {
+                if (_selectedNodeInfoList.Count >= 2)
+                {
+                    if (_selectingInfo == _selectedNodeInfoList[_selectedNodeInfoList.Count - 2])
+                    {
+                        _selectedNodeInfoList.RemoveAt(_selectedNodeInfoList.Count - 1);
+                    }
+                    else
+                    {
+                        _selectedNodeInfoList.Add(_selectingInfo);
+                    }
+                }
+                else
+                {
+                    _selectedNodeInfoList.Add(_selectingInfo);
+                }
+
+                BuildLineMesh();
+            }
         }
 
         private void LocateCursor()
@@ -132,17 +173,18 @@ namespace Level
             Vector3 worldPosition = transform.position;
 
             _prevSelectingInfo = _selectingInfo;
-            _locationChanged = false;
+            _selectingNodeChanged = false;
 
             if (BoardManager.GetNodeSideInfoAtMouse(ref _selectingInfo))
             {
                 worldPosition = _selectingInfo.GetWorldPosition();
+                //offset
                 worldPosition += BoardManager.SideToVector3Offset(_selectingInfo._side) * 0.1f;
                 rotation = BoardManager.SideToRotation(_selectingInfo._side);
 
                 if (_prevSelectingInfo != _selectingInfo)
                 {
-                    _locationChanged = true;
+                    _selectingNodeChanged = true;
                 }
             }
             transform.position = worldPosition;
@@ -162,16 +204,49 @@ namespace Level
 
         private void BuildLineMesh()
         {
-            if (_nodeInfoList.Count > 0)
+            if (_selectedNodeInfoList.Count > 1)
             {
-                //TODO : 
-                //_selectMesh = MeshBuilder.BuildQuadsFromNodeInfoList(_nodeInfoList, _cursorUVs);
+                _lineMesh = MeshBuilder.BuildQuadsFromNodeInfoList(_selectedNodeInfoList, _cursorUVs);
+                _meshFilter.mesh = _lineMesh;
             }
         }
 
-        private void ChangeCursorMesh(Mesh mesh)
+        private void ChangeState(CursorState state)
         {
-            _meshFilter.mesh = mesh;
+            if (state == _state)
+            {
+                return;
+            }
+
+            switch (_state)
+            {
+                case CursorState.Create:
+                    {
+                    } break;
+                case CursorState.Move:
+                    {
+                        _selectedNodeInfoList.Clear();
+                    } break;
+                case CursorState.Select:
+                    {
+                    } break;
+            }
+
+            _state = state;
+            switch (state)
+            {
+                case CursorState.Create:
+                    {
+                    } break;
+                case CursorState.Move:
+                    {
+                        BuildLineMesh();
+                    } break;
+                case CursorState.Select:
+                    {
+                        _meshFilter.mesh = _selectMesh;
+                    } break;
+            }
         }
 
     }

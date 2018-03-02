@@ -4,9 +4,14 @@ using UnityEngine;
 
 public static class Extensions
 {
-    public static Vector3Int ToVector3Int(this Vector3 position, int xDelta = 0, int yDelta = 0, int  zDelta = 0)
+    public static Vector3Int ToVector3Int(this Vector3 position)
     {
-        return new Vector3Int((int)position.x + xDelta, (int)position.y + yDelta, (int)position.z + zDelta);
+        return new Vector3Int((int)position.x, (int)position.y, (int)position.z);
     }
+
+    public static Vector3 ToVector3(this Vector3Int position)
+    {
+        return new Vector3(position.x, position.y, position.z);
+    } 
 
 }

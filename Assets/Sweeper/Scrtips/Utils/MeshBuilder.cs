@@ -6,16 +6,9 @@ namespace Utils
 {
     public class MeshBuilder 
     {
-        public static Mesh BuildQuad(Side side, float radius, Vector3 offset)
+        public static void BuildQuadData(Side side, float radius, Vector3 offset,
+            ref Vector3[] vertices, ref Vector3[] normals, ref int[] triangles)
         {
-            Mesh mesh = new Mesh();
-            mesh.name = "Scripted Mesh";
-
-            Vector3[] vertices = new Vector3[4];
-            Vector3[] normals = new Vector3[4];
-
-            int[] triangles = new int[6];
-
             Vector3 p1 = new Vector3( -radius, -radius, -radius) + offset;
             Vector3 p2 = new Vector3(-radius, radius, -radius) + offset;
             Vector3 p3 = new Vector3(radius, radius, -radius) + offset;
@@ -71,6 +64,21 @@ namespace Utils
                     break;
             }
 
+
+        }
+
+        public static Mesh BuildQuad(Side side, float radius, Vector3 offset)
+        {
+            Mesh mesh = new Mesh();
+            mesh.name = "Scripted Mesh";
+
+            Vector3[] vertices = new Vector3[4];
+            Vector3[] normals = new Vector3[4];
+
+            int[] triangles = new int[6];
+
+            BuildQuadData(side, radius, offset, ref vertices, ref normals, ref triangles);
+
             mesh.vertices = vertices;
             mesh.normals = normals;
             mesh.triangles = triangles;
@@ -81,9 +89,56 @@ namespace Utils
             return mesh;
         }
 
-        public static Mesh BuildQuadsFromNodeInfoList(List<NodeSideInfo> list)
+        public static Mesh BuildQuadsFromNodeInfoList(List<NodeSideInfo> list,Vector2[,] inputUV)
         {
             Mesh mesh = new Mesh();
+            mesh.name = "ListMesh";
+
+            List<Vector3> vertices = new List<Vector3>();
+            List<Vector2> uvs = new List<Vector2>();
+            List<Vector3> normals = new List<Vector3>();
+            List<int> triangles = new List<int>();
+
+            for (int i = 0; i < list.Count - 1; ++i)
+            {
+                NodeSideInfo current = list[i];
+                NodeSideInfo next = list[i + 1];
+
+                Vector3Int boardDiff = next._node.BoardPosition - current._node.BoardPosition;
+                Side currentRelativeSide = BoardManager.NormalToSide(boardDiff.ToVector3());
+
+                Vector3[] localVertices = new Vector3[4];
+                Vector3[] localNormals = new Vector3[4];
+
+                int[] localTriangles = new int[6];
+
+                BuildQuadData(current._side, 
+                                BoardManager.Instance.NodeRadius, 
+                                -BoardManager.SideToVector3Offset(current._side),
+                                ref localVertices,
+                                ref localNormals,
+                                ref localTriangles);
+
+                for(int j = 0; j < 4; ++j)
+                {
+                    localVertices[j] += current.GetWorldPosition();
+                }
+                for (int j = 0; j < 6; ++j)
+                {
+                    localTriangles[j] += 4 * i;
+                }
+
+                vertices.AddRange(localVertices);
+                normals.AddRange(localNormals);
+                triangles.AddRange(localTriangles);
+            }
+
+            mesh.vertices = vertices.ToArray();
+            mesh.normals = normals.ToArray();
+            mesh.triangles = triangles.ToArray();
+
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
 
             return mesh;
         }
