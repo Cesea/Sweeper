@@ -4,22 +4,10 @@ using UnityEngine;
 
 namespace AI
 {
-    public class IState
+    public interface IState
     {
-        protected EnemyBoardObject _owner;
-
-        public virtual void Enter(EnemyBoardObject owner)
-        {
-            _owner = owner;
-        }
-
-        public virtual void Update()
-        {
-        }
-
-        public virtual void Exit()
-        {
-        }
-
+        void Enter(EnemyBoardObject owner);
+        void Update();
+        void Exit();
     }
 }

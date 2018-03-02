@@ -5,6 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(BoardMovementManager))]
 public class PlayerBoardObject : BoardObject
 {
+    protected BoardHealth _health;
+
     private void OnEnable()
     {
         EventManager.Instance.AddListener<Events.RadialShutEvent>(ClearCommandBuffer);
@@ -13,6 +15,12 @@ public class PlayerBoardObject : BoardObject
     private void OnDisable()
     {
         EventManager.Instance.RemoveListener<Events.RadialShutEvent>(ClearCommandBuffer);
+    }
+
+    protected override void Awake()
+    {
+        base.Awake();
+        _health = GetComponent<BoardHealth>();
     }
 
     public override bool CheckAdjacentCells()
@@ -33,6 +41,23 @@ public class PlayerBoardObject : BoardObject
             GameStateManager.Instance.SpawnExclamation(transform);
         }
         return isHazardExist;
+    }
+
+    public override bool CheckMovement(NodeSideInfo sittingNodeInfo)
+    {
+        bool result = false;
+        if (sittingNodeInfo.IsHazard)
+        {
+            result = true;
+            _health.ReceiveDamage(1);
+        }
+        else if (sittingNodeInfo._node.Type == Node.NodeType.Exit)
+        {
+            result = true;
+            GameStateManager.Instance.IsGameOver = true;
+            GameStateManager.Instance.LevelFinished = true;
+        }
+        return result;
     }
 
 }

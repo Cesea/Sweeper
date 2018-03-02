@@ -9,10 +9,14 @@ namespace Foundation
     {
         protected int _cost;
 
-        public virtual void Execute(GameObject target)
+        public virtual bool Execute(GameObject target)
         {
             BoardStamina stamina = target.GetComponent<BoardStamina>();
-            stamina.CurrentStamina -= _cost;
+            if (stamina.Consume(_cost))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -9,9 +9,6 @@ public class BoardObject : MonoBehaviour
 {
     protected BoardMovementManager _movementManager;
 
-    protected bool _alive = true;
-    public bool Alive { get { return _alive; }  set { _alive = value; } }
-
     [HideInInspector]
     public List<Command> _commandBuffer = new List<Command>();
 
@@ -31,9 +28,14 @@ public class BoardObject : MonoBehaviour
         _adjacentCells = new NodeSideInfo[8];
     }
 
-    public void SetSittingNode(Node node, Side side)
+    public void SetSittingNode(Vector3Int pos, Side side)
     {
-        _movementManager.SetSittingNode(node, side);
+        SetSittingNode(pos.x, pos.y, pos.z, side);
+    }
+
+    public void SetSittingNode(int x, int y, int z, Side side)
+    {
+        _movementManager.SetSittingNode(x, y, z, side);
     }
 
     // NOTE : if there is hazard then return true
@@ -63,20 +65,9 @@ public class BoardObject : MonoBehaviour
         _commandBuffer.Clear();
     }
 
-    public bool CheckMovement(NodeSideInfo sittingNodeInfo)
+    public virtual bool CheckMovement(NodeSideInfo sittingNodeInfo)
     {
         bool result = false;
-        if (sittingNodeInfo.IsHazard)
-        {
-            result = true;
-            _alive = false;
-        }
-        else if (sittingNodeInfo._node.Type == Node.NodeType.Exit)
-        {
-            result = true;
-            GameStateManager.Instance.IsGameOver = true;
-            GameStateManager.Instance.LevelFinished = true;
-        }
         return result;
     }
 

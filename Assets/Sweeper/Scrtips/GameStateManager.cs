@@ -10,18 +10,18 @@ using Utils;
 public class GameStateManager : SingletonBase<GameStateManager>
 {
     private BoardManager _boardManager;
+    private EnemyManager _enemyManager;
 
     [Header("Prefabs")]
     public GameObject _exclamationPrefab;
 
     public float _delayTime = 1.0f;
 
-
     private List<GameObject> _exclamations;
 
     [SerializeField]
-    private BoardObject _player;
-    public BoardObject Player { get { return _player; }  set { _player = value; } }
+    private PlayerBoardObject _player;
+    public PlayerBoardObject Player { get { return _player; } set { _player = value; } }
 
     public CameraController _cameraController;
 
@@ -30,20 +30,35 @@ public class GameStateManager : SingletonBase<GameStateManager>
     private bool _levelStarted = false;
     public bool LevelStarted { get { return _levelStarted; } set { _levelStarted = value; } }
     private bool _isGamePlaying = false;
-    public bool IsGamePlaying { get { return _isGamePlaying; }  set { _isGamePlaying = value; } } 
+    public bool IsGamePlaying { get { return _isGamePlaying; } set { _isGamePlaying = value; } }
     private bool _isGameOver = false;
-    public bool IsGameOver { get { return _isGameOver; }  set { _isGameOver = value; } }
+    public bool IsGameOver { get { return _isGameOver; } set { _isGameOver = value; } }
     private bool _levelFinished = false;
-    public bool LevelFinished { get { return _levelFinished; }  set { _levelFinished = value; } }
+    public bool LevelFinished { get { return _levelFinished; } set { _levelFinished = value; } }
+
+    //private bool _playerDied = false;
 
     public UnityEvent StartLevelEvent;
     public UnityEvent PlayLevelEvent;
     public UnityEvent EndLevelEvent;
 
 
+    private void OnEnable()
+    {
+        EventManager.Instance.AddListener<Events.RadarSkillEvent>(OnRadarSkillEvent);
+    }
+
+    private void OnDisable()
+    {
+        EventManager.Instance.AddListener<Events.RadarSkillEvent>(OnRadarSkillEvent);
+    }
+
+
     private void Start()
     {
         _boardManager = BoardManager.Instance;
+        _enemyManager = EnemyManager.Instance;
+
         _exclamations = new List<GameObject>();
 
         _levelCursor.gameObject.SetActive(false);
@@ -61,15 +76,24 @@ public class GameStateManager : SingletonBase<GameStateManager>
 
     private IEnumerator RunGameLoop()
     {
-        yield return StartCoroutine("StartLevelRoutine"); 
-        yield return StartCoroutine("PlayLevelRoutine"); 
-        yield return StartCoroutine("EndLevelRoutine"); 
+        yield return StartCoroutine("StartLevelRoutine");
+        yield return StartCoroutine("PlayLevelRoutine");
+        yield return StartCoroutine("EndLevelRoutine");
     }
 
     private IEnumerator StartLevelRoutine()
     {
         _player.CanReceiveCommand = false;
+
         SetupNextBoard();
+        yield return null;        
+
+        SetupPlayer();
+        yield return null;        
+
+        SetupEnemy();
+        yield return null;        
+
         while (!_levelStarted)
         {
             yield return null;
@@ -93,7 +117,7 @@ public class GameStateManager : SingletonBase<GameStateManager>
         if (PlayLevelEvent != null)
         {
             PlayLevelEvent.Invoke();
-        } 
+        }
 
         _player.CanReceiveCommand = true;
         while (!_isGameOver)
@@ -105,9 +129,10 @@ public class GameStateManager : SingletonBase<GameStateManager>
             {
                 break;
             }
+
             //lose
             //player dies
-            if (!_player.Alive)
+            if (!_player.GetComponent<BoardHealth>().Alive)
             {
                 break;
             }
@@ -146,15 +171,6 @@ public class GameStateManager : SingletonBase<GameStateManager>
         SceneLoader.Instance.LoadScene(SceneLoader.Instance.GetCurrentScene().buildIndex);
     }
 
-    private void OnEnable()
-    {
-        EventManager.Instance.AddListener<Events.RadarSkillEvent>(OnRadarSkillEvent);
-    }
-
-    private void OnDisable()
-    {
-        EventManager.Instance.AddListener<Events.RadarSkillEvent>(OnRadarSkillEvent);
-    }
 
     public void PlayLevel()
     {
@@ -164,19 +180,22 @@ public class GameStateManager : SingletonBase<GameStateManager>
     public void SetupNextBoard()
     {
         _boardManager.BuildNewBoard();
-        RespawnPlayer();
         RemoveExclamations();
 
         _cameraController.transform.position = new Vector3(
             _boardManager.WorldSize.x / 2.0f,
             _cameraController.transform.position.y,
             _boardManager.WorldSize.z / 2.0f);
-
     }
 
-    public void RespawnPlayer()
+    public void SetupPlayer()
     {
-        Player.SetSittingNode(_boardManager.CurrentBoard.GetNodeAt(_boardManager.CurrentBoard.StartCellCoord), Side.Top);
+        Player.SetSittingNode(_boardManager.CurrentBoard.StartCellCoord, Side.Top);
+    }
+
+    public void SetupEnemy()
+    {
+        _enemyManager.SpawnEnemy(3, 0, 3, Side.Top);
     }
 
     public void SpawnExclamation(Transform playerTransform)
@@ -197,6 +216,7 @@ public class GameStateManager : SingletonBase<GameStateManager>
             _exclamations.Clear();
         }
     }
+
 
     public void OnRadarSkillEvent(Events.RadarSkillEvent e)
     {
@@ -223,4 +243,9 @@ public class GameStateManager : SingletonBase<GameStateManager>
         //    }
         //}
     }
+
+    //public void OnPlayerDied()
+    //{
+    //    _playerDied = true;        
+    //}
 }

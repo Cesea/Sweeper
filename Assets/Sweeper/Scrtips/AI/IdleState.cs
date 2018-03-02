@@ -1,22 +1,27 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace AI
 {
-    public class IdleState : MonoBehaviour
+    public class IdleState : IState
     {
+        private EnemyBoardObject _owner;
+        private PlayerBoardObject _player;
 
-        // Use this for initialization
-        void Start()
+        public void Enter(EnemyBoardObject owner)
         {
-
+            _owner = owner;
+            _player = _owner._playerObject;
         }
 
-        // Update is called once per frame
-        void Update()
+        public void Exit()
         {
+        }
 
+        public void Update()
+        {
         }
     }
 }

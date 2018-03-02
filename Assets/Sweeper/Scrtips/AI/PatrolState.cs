@@ -1,22 +1,24 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace AI
 {
-    public class PatrolState : MonoBehaviour
+    public class PatrolState : IState
     {
-
-        // Use this for initialization
-        void Start()
+        EnemyBoardObject _owner;
+        public void Enter(EnemyBoardObject owner)
         {
-
+            _owner = owner;
         }
 
-        // Update is called once per frame
-        void Update()
+        public void Exit()
         {
+        }
 
+        public void Update()
+        {
         }
     }
 }

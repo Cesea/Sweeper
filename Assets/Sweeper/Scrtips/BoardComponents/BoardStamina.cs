@@ -4,25 +4,32 @@ using UnityEngine;
 
 public class BoardStamina : MonoBehaviour
 {
-    public int MaxStamina;
-    public int CurrentStamina;
+    public int _maxStamina;
+    protected int _currentStamina;
 
     public bool CanDoCommand
     {
-        get { return CurrentStamina > 0; }
+        get { return _currentStamina > 0; }
     }
-
-
     private void Start()
     {
-        CurrentStamina = MaxStamina;
+        ResetStaminaToMax();
     }
 
     public void ResetStaminaToMax()
     {
-        CurrentStamina = MaxStamina;
+        _currentStamina = _maxStamina;
     }
 
-
+    public bool Consume(int amount)
+    {
+        _currentStamina -= amount;
+        if (_currentStamina < 0)
+        {
+            _currentStamina += amount;
+            return false;
+        }
+        return true;
+    }
 
 }

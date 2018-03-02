@@ -1,22 +1,25 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace AI
 {
-    public class FleeState : MonoBehaviour
+    public class FleeState : IState
     {
+        EnemyBoardObject _owner;
 
-        // Use this for initialization
-        void Start()
+        public void Enter(EnemyBoardObject owner)
         {
-
+            _owner = owner;
         }
 
-        // Update is called once per frame
-        void Update()
+        public void Exit()
         {
+        }
 
+        public void Update()
+        {
         }
     }
 }

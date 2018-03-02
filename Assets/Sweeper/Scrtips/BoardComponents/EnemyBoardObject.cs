@@ -5,12 +5,15 @@ using UnityEngine;
 [RequireComponent(typeof(BoardMovementManager))]
 public class EnemyBoardObject : BoardObject
 {
-    private PlayerBoardObject _playerObject;
+    public PlayerBoardObject _playerObject;
+
+    protected BoardHealth _health;
 
     protected override void Awake()
     {
         base.Awake();
         _playerObject = GameObject.FindObjectOfType<PlayerBoardObject>();
+        _health = GetComponent<BoardHealth>();
     }
 
     public override bool CheckAdjacentCells()
@@ -31,5 +34,17 @@ public class EnemyBoardObject : BoardObject
             GameStateManager.Instance.SpawnExclamation(transform);
         }
         return isHazardExist;
+    }
+
+    public override bool CheckMovement(NodeSideInfo sittingNodeInfo)
+    {
+        bool result = false;
+        if (sittingNodeInfo.IsHazard)
+        {
+            result = true;
+            _health.ReceiveDamage(1);
+        }
+
+        return result;
     }
 }

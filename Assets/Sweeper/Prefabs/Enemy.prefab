@@ -41,6 +41,9 @@ GameObject:
   - component: {fileID: 114060964489398098}
   - component: {fileID: 114479017590170046}
   - component: {fileID: 114033342113297956}
+  - component: {fileID: 114607328135176032}
+  - component: {fileID: 114028100167726822}
+  - component: {fileID: 114837604635189480}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -69,7 +72,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1472342866130534}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.35, z: 0}
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children: []
   m_Father: {fileID: 4510994566859304}
@@ -128,6 +131,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114028100167726822
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1919805956085830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd4abeca12fb4c34f862d8df833a0b45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxHealth: 3
 --- !u!114 &114033342113297956
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -179,3 +194,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _commandBuffer: []
   _canReceiveCommand: 0
+  _playerObject: {fileID: 0}
+--- !u!114 &114607328135176032
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1919805956085830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd5ca94c0345bc64babaf12e7443e096, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _boardObject: {fileID: 0}
+--- !u!114 &114837604635189480
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1919805956085830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08f52d875665fff4abcc49d36f917793, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxStamina: 3
+  CurrentStamina: 0

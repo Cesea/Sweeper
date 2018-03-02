@@ -1,22 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace AI
 {
-    public class ChaseState : MonoBehaviour
+    public class ChaseState : IState
     {
-
-        // Use this for initialization
-        void Start()
+        EnemyBoardObject _owner;
+        public void Enter(EnemyBoardObject owner)
         {
-
         }
 
-        // Update is called once per frame
-        void Update()
+        public void Exit()
         {
+        }
 
+        public void Update()
+        {
         }
     }
 }

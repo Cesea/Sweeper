@@ -25,9 +25,9 @@ public class BoardMovementManager : MonoBehaviour
         _sittingNodeInfo = new NodeSideInfo();
     }
 
-    public void SetSittingNode(Node node, Side side)
+    public void SetSittingNode(int x, int y, int z, Side side)
     {
-        _sittingNodeInfo = BoardManager.Instance.CurrentBoard.GetNodeInfoAt(node.X, node.Y, node.Z, side);
+        _sittingNodeInfo = BoardManager.Instance.CurrentBoard.GetNodeInfoAt(x, y, z, side);
         transform.position = _sittingNodeInfo.GetWorldPosition();
         OnMovementDone(_sittingNodeInfo);
     }
