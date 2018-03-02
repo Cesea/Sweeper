@@ -340,9 +340,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd4148ad7afc4594ca8fccc772d1ed9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _player: {fileID: 0}
+  _player: {fileID: 1354438154}
   _buildCursor: {fileID: 2096161795}
-  _installObjectPrefabs: []
+  _installObjectPrefabs:
+  - {fileID: 1370135647862746, guid: 9bc58b373f143584486a02ef679ad757, type: 2}
+  - {fileID: 1640418622757004, guid: 671716a9fd914574e9b7ba080473fb78, type: 2}
+  - {fileID: 1121808584864342, guid: 92e2d2f2b801ba842bd422f0e0e806b8, type: 2}
   _selectingIndex: 0
   _canBuild: 0
 --- !u!4 &632859037

@@ -42,37 +42,40 @@ namespace Level
         {
             LocateCursor();
 
-            switch (_state)
-            {
-                case CursorState.Select:
-                    {
-                        SelectUpdate();
-                    } break;
-                case CursorState.Move:
-                    {
-                        MoveUpdate();
-                    } break;
-                case CursorState.Create:
-                    {
-                        CreateUpdate();
-                    } break;
-            }
+            SelectUpdate();
+            //switch (_state)
+            //{
+            //    case CursorState.Select:
+            //        {
+            //            SelectUpdate();
+            //        } break;
+            //    case CursorState.Move:
+            //        {
+            //            MoveUpdate();
+            //        } break;
+            //    case CursorState.Create:
+            //        {
+            //            CreateUpdate();
+            //        } break;
+            //}
 
         }
 
         private void SelectUpdate()
         {
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButton(0) &&
+                Object.ReferenceEquals(_selectingInfo, null))
             {
-                if (_selectingInfo != null)
+                GameObject sittingObject = _selectingInfo._sittingObject;
+                if (sittingObject != null)
                 {
-                    GameObject sittingObject = _selectingInfo._node.GetSittingObjectAt(_selectingInfo._side);
+                    //GameStateManager.Instance._selectingObject  = sittingObject;
                 }
             }
 
             if (Input.GetMouseButton(1) && _rightMouseClickTimer.Tick(Time.deltaTime))
             {
-                if (_selectingInfo != null && 
+                if (!Object.ReferenceEquals(_selectingInfo, null) && 
                     !RadialMenu._opened &&
                     BoardManager.GetNodeSideInfoAtMouse(ref _selectingInfo))
                 {

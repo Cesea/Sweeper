@@ -95,9 +95,9 @@ namespace Level
             {
                 return;
             }
-            if (info != null)
+            if (!Object.ReferenceEquals(info, null))
             {
-                if (info._node.GetInstalledObjectAt(info._side) != null)
+                if (info._installedObject != null)
                 {
                     //설치하려는 자리에 이미 노드가 있다.... 어떻게 처리 할까??
                 }
@@ -118,20 +118,20 @@ namespace Level
                     {
                         info.IsPassable = false;
                     }
-                    info._node.SetInstalledObjectAt(info._side, go);
+                    info._installedObject = go;
                 }
             }
         }
 
         public void DestroyObjectAtNode(NodeSideInfo info)
         {
-            if (info != null &&
-                info._node.GetInstalledObjectAt(info._side) != null)
+            if (!Object.ReferenceEquals(info, null)&&
+                info._installedObject != null)
             {
                 //LevelObject levelObject = info._node.GetInstalledObjectAt(info._side).GetComponent<LevelObject>();
 
-                Destroy(info._node.GetInstalledObjectAt(info._side));
-                info._node.SetInstalledObjectAt(info._side, null);
+                Destroy(info._installedObject);
+                info._installedObject = null;
             }
         }
 

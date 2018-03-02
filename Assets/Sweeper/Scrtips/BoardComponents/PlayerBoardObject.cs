@@ -28,7 +28,7 @@ public class PlayerBoardObject : BoardObject
         bool isHazardExist = false;
         foreach (var n in _adjacentCells)
         {
-            if (n != null)
+            if (!Object.ReferenceEquals(n, null))
             {
                 if (n.IsHazard)
                 {

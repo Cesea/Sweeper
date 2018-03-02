@@ -17,28 +17,6 @@ public enum Side
 [System.Serializable]
 public class Node
 {
-    //LevelObject
-    public GameObject[] InstalledObjects;
-    //BoardObject
-    public GameObject[] SittingObjects;
-
-    public GameObject GetInstalledObjectAt(Side side)
-    {
-        return InstalledObjects[(int)side];
-    }
-    public GameObject GetSittingObjectAt(Side side)
-    {
-        return SittingObjects[(int)side];
-    }
-    public void SetInstalledObjectAt(Side side, GameObject o)
-    {
-        InstalledObjects[(int)side] = o;
-    }
-    public void SetSittingObjectAt(Side side, GameObject o)
-    {
-        SittingObjects[(int)side] = o;
-    }
-
     public enum NodeType
     {
         Normal,
@@ -127,8 +105,6 @@ public class Node
         _parent = parent;
         _owner = owner;
 
-        InstalledObjects = new GameObject[(int)Side.Count];
-        SittingObjects = new GameObject[(int)Side.Count];
     }
 
     public void BuildMesh()
@@ -319,19 +295,29 @@ public class NodeSideInfo
     public bool IsHazard { get; set; }
     public bool IsPassable { get; set; }
 
+    public GameObject _sittingObject = null;
+    public GameObject _installedObject = null;
+
     public NodeSideInfo Parent;
 
     public override bool Equals(object obj)
     {
-        if (obj == null || GetType() != obj.GetType()) return false;
-        NodeSideInfo info = (NodeSideInfo)obj;
-        return ((_node == info._node) && (_side == info._side));
+        NodeSideInfo info = obj as NodeSideInfo;
+        if (Object.ReferenceEquals(obj, null))
+        {
+            return false;
+        }
+        else
+        {
+            return ((_node == info._node) && (_side == info._side));
+        }
     }
 
     public NodeSideInfo()
     {
         _node = null;
         _side = Side.Count;
+
     }
 
     public NodeSideInfo(Node node, Side side)

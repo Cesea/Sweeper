@@ -22,7 +22,7 @@ public static class CommandBuilder
         if (deltaGridToPlayer.x >= -1 && deltaGridToPlayer.x <= 1 &&
            deltaGridToPlayer.y >= -1 && deltaGridToPlayer.y <= 1 )
         {
-            if (target._node.GetInstalledObjectAt(target._side) != null)
+            if (target._installedObject != null)
             {
                 result.Add(new InstallObjectCommand(target));
             }

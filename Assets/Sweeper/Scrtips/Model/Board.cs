@@ -154,11 +154,11 @@ public class Board
 
     public void DestoryAllLevelObjects()
     {
-        foreach (var n in Nodes)
+        foreach (var info in _nodeSideInfos)
         {
-            foreach (var o in n.InstalledObjects)
+            if (info._installedObject != null)
             {
-                GameObject.Destroy(o);
+                GameObject.Destroy(info._installedObject);
             }
         }
     }
@@ -651,7 +651,7 @@ public class Board
                         Nodes[Index3D(x, y, z)].IsSolid)
                     {
                         NodeSideInfo currentInfo = _nodeSideInfos[Index3D(x, y, z), (int)info._side];
-                        if ((currentInfo.Equals(null)) ||
+                        if (Object.ReferenceEquals(currentInfo,(null)) ||
                             (x == info._node.X && y == info._node.Y && z == info._node.Z) ||
                             (!currentInfo._node.IsSolid))
                         {

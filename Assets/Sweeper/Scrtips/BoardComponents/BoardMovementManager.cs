@@ -10,7 +10,7 @@ public class BoardMovementManager : MonoBehaviour
 
     public List<BoardMoveBase> _availableMovements = new List<BoardMoveBase>();
 
-    public NodeSideInfo _sittingNodeInfo;
+    public NodeSideInfo _sittingNodeInfo = null;
 
     private BoardObject _boardObject;
 
@@ -20,26 +20,30 @@ public class BoardMovementManager : MonoBehaviour
         _boardObject = GetComponent<BoardObject>();
     }
 
-    private void Start()
-    {
-        _sittingNodeInfo = new NodeSideInfo();
-    }
-
     public void SetSittingNode(int x, int y, int z, Side side)
     {
+        if (!Object.ReferenceEquals(_sittingNodeInfo, null))
+        {
+            _sittingNodeInfo._sittingObject = null;
+        }
         _sittingNodeInfo = BoardManager.Instance.CurrentBoard.GetNodeInfoAt(x, y, z, side);
+        _sittingNodeInfo._sittingObject = gameObject;
+
         transform.position = _sittingNodeInfo.GetWorldPosition();
         OnMovementDone(_sittingNodeInfo);
     }
 
     public void OnMovementStart()
     {
+        _sittingNodeInfo._sittingObject = null;
         GameStateManager.Instance.RemoveExclamations();
     }
 
     public void OnMovementDone(NodeSideInfo info)
     {
         _sittingNodeInfo = info;
+        _sittingNodeInfo._sittingObject = gameObject;
+
         _boardObject.UpdateNeighbourCells();
 
         //만약 플레이어가 죽거나 출구에 도착한다면 true를 반환한다

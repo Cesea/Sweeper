@@ -59,6 +59,7 @@ public class BoardObject : MonoBehaviour
         if (!_canReceiveCommand && 
             index > _commandBuffer.Count - 1)
         {
+            _commandBuffer.Clear();
             return;
         }
         _commandBuffer[index].Execute(gameObject);
