@@ -7,6 +7,7 @@ public class BoardHealth : MonoBehaviour
 {
     public int _maxHealth;
     protected int _currentHealth;
+    public int CurrentHealth { get { return _currentHealth; } }
 
     private void Start()
     {

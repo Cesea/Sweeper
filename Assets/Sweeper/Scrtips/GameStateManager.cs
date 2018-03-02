@@ -190,6 +190,7 @@ public class GameStateManager : SingletonBase<GameStateManager>
 
     public void SetupPlayer()
     {
+        InGameHUD.Show(Player);
         Player.SetSittingNode(_boardManager.CurrentBoard.StartCellCoord, Side.Top);
     }
 

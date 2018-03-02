@@ -49,7 +49,11 @@ public class PlayerBoardObject : BoardObject
         if (sittingNodeInfo.IsHazard)
         {
             result = true;
-            _health.ReceiveDamage(1);
+            //ReceiveDamage가 true를 반환했다는건 데미지가 들어갔다는 이야기 이다
+            if (_health.ReceiveDamage(1))
+            {
+                EventManager.Instance.TriggerEvent(new Events.PlayerHealthChanged(_health.CurrentHealth)); 
+            }
         }
         else if (sittingNodeInfo._node.Type == Node.NodeType.Exit)
         {
@@ -59,5 +63,6 @@ public class PlayerBoardObject : BoardObject
         }
         return result;
     }
+
 
 }

@@ -35,7 +35,6 @@ public class ScreenFader : MonoBehaviour
             Color fromColor =  (_fadingDirection == 0) ? _solidColor : _clearColor;
             Color toColor =  (_fadingDirection == 0) ? _clearColor : _solidColor;
             _graphic.color = Color.Lerp(fromColor, toColor, _timer.Percent);
-            Debug.Log(_timer.Percent);
 
             if (ticked)
             {

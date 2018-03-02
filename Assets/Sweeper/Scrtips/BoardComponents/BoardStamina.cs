@@ -6,11 +6,14 @@ public class BoardStamina : MonoBehaviour
 {
     public int _maxStamina;
     protected int _currentStamina;
+    public int CurrentStamina { get { return _currentStamina; } }
 
     public bool CanDoCommand
     {
         get { return _currentStamina > 0; }
     }
+
+
     private void Start()
     {
         ResetStaminaToMax();

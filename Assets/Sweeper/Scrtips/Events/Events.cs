@@ -21,5 +21,26 @@ namespace Events
         }
     }
 
+    public class PlayerHealthChanged : GameEvent
+    {
+        public int _value; 
+
+        public PlayerHealthChanged(int value)
+        {
+            _value = value;
+        }
+    }
+
+    public class PlayerStaminaChanged : GameEvent
+    {
+        public int _value;
+
+        public PlayerStaminaChanged(int value)
+        {
+            _value = value;
+        }
+
+    }
+
 }
 

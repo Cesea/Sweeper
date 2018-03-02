@@ -15,6 +15,7 @@ public class MenuManager : SingletonBase<MenuManager>
     public RadialMenu _radialMenuPrefab;
     public ModalDialog _modalDialogPrefab;
     public LevelCreateMenu _levelCreateMenuPrefab;
+    public InGameHUD _inGameHUDPrefab;
 
     private void Start()
     {

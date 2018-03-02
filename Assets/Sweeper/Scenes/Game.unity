@@ -166,7 +166,7 @@ GameObject:
   - component: {fileID: 439922856}
   - component: {fileID: 439922855}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: FadeCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1001,6 +1001,8 @@ MonoBehaviour:
   _modalDialogPrefab: {fileID: 114781904229040642, guid: 714c3e0f22d12184ba97bce5a0c8604c,
     type: 2}
   _levelCreateMenuPrefab: {fileID: 114047429243188640, guid: 1956928dc0cf50045b431cf4d4a0fc67,
+    type: 2}
+  _inGameHUDPrefab: {fileID: 114886190906240768, guid: ccf5129eb73f7ce4f88f144daa706c05,
     type: 2}
 --- !u!4 &1824593960
 Transform:
