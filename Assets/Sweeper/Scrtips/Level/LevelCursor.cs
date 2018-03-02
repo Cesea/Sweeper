@@ -20,45 +20,72 @@ namespace Level
             { new Vector2(0.0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.0f, 1.0f), new Vector2(0.5f,1.0f) },
             { new Vector2(0.5f, 0.5f), new Vector2(1.0f, 0.5f), new Vector2(0.5f, 1.0f), new Vector2(1.0f,1.0f) },
             { new Vector2(0.0f, 0.0f), new Vector2(0.5f, 0.0f), new Vector2(0.0f, 0.5f), new Vector2(0.5f,0.5f) },
-            { new Vector2(0.5f, 0.0f), new Vector2(1.0f, 0.0f), new Vector2(0.5f, 0.5f), new Vector2(1.0f,0.5f) }
+            { new Vector2(0.5f, 0.0f), new Vector2(0.5f, 0.5f), new Vector2(1.0f, 0.5f), new Vector2(1.0f,0.0f) }
         };
 
         [HideInInspector]
         public NodeSideInfo _selectingInfo;
+        [HideInInspector]
+        public NodeSideInfo _prevSelectingInfo;
+
+        [HideInInspector]
+        public List<NodeSideInfo> _nodeInfoList = new List<NodeSideInfo>();
+
+        private bool _locationChanged = false;
+
+        public Material _cursorMaterial;
+
         private Timer _rightMouseClickTimer;
 
-        private MeshRenderer _meshRenderer;
-
         private CursorState _state;
+
+        private MeshRenderer _meshRenderer;
+        private MeshFilter _meshFilter;
+
+        private Mesh _selectMesh;
+        private Mesh _lineMesh;
+
+        private void Awake()
+        {
+            _meshRenderer = GetComponentInChildren<MeshRenderer>();
+            _meshRenderer.material = _cursorMaterial;
+            _meshFilter = GetComponentInChildren<MeshFilter>();
+        }
 
         private void Start()
         {
             _rightMouseClickTimer = new Timer(0.5f);
-
             _state = CursorState.Select;
+
+            _prevSelectingInfo = 
+                BoardManager.Instance.CurrentBoard.GetNodeInfoAt(BoardManager.Instance.CurrentBoard.StartCellCoord, Side.Top);
+            _selectingInfo = 
+                BoardManager.Instance.CurrentBoard.GetNodeInfoAt(BoardManager.Instance.CurrentBoard.StartCellCoord, Side.Top);
+
+            BuildSelecMesh();
         }
 
         private void Update()
         {
             LocateCursor();
-
-            SelectUpdate();
-            //switch (_state)
-            //{
-            //    case CursorState.Select:
-            //        {
-            //            SelectUpdate();
-            //        } break;
-            //    case CursorState.Move:
-            //        {
-            //            MoveUpdate();
-            //        } break;
-            //    case CursorState.Create:
-            //        {
-            //            CreateUpdate();
-            //        } break;
-            //}
-
+            switch (_state)
+            {
+                case CursorState.Select:
+                    {
+                        SelectUpdate();
+                    }
+                    break;
+                case CursorState.Move:
+                    {
+                        MoveUpdate();
+                    }
+                    break;
+                case CursorState.Create:
+                    {
+                        CreateUpdate();
+                    }
+                    break;
+            }
         }
 
         private void SelectUpdate()
@@ -97,7 +124,6 @@ namespace Level
 
         private void MoveUpdate()
         {
-
         }
 
         private void LocateCursor()
@@ -105,13 +131,49 @@ namespace Level
             Quaternion rotation = transform.rotation;
             Vector3 worldPosition = transform.position;
 
+            _prevSelectingInfo = _selectingInfo;
+            _locationChanged = false;
+
             if (BoardManager.GetNodeSideInfoAtMouse(ref _selectingInfo))
             {
                 worldPosition = _selectingInfo.GetWorldPosition();
+                worldPosition += BoardManager.SideToVector3Offset(_selectingInfo._side) * 0.1f;
                 rotation = BoardManager.SideToRotation(_selectingInfo._side);
+
+                if (_prevSelectingInfo != _selectingInfo)
+                {
+                    _locationChanged = true;
+                }
             }
             transform.position = worldPosition;
             transform.rotation = rotation;
         }
+
+        private void BuildSelecMesh()
+        {
+            _selectMesh = MeshBuilder.BuildQuad(Side.Top, 
+                                                BoardManager.Instance.NodeRadius, 
+                                                new Vector3(0.0f, -BoardManager.Instance.NodeRadius, 0.0f));
+            Vector2[] uvs = {_cursorUVs[3, 0], _cursorUVs[3, 1], _cursorUVs[3, 2], _cursorUVs[3, 3] };
+            _selectMesh.uv = uvs;
+
+            _meshFilter.mesh = _selectMesh;
+        }
+
+        private void BuildLineMesh()
+        {
+            if (_nodeInfoList.Count > 0)
+            {
+                //TODO : 
+                //_selectMesh = MeshBuilder.BuildQuadsFromNodeInfoList(_nodeInfoList, _cursorUVs);
+            }
+        }
+
+        private void ChangeCursorMesh(Mesh mesh)
+        {
+            _meshFilter.mesh = mesh;
+        }
+
     }
+
 }

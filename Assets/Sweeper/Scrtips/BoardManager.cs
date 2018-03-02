@@ -185,11 +185,11 @@ public class BoardManager : SingletonBase<BoardManager>
         {
             case Side.Left:
                 {
-                    result = Quaternion.Euler(90, 90, 0);
+                    result = Quaternion.Euler(0, 0, 90);
                 } break;
             case Side.Right :
                 {
-                    result = Quaternion.Euler(90, -90, 0);
+                    result = Quaternion.Euler(0, 0, -90);
                 } break;
             case Side.Top :
                 {

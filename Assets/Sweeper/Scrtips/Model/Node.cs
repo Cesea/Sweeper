@@ -129,23 +129,9 @@ public class Node
 
     private void BuildQuad(Side side)
     {
-        Mesh mesh = new Mesh();
-        mesh.name = "Scripted Mesh";
+        Mesh mesh = Utils.MeshBuilder.BuildQuad(side, BoardManager.Instance.NodeRadius, Vector3.zero);
 
-        Vector3[] vertices = new Vector3[4];
-        Vector3[] normals = new Vector3[4];
         Vector2[] uvs = new Vector2[4];
-
-        int[] triangles = new int[6];
-
-        Vector3 p1 = new Vector3(-0.5f, -0.5f, -0.5f);
-        Vector3 p2 = new Vector3(-0.5f, 0.5f, -0.5f);
-        Vector3 p3 = new Vector3(0.5f, 0.5f, -0.5f);
-        Vector3 p4 = new Vector3(0.5f, -0.5f, -0.5f);
-        Vector3 p5 = new Vector3(-0.5f, -0.5f, 0.5f);
-        Vector3 p6 = new Vector3(-0.5f, 0.5f, 0.5f);
-        Vector3 p7 = new Vector3(0.5f, 0.5f, 0.5f);
-        Vector3 p8 = new Vector3(0.5f, -0.5f, 0.5f);
 
         Vector2 uv00 = new Vector2(0.0f, 0.0f);
         Vector2 uv10 = new Vector2(1.0f, 0.0f);
@@ -174,62 +160,9 @@ public class Node
             uv11 = BlockUVs[(int)(_type), 3];
         }
 
-        switch (side)
-        {
-            case Side.Bottom:
-                {
-                    vertices = new Vector3[] { p1, p4, p8, p5 };
-                    normals = new Vector3[] { Vector3.down, Vector3.down, Vector3.down, Vector3.down };
-                    uvs = new Vector2[] { uv00, uv10, uv11, uv01 };
-                    triangles = new int[] { 0, 1, 2, 0, 2, 3 };
-                }
-                break;
-            case Side.Top:
-                {
-                    vertices = new Vector3[] { p2, p6, p7, p3 };
-                    normals = new Vector3[] { Vector3.up, Vector3.up, Vector3.up, Vector3.up };
-                    uvs = new Vector2[] { uv00, uv01, uv11, uv10 };
-                    triangles = new int[] { 0, 1, 2, 0, 2, 3 };
-                }
-                break;
-            case Side.Left:
-                {
-                    vertices = new Vector3[] { p1, p5, p6, p2 };
-                    normals = new Vector3[] { Vector3.left, Vector3.left, Vector3.left, Vector3.left };
-                    uvs = new Vector2[] { uv00, uv10, uv11, uv01 };
-                    triangles = new int[] { 0, 1, 2, 0, 2, 3 };
-                }
-                break;
-            case Side.Right:
-                {
-                    vertices = new Vector3[] { p4, p3, p7, p8 };
-                    normals = new Vector3[] { Vector3.right, Vector3.right, Vector3.right, Vector3.right };
-                    uvs = new Vector2[] { uv00, uv01, uv11, uv10 };
-                    triangles = new int[] { 0, 1, 2, 0, 2, 3 };
-                }
-                break;
-            case Side.Front:
-                {
-                    vertices = new Vector3[] { p5, p8, p7, p6 };
-                    normals = new Vector3[] { Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward };
-                    uvs = new Vector2[] { uv00, uv10, uv11, uv01 };
-                    triangles = new int[] { 0, 1, 2, 0, 2, 3 };
-                }
-                break;
-            case Side.Back:
-                {
-                    vertices = new Vector3[] { p1, p2, p3, p4 };
-                    normals = new Vector3[] { Vector3.back, Vector3.back, Vector3.back, Vector3.back };
-                    uvs = new Vector2[] { uv00, uv01, uv11, uv10 };
-                    triangles = new int[] { 0, 1, 2, 0, 2, 3 };
-                }
-                break;
-        }
+        uvs = new Vector2[] { uv00, uv10, uv11, uv01 };
 
-        mesh.vertices = vertices;
-        mesh.normals = normals;
         mesh.uv = uvs;
-        mesh.triangles = triangles;
 
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
@@ -280,6 +213,30 @@ public class Node
         }
         return result;
     }
+
+    public override bool Equals(object obj)
+    {
+        Node node = obj as Node;
+        if (Object.ReferenceEquals(node, null))
+        {
+            return false;
+        }
+        else
+        {
+            return (X == node.X && Y == node.Y && Z == node.Z);
+        }
+    }
+
+    public static bool operator ==(Node a, Node b)
+    {
+        return a.Equals(b);
+    }
+
+    public static bool operator !=(Node a, Node b)
+    {
+        return !a.Equals(b);
+    }
+
 }
 
 public class NodeSideInfo

@@ -665,6 +665,12 @@ public class Board
         return result;
     }
 
+
+    public NodeSideInfo GetNodeInfoAt(Vector3Int pos, Side side)
+    {
+        return GetNodeInfoAt(pos.x, pos.y, pos.z, side);
+    }
+
     public NodeSideInfo GetNodeInfoAt(int x, int y, int z, Side side)
     {
         if (!IsInBoundRef(ref x, ref y, ref z) ||
