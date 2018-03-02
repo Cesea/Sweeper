@@ -8,21 +8,68 @@ namespace Level
 {
     public class LevelCursor : MonoBehaviour
     {
+        public enum CursorState
+        {
+            Select,
+            Move,
+            Create
+        }
+
+        public static Vector2[,] _cursorUVs =
+        { 
+            { new Vector2(0.0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.0f, 1.0f), new Vector2(0.5f,1.0f) },
+            { new Vector2(0.5f, 0.5f), new Vector2(1.0f, 0.5f), new Vector2(0.5f, 1.0f), new Vector2(1.0f,1.0f) },
+            { new Vector2(0.0f, 0.0f), new Vector2(0.5f, 0.0f), new Vector2(0.0f, 0.5f), new Vector2(0.5f,0.5f) },
+            { new Vector2(0.5f, 0.0f), new Vector2(1.0f, 0.0f), new Vector2(0.5f, 0.5f), new Vector2(1.0f,0.5f) }
+        };
+
         [HideInInspector]
         public NodeSideInfo _selectingInfo;
         private Timer _rightMouseClickTimer;
 
+        private MeshRenderer _meshRenderer;
+
+        private CursorState _state;
+
         private void Start()
         {
-            _rightMouseClickTimer = new Timer(0.5f); 
-        }
+            _rightMouseClickTimer = new Timer(0.5f);
 
+            _state = CursorState.Select;
+        }
 
         private void Update()
         {
             LocateCursor();
 
-            /////////////////
+            switch (_state)
+            {
+                case CursorState.Select:
+                    {
+                        SelectUpdate();
+                    } break;
+                case CursorState.Move:
+                    {
+                        MoveUpdate();
+                    } break;
+                case CursorState.Create:
+                    {
+                        CreateUpdate();
+                    } break;
+            }
+
+        }
+
+        private void SelectUpdate()
+        {
+            if (Input.GetMouseButton(0))
+            {
+                if (_selectingInfo != null)
+                {
+                    GameObject sittingObject = _selectingInfo._node.GetSittingObjectAt(_selectingInfo._side);
+                }
+            }
+
             if (Input.GetMouseButton(1) && _rightMouseClickTimer.Tick(Time.deltaTime))
             {
                 if (_selectingInfo != null && 
@@ -39,8 +86,14 @@ namespace Level
             {
                 RadialMenu.Shut();
             }
-            /////////////////
+        }
 
+        private void CreateUpdate()
+        {
+        }
+
+        private void MoveUpdate()
+        {
 
         }
 
@@ -57,7 +110,5 @@ namespace Level
             transform.position = worldPosition;
             transform.rotation = rotation;
         }
-
-
     }
 }

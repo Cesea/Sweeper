@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -149,7 +149,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4788323994552550, guid: 6b8eb76aa715c2b4b9fc9f1eb6f241de, type: 2}
       propertyPath: m_RootOrder
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6b8eb76aa715c2b4b9fc9f1eb6f241de, type: 2}
@@ -236,7 +236,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 439922854}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 376, y: 211.5, z: 0}
+  m_LocalPosition: {x: 374.5, y: 210.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1349563163}
@@ -342,10 +342,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _player: {fileID: 0}
   _buildCursor: {fileID: 2096161795}
-  _installObjectPrefabs:
-  - {fileID: 1370135647862746, guid: 9bc58b373f143584486a02ef679ad757, type: 2}
-  - {fileID: 1640418622757004, guid: 671716a9fd914574e9b7ba080473fb78, type: 2}
-  - {fileID: 1121808584864342, guid: 92e2d2f2b801ba842bd422f0e0e806b8, type: 2}
+  _installObjectPrefabs: []
   _selectingIndex: 0
   _canBuild: 0
 --- !u!4 &632859037
@@ -359,7 +356,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &632859038
 MonoBehaviour:
@@ -612,7 +609,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1120161573
 GameObject:
@@ -723,7 +720,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1 &1349563162
 GameObject:
@@ -879,23 +876,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1351740637}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1354438149 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1975037907248704, guid: 6b8eb76aa715c2b4b9fc9f1eb6f241de,
-    type: 2}
-  m_PrefabInternal: {fileID: 135172844}
---- !u!114 &1354438150
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1354438149}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd4abeca12fb4c34f862d8df833a0b45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _maxHealth: 3
 --- !u!114 &1354438154 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114452372070584998, guid: 6b8eb76aa715c2b4b9fc9f1eb6f241de,
@@ -992,7 +972,7 @@ GameObject:
   - component: {fileID: 1824593960}
   - component: {fileID: 1824593959}
   m_Layer: 0
-  m_Name: MenuManagerTmp
+  m_Name: MENU_MANAGER_TMP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1030,7 +1010,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1933234229
 GameObject:
@@ -1136,7 +1116,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 1
+          m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 877766166}
         m_MethodName: FadeOn
@@ -1147,7 +1127,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 1
+          m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null

@@ -41,9 +41,8 @@ namespace AI
         {
             if (newState != null)
             {
-
                 //이전 상태가 없을때
-                if (_stateStack.Count != 0)
+                if (_stateStack.Count == 0)
                 {
                     _stateStack.Push(newState);
                     newState.Enter(_boardObject);
