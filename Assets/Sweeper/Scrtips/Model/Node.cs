@@ -349,7 +349,18 @@ public class NodeSideInfo
         }
 
         return result;
+    }
 
+    public static Side GetRelativeSide(NodeSideInfo a, NodeSideInfo b)
+    {
+        if (a._node == b._node)
+        {
+            return Side.Count;
+        }
+        else
+        {
+            return Node.GetRelativeSide(a._node, b._node);
+        }
     }
 
 }

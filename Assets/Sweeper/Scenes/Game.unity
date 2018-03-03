@@ -1236,7 +1236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d89a4b036f048144ca8a8ea9181b6451, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cursorMaterial: {fileID: 2100000, guid: d8773107f25defc48a0170ef6f863d28, type: 2}
+  _cursorMaterial: {fileID: 2100000, guid: 61ab23c0dc812f54aa23dc11440e5fa1, type: 2}
 --- !u!4 &2096161796
 Transform:
   m_ObjectHideFlags: 0

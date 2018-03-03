@@ -89,7 +89,64 @@ namespace Utils
             return mesh;
         }
 
-        public static Mesh BuildQuadsFromNodeInfoList(List<NodeSideInfo> list,Vector2[,] inputUV)
+        public static void BuildLineQuadData(Vector3 v1, Vector3 v2, float lineWidth, int quadIndex, 
+            ref Vector3[] verties, ref Vector3[] normals, ref int[] triangles)
+        {
+            Vector3 diff = v2 - v1;
+            Side side = BoardManager.NormalToSide(diff);
+            Vector3 normal = BoardManager.SideToOffset(side).ToVector3();
+
+            bool counterClockWise = false;
+
+            Vector3 offsetDelta = Vector3.zero;
+            switch (side)
+            {
+                //case Side.Top: { offsetDelta = new Vector3(0.0f, ); }break;
+                //case Side.Bottom: {  offsetDelta = new Vector3(); }break;
+                case Side.Left: { offsetDelta = new Vector3(0.0f, 0.0f, -1.0f); counterClockWise = true; } break;
+                case Side.Right: { offsetDelta = new Vector3(0.0f, 0.0f, 1.0f); counterClockWise = true; } break;
+                case Side.Front: { offsetDelta = new Vector3(1.0f, 0.0f, 0.0f); } break;
+                case Side.Back: { offsetDelta = new Vector3(-1.0f, 0.0f, 0.0f); } break;
+            }
+
+            offsetDelta *= lineWidth;
+
+            verties[0] = v1 - offsetDelta;
+            verties[1] = v2 - offsetDelta;
+            verties[2] = v2 + offsetDelta;
+            verties[3] = v1 + offsetDelta;
+
+            normals[0] = normal;
+            normals[1] = normal;
+            normals[2] = normal;
+            normals[3] = normal;
+
+            if (counterClockWise)
+            {
+                triangles[0] = 3;
+                triangles[1] = 2;
+                triangles[2] = 1;
+                triangles[3] = 3;
+                triangles[4] = 1;
+                triangles[5] = 0;
+            }
+            else
+            {
+                triangles[0] = 0;
+                triangles[1] = 1;
+                triangles[2] = 2;
+                triangles[3] = 0;
+                triangles[4] = 2;
+                triangles[5] = 3;
+            }
+
+            for (int j = 0; j < 6; ++j)
+            {
+                triangles[j] += quadIndex * 4;
+            }
+        }
+
+        public static Mesh BuildQuadsFromNodeInfoList(List<NodeSideInfo> list,Vector2[,] inputUV, float lineWidth)
         {
             Mesh mesh = new Mesh();
             mesh.name = "ListMesh";
@@ -105,225 +162,41 @@ namespace Utils
 
             int[] localTriangles = new int[6];
 
-            if (list.Count == 2)
+            List<Vector3> vertexList = new List<Vector3>();
+
+            for (int i = 0; i < list.Count - 1; ++i)
             {
-                NodeSideInfo current = list[0];
-                NodeSideInfo next = list[1];
+                NodeSideInfo current = list[i];
+                NodeSideInfo next = list[i + 1];
 
-                Side currentRelativeSide = Node.GetRelativeSide(current._node, next._node);
-                {
-                    int startIndex = 0;
-                    switch (currentRelativeSide)
-                    {
-                        case Side.Left:
-                        case Side.Right:
-                        case Side.Top:
-                        case Side.Bottom:
-                            {
-                                startIndex = 0;
-                            }
-                            break;
-                        case Side.Front:
-                        case Side.Back:
-                            {
-                                startIndex = 1;
-                            }
-                            break;
-                    }
-                    localUVs[0] = inputUV[0, (startIndex + 0) % 4];
-                    localUVs[1] = inputUV[0, (startIndex + 1) % 4];
-                    localUVs[2] = inputUV[0, (startIndex + 2) % 4];
-                    localUVs[3] = inputUV[0, (startIndex + 3) % 4];
-                }
+                Vector3 closestEdge =  NodeSideInfo.GetClosestEdge(current, next);
 
-                Vector3 offset = BoardManager.SideToVector3Offset(current._side);
+                vertexList.Add(current.GetWorldPosition());
+                vertexList.Add(closestEdge);
+                vertexList.Add(next.GetWorldPosition());
+            }
 
-                BuildQuadData(current._side,
-                                BoardManager.Instance.NodeRadius,
-                                -offset,
-                                ref localVertices,
-                                ref localNormals,
-                                ref localTriangles);
 
-                for (int j = 0; j < 4; ++j)
-                {
-                    localVertices[j] += current.GetWorldPosition() + offset * 0.1f;
-                }
+            int quadIndexCount = 0;
 
-                uvs.AddRange(localUVs);
+            for (int i = 0; i < vertexList.Count; i += 3)
+            {
+                Vector3 min = vertexList[i + 0];
+                Vector3 middle = vertexList[i + 1];
+                Vector3 max = vertexList[i + 2];
+
+                BuildLineQuadData(min, middle, lineWidth, quadIndexCount++,
+                    ref localVertices, ref localNormals, ref localTriangles);
+                vertices.AddRange(localVertices);
+                normals.AddRange(localNormals);
+                triangles.AddRange(localTriangles);
+
+                BuildLineQuadData(middle, max, lineWidth, quadIndexCount++,
+                    ref localVertices, ref localNormals, ref localTriangles);
                 vertices.AddRange(localVertices);
                 normals.AddRange(localNormals);
                 triangles.AddRange(localTriangles);
             }
-            else if(list.Count > 2)
-            {
-                Side prevRelativeSide = Node.GetRelativeSide(list[0]._node, list[1]._node);
-                for (int i = 0; i < list.Count - 1; ++i)
-                {
-                    NodeSideInfo current = list[i];
-                    NodeSideInfo next = list[i + 1];
-
-                    Side currentRelativeSide = Node.GetRelativeSide(current._node, next._node);
-
-                    #region In Case RelativeSide is different
-                    if (prevRelativeSide != currentRelativeSide)
-                    {
-                        int startIndex = 0;
-
-                        if (prevRelativeSide == Side.Left)
-                        {
-                            switch (currentRelativeSide)
-                            {
-                                case Side.Front: { startIndex = 3; } break;
-                                case Side.Back: { startIndex = 2; } break;
-                            }
-                        }
-                        else if (prevRelativeSide == Side.Right)
-                        {
-                            switch (currentRelativeSide)
-                            {
-                                case Side.Front: { startIndex = 0; } break;
-                                case Side.Back: { startIndex = 1; } break;
-                            }
-                        }
-                        else if (prevRelativeSide == Side.Front)
-                        {
-                            switch (currentRelativeSide)
-                            {
-                                case Side.Left: { startIndex = 1; } break;
-                                case Side.Right: { startIndex = 2; } break;
-                                case Side.Top: { startIndex = 1; }break;
-                            }
-                        }
-                        else if (prevRelativeSide == Side.Back)
-                        {
-                            switch (currentRelativeSide)
-                            {
-                                case Side.Left: { startIndex = 0; } break;
-                                case Side.Right: { startIndex = 3; } break;
-                            }
-                        }
-                        localUVs[0] = inputUV[1, (startIndex + 0) % 4];
-                        localUVs[1] = inputUV[1, (startIndex + 1) % 4];
-                        localUVs[2] = inputUV[1, (startIndex + 2) % 4];
-                        localUVs[3] = inputUV[1, (startIndex + 3) % 4];
-                    }
-                    #endregion
-                    #region In case RelativeSide is same
-                    else
-                    {
-                        int startIndex = 0;
-                        switch (currentRelativeSide)
-                        {
-                            case Side.Left:
-                            case Side.Right:
-                                {
-                                    startIndex = 0;
-                                }break;
-                            case Side.Top:
-                            case Side.Bottom:
-                                {
-                                    startIndex = 1;
-                                }
-                                break;
-                            case Side.Front:
-                            case Side.Back:
-                                {
-                                    startIndex = 1;
-                                }
-                                break;
-                        }
-                        localUVs[0] = inputUV[0, (startIndex + 0) % 4];
-                        localUVs[1] = inputUV[0, (startIndex + 1) % 4];
-                        localUVs[2] = inputUV[0, (startIndex + 2) % 4];
-                        localUVs[3] = inputUV[0, (startIndex + 3) % 4];
-                    }
-                    #endregion
-
-                    Vector3 offset = BoardManager.SideToVector3Offset(current._side);
-
-                    BuildQuadData(current._side,
-                                    BoardManager.Instance.NodeRadius,
-                                    -offset,
-                                    ref localVertices,
-                                    ref localNormals,
-                                    ref localTriangles);
-
-                    for (int j = 0; j < 4; ++j)
-                    {
-                        localVertices[j] += current.GetWorldPosition() + offset * 0.1f;
-                    }
-                    for (int j = 0; j < 6; ++j)
-                    {
-                        localTriangles[j] += 4 * i;
-                    }
-
-                    vertices.AddRange(localVertices);
-                    normals.AddRange(localNormals);
-                    triangles.AddRange(localTriangles);
-                    uvs.AddRange(localUVs);
-
-                    prevRelativeSide = currentRelativeSide;
-                }
-            }
-            #region Last arrow
-            {
-                NodeSideInfo last = null;
-                NodeSideInfo prev = null;
-                Side relativeSide = Side.Right;
-                if (list.Count == 1)
-                {
-                    last = list[0];
-                }
-                else
-                {
-                    last = list[list.Count - 1];
-                    prev = list[list.Count - 2];
-                    Vector3Int diff = last._node.BoardPosition - prev._node.BoardPosition;
-                    relativeSide = BoardManager.NormalToSide(diff.ToVector3());
-                }
-
-                int startIndex = 0;
-                switch (relativeSide)
-                {
-                    case Side.Right: { startIndex = 0; } break;
-                    case Side.Left: { startIndex = 2; } break;
-                    case Side.Front: { startIndex = 1; } break;
-                    case Side.Back: { startIndex = 3; } break;
-                    case Side.Top: { startIndex = 1; } break;
-                    case Side.Bottom: { startIndex = 3; } break;
-                }
-                localUVs[0] = inputUV[2, (startIndex + 0) % 4];
-                localUVs[1] = inputUV[2, (startIndex + 1) % 4];
-                localUVs[2] = inputUV[2, (startIndex + 2) % 4];
-                localUVs[3] = inputUV[2, (startIndex + 3) % 4];
-
-                Vector3 lastOffset = BoardManager.SideToVector3Offset(last._side);
-
-
-                BuildQuadData(last._side,
-                                BoardManager.Instance.NodeRadius,
-                                -lastOffset,
-                                ref localVertices,
-                                ref localNormals,
-                                ref localTriangles);
-
-                for (int j = 0; j < 4; ++j)
-                {
-                    localVertices[j] += last.GetWorldPosition() + lastOffset * 0.1f;
-                }
-                for (int j = 0; j < 6; ++j)
-                {
-                    localTriangles[j] += 4 * (list.Count - 1);
-                }
-
-                vertices.AddRange(localVertices);
-                normals.AddRange(localNormals);
-                triangles.AddRange(localTriangles);
-                uvs.AddRange(localUVs);
-            }
-            #endregion
-
 
             mesh.vertices = vertices.ToArray();
             mesh.normals = normals.ToArray();

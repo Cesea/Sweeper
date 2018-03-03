@@ -218,7 +218,7 @@ namespace Level
         {
             if (_selectedNodeInfoList.Count > 0)
             {
-                _lineMesh = MeshBuilder.BuildQuadsFromNodeInfoList(_selectedNodeInfoList, _cursorUVs);
+                _lineMesh = MeshBuilder.BuildQuadsFromNodeInfoList(_selectedNodeInfoList, _cursorUVs, 0.3f);
                 _meshFilter.mesh = _lineMesh;
             }
         }
