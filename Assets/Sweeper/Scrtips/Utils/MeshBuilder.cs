@@ -89,16 +89,123 @@ namespace Utils
             return mesh;
         }
 
-        public static void BuildLineQuadData(Vector3 v1, Vector3 v2, float lineWidth, int quadIndex, 
+        public static void BuildLineQuadData(Vector3 v1, Vector3 v2, 
+            Side quadSide,
+            float lineWidth, int quadIndex, 
             ref Vector3[] verties, ref Vector3[] normals, ref int[] triangles)
         {
             Vector3 diff = v2 - v1;
-            Side side = BoardManager.NormalToSide(diff);
-            Vector3 normal = BoardManager.SideToOffset(side).ToVector3();
+            Side relativeSide = BoardManager.NormalToSide(diff);
 
             bool counterClockWise = false;
 
             Vector3 offsetDelta = Vector3.zero;
+            switch (relativeSide)
+            {
+                case Side.Left:
+                    {
+                        offsetDelta = new Vector3(0.0f, 0.0f, 1.0f); 
+                    } break;
+                case Side.Right:
+                    {
+                        offsetDelta = new Vector3(0.0f, 0.0f, 1.0f);
+                        counterClockWise = true;
+                    } break;
+                case Side.Front:
+                    {
+                        offsetDelta = new Vector3(1.0f, 0.0f, 0.0f);
+                    } break;
+                case Side.Back:
+                    {
+                        offsetDelta = new Vector3(1.0f, 0.0f, 0.0f);
+                        counterClockWise = true;
+                    } break;
+
+                case Side.Top:
+                    {
+                        if (quadSide == Side.Left || quadSide == Side.Right)
+                        {
+                            offsetDelta.z = 1.0f;
+                            if (quadSide == Side.Left)
+                            {
+                                counterClockWise = true;
+                            }
+                        }
+                        else if (quadSide == Side.Front || quadSide == Side.Back)
+                        {
+                            offsetDelta.x = 1.0f;
+                            if (quadSide == Side.Front)
+                            {
+                                counterClockWise = true;
+                            }
+                        }
+                    } break;
+                case Side.Bottom:
+                    {
+                        if (quadSide == Side.Left || quadSide == Side.Right)
+                        {
+                            offsetDelta.z = 1.0f;
+                            if (quadSide == Side.Right)
+                            {
+                                counterClockWise = true;
+                            }
+                        }
+                        else if (quadSide == Side.Front || quadSide == Side.Back)
+                        {
+                            offsetDelta.x = 1.0f;
+                            if (quadSide == Side.Back)
+                            {
+                                counterClockWise = true;
+                            }
+                        }
+                    } break;
+            }
+            offsetDelta *= lineWidth;
+            Vector3 quadNormal = BoardManager.SideToOffset(quadSide);
+            v1 += quadNormal * 0.1f;
+            v2 += quadNormal * 0.1f;
+
+            verties[0] = v1 - offsetDelta;
+            verties[1] = v2 - offsetDelta;
+            verties[2] = v2 + offsetDelta;
+            verties[3] = v1 + offsetDelta;
+
+            normals[0] = quadNormal; normals[1] = quadNormal; normals[2] = quadNormal; normals[3] = quadNormal;
+
+            if (counterClockWise)
+            {
+                triangles[0] = 3; triangles[1] = 2; triangles[2] = 1;
+                triangles[3] = 3; triangles[4] = 1; triangles[5] = 0;
+            }
+            else
+            {
+                triangles[0] = 0; triangles[1] = 1; triangles[2] = 2;
+                triangles[3] = 0; triangles[4] = 2; triangles[5] = 3;
+            }
+
+            for (int j = 0; j < 6; ++j)
+            {
+                triangles[j] += quadIndex * 4;
+            }
+        }
+
+         public static void BuildCornerLineQuadData(Vector3 v1, Vector3 v2, 
+             Side minSide, Side maxSide,
+            float lineWidth, int quadIndex, 
+            ref Vector3[] verties, ref Vector3[] normals, ref int[] triangles)
+        {
+            Vector3 diff = v2 - v1;
+            Side side = BoardManager.NormalToSide(diff);
+
+            bool counterClockWise = false;
+
+            Vector3 offsetDelta = Vector3.zero;
+            if ((minSide == Side.Top || minSide == Side.Bottom) &&
+                (maxSide == Side.Left || maxSide == Side.Right || maxSide == Side.Front | maxSide == Side.Back))
+            {
+
+            }
+
             switch (side)
             {
                 //case Side.Top: { offsetDelta = new Vector3(0.0f, ); }break;
@@ -109,35 +216,26 @@ namespace Utils
                 case Side.Back: { offsetDelta = new Vector3(-1.0f, 0.0f, 0.0f); } break;
             }
 
-            offsetDelta *= lineWidth;
+            //offsetDelta *= lineWidth;
+            //v1 += quadNormal * 0.1f;
+            //v2 += quadNormal * 0.1f;
 
-            verties[0] = v1 - offsetDelta;
-            verties[1] = v2 - offsetDelta;
-            verties[2] = v2 + offsetDelta;
-            verties[3] = v1 + offsetDelta;
+            //verties[0] = v1 - offsetDelta;
+            //verties[1] = v2 - offsetDelta;
+            //verties[2] = v2 + offsetDelta;
+            //verties[3] = v1 + offsetDelta;
 
-            normals[0] = normal;
-            normals[1] = normal;
-            normals[2] = normal;
-            normals[3] = normal;
+            //normals[0] = quadNormal; normals[1] = quadNormal; normals[2] = quadNormal; normals[3] = quadNormal;
 
             if (counterClockWise)
             {
-                triangles[0] = 3;
-                triangles[1] = 2;
-                triangles[2] = 1;
-                triangles[3] = 3;
-                triangles[4] = 1;
-                triangles[5] = 0;
+                triangles[0] = 3; triangles[1] = 2; triangles[2] = 1;
+                triangles[3] = 3; triangles[4] = 1; triangles[5] = 0;
             }
             else
             {
-                triangles[0] = 0;
-                triangles[1] = 1;
-                triangles[2] = 2;
-                triangles[3] = 0;
-                triangles[4] = 2;
-                triangles[5] = 3;
+                triangles[0] = 0; triangles[1] = 1; triangles[2] = 2;
+                triangles[3] = 0; triangles[4] = 2; triangles[5] = 3;
             }
 
             for (int j = 0; j < 6; ++j)
@@ -163,6 +261,7 @@ namespace Utils
             int[] localTriangles = new int[6];
 
             List<Vector3> vertexList = new List<Vector3>();
+            List<Side> sideList = new List<Side>();
 
             for (int i = 0; i < list.Count - 1; ++i)
             {
@@ -174,10 +273,15 @@ namespace Utils
                 vertexList.Add(current.GetWorldPosition());
                 vertexList.Add(closestEdge);
                 vertexList.Add(next.GetWorldPosition());
+
+                sideList.Add(current._side);
+                sideList.Add(next._side);
             }
 
 
             int quadIndexCount = 0;
+
+            int sideIndex = 0;
 
             for (int i = 0; i < vertexList.Count; i += 3)
             {
@@ -185,17 +289,51 @@ namespace Utils
                 Vector3 middle = vertexList[i + 1];
                 Vector3 max = vertexList[i + 2];
 
-                BuildLineQuadData(min, middle, lineWidth, quadIndexCount++,
-                    ref localVertices, ref localNormals, ref localTriangles);
-                vertices.AddRange(localVertices);
-                normals.AddRange(localNormals);
-                triangles.AddRange(localTriangles);
+                Side minSide = sideList[sideIndex];
+                Side maxSide = sideList[sideIndex + 1];
 
-                BuildLineQuadData(middle, max, lineWidth, quadIndexCount++,
-                    ref localVertices, ref localNormals, ref localTriangles);
-                vertices.AddRange(localVertices);
-                normals.AddRange(localNormals);
-                triangles.AddRange(localTriangles);
+                //if (minSide == maxSide)
+                {
+                    BuildLineQuadData(min, middle,
+                        minSide,
+                        lineWidth, quadIndexCount++,
+                        ref localVertices, ref localNormals, ref localTriangles);
+                    vertices.AddRange(localVertices);
+                    normals.AddRange(localNormals);
+                    triangles.AddRange(localTriangles);
+
+                    BuildLineQuadData(middle, max,
+                        maxSide,
+                        lineWidth, quadIndexCount++,
+                        ref localVertices, ref localNormals, ref localTriangles);
+                    vertices.AddRange(localVertices);
+                    normals.AddRange(localNormals);
+                    triangles.AddRange(localTriangles);
+                }
+                //else
+                //{
+                //    BuildCornerLineQuadData(
+                //        min, middle,
+                //        minSide, maxSide,
+                //        lineWidth, quadIndexCount++,
+                //        ref localVertices, ref localNormals, ref localTriangles);
+
+                //    vertices.AddRange(localVertices);
+                //    normals.AddRange(localNormals);
+                //    triangles.AddRange(localTriangles);
+
+                //    BuildCornerLineQuadData(
+                //        middle, max,
+                //        minSide, maxSide,
+                //        lineWidth, quadIndexCount++,
+                //        ref localVertices, ref localNormals, ref localTriangles);
+
+                //    vertices.AddRange(localVertices);
+                //    normals.AddRange(localNormals);
+                //    triangles.AddRange(localTriangles);
+                //}
+
+                sideIndex += 2;
             }
 
             mesh.vertices = vertices.ToArray();

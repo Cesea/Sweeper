@@ -342,6 +342,12 @@ public class NodeSideInfo
             Vector3 diffHalf = (bPos - aPos) * 0.5f;
             result = aPos + diffHalf;
         }
+        else if (a._node == b._node)
+        {
+            result = a._node.WorldPosition + 
+                BoardManager.SideToVector3Offset(a._side) + 
+                BoardManager.SideToVector3Offset(b._side);
+        }
         else
         {
             Vector3 diff = (bPos - aPos);
