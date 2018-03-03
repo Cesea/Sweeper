@@ -112,7 +112,13 @@ public class Node
         {
             return false;
         }
-    } 
+    }
+
+    public static Side GetRelativeSide(Node from, Node to)
+    {
+        Vector3Int boardDiff = to.BoardPosition - from.BoardPosition;
+        return BoardManager.NormalToSide(boardDiff.ToVector3());
+    }
 
     public Node(int x, int y, int z, Vector3 worldPos, NodeType type, GameObject parent, Board owner)
     {

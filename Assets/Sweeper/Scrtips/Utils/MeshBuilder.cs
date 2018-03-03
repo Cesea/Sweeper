@@ -101,13 +101,40 @@ namespace Utils
 
             Vector3[] localVertices = new Vector3[4];
             Vector3[] localNormals = new Vector3[4];
+            Vector2[] localUVs = new Vector2[4];
 
             int[] localTriangles = new int[6];
 
-            if (list.Count == 1)
+            if (list.Count == 2)
             {
-
                 NodeSideInfo current = list[0];
+                NodeSideInfo next = list[1];
+
+                Side currentRelativeSide = Node.GetRelativeSide(current._node, next._node);
+                {
+                    int startIndex = 0;
+                    switch (currentRelativeSide)
+                    {
+                        case Side.Left:
+                        case Side.Right:
+                        case Side.Top:
+                        case Side.Bottom:
+                            {
+                                startIndex = 0;
+                            }
+                            break;
+                        case Side.Front:
+                        case Side.Back:
+                            {
+                                startIndex = 1;
+                            }
+                            break;
+                    }
+                    localUVs[0] = inputUV[0, (startIndex + 0) % 4];
+                    localUVs[1] = inputUV[0, (startIndex + 1) % 4];
+                    localUVs[2] = inputUV[0, (startIndex + 2) % 4];
+                    localUVs[3] = inputUV[0, (startIndex + 3) % 4];
+                }
 
                 Vector3 offset = BoardManager.SideToVector3Offset(current._side);
 
@@ -122,29 +149,96 @@ namespace Utils
                 {
                     localVertices[j] += current.GetWorldPosition() + offset * 0.1f;
                 }
+
+                uvs.AddRange(localUVs);
                 vertices.AddRange(localVertices);
                 normals.AddRange(localNormals);
                 triangles.AddRange(localTriangles);
             }
-            else
+            else if(list.Count > 2)
             {
-                for (int i = 0; i < list.Count; ++i)
+                Side prevRelativeSide = Node.GetRelativeSide(list[0]._node, list[1]._node);
+                for (int i = 0; i < list.Count - 1; ++i)
                 {
-                    NodeSideInfo current; 
-                    NodeSideInfo next;
-                    if (i == list.Count - 1)
+                    NodeSideInfo current = list[i];
+                    NodeSideInfo next = list[i + 1];
+
+                    Side currentRelativeSide = Node.GetRelativeSide(current._node, next._node);
+
+                    #region In Case RelativeSide is different
+                    if (prevRelativeSide != currentRelativeSide)
                     {
-                        current = list[i];
-                        next = list[i - 1];
+                        int startIndex = 0;
+
+                        if (prevRelativeSide == Side.Left)
+                        {
+                            switch (currentRelativeSide)
+                            {
+                                case Side.Front: { startIndex = 3; } break;
+                                case Side.Back: { startIndex = 2; } break;
+                            }
+                        }
+                        else if (prevRelativeSide == Side.Right)
+                        {
+                            switch (currentRelativeSide)
+                            {
+                                case Side.Front: { startIndex = 0; } break;
+                                case Side.Back: { startIndex = 1; } break;
+                            }
+                        }
+                        else if (prevRelativeSide == Side.Front)
+                        {
+                            switch (currentRelativeSide)
+                            {
+                                case Side.Left: { startIndex = 1; } break;
+                                case Side.Right: { startIndex = 2; } break;
+                                case Side.Top: { startIndex = 1; }break;
+                            }
+                        }
+                        else if (prevRelativeSide == Side.Back)
+                        {
+                            switch (currentRelativeSide)
+                            {
+                                case Side.Left: { startIndex = 0; } break;
+                                case Side.Right: { startIndex = 3; } break;
+                            }
+                        }
+                        localUVs[0] = inputUV[1, (startIndex + 0) % 4];
+                        localUVs[1] = inputUV[1, (startIndex + 1) % 4];
+                        localUVs[2] = inputUV[1, (startIndex + 2) % 4];
+                        localUVs[3] = inputUV[1, (startIndex + 3) % 4];
                     }
+                    #endregion
+                    #region In case RelativeSide is same
                     else
                     {
-                        current = list[i];
-                        next = list[i + 1];
+                        int startIndex = 0;
+                        switch (currentRelativeSide)
+                        {
+                            case Side.Left:
+                            case Side.Right:
+                                {
+                                    startIndex = 0;
+                                }break;
+                            case Side.Top:
+                            case Side.Bottom:
+                                {
+                                    startIndex = 1;
+                                }
+                                break;
+                            case Side.Front:
+                            case Side.Back:
+                                {
+                                    startIndex = 1;
+                                }
+                                break;
+                        }
+                        localUVs[0] = inputUV[0, (startIndex + 0) % 4];
+                        localUVs[1] = inputUV[0, (startIndex + 1) % 4];
+                        localUVs[2] = inputUV[0, (startIndex + 2) % 4];
+                        localUVs[3] = inputUV[0, (startIndex + 3) % 4];
                     }
-
-                    Vector3Int boardDiff = next._node.BoardPosition - current._node.BoardPosition;
-                    Side currentRelativeSide = BoardManager.NormalToSide(boardDiff.ToVector3());
+                    #endregion
 
                     Vector3 offset = BoardManager.SideToVector3Offset(current._side);
 
@@ -167,19 +261,79 @@ namespace Utils
                     vertices.AddRange(localVertices);
                     normals.AddRange(localNormals);
                     triangles.AddRange(localTriangles);
+                    uvs.AddRange(localUVs);
+
+                    prevRelativeSide = currentRelativeSide;
+                }
+            }
+            #region Last arrow
+            {
+                NodeSideInfo last = null;
+                NodeSideInfo prev = null;
+                Side relativeSide = Side.Right;
+                if (list.Count == 1)
+                {
+                    last = list[0];
+                }
+                else
+                {
+                    last = list[list.Count - 1];
+                    prev = list[list.Count - 2];
+                    Vector3Int diff = last._node.BoardPosition - prev._node.BoardPosition;
+                    relativeSide = BoardManager.NormalToSide(diff.ToVector3());
                 }
 
+                int startIndex = 0;
+                switch (relativeSide)
+                {
+                    case Side.Right: { startIndex = 0; } break;
+                    case Side.Left: { startIndex = 2; } break;
+                    case Side.Front: { startIndex = 1; } break;
+                    case Side.Back: { startIndex = 3; } break;
+                    case Side.Top: { startIndex = 1; } break;
+                    case Side.Bottom: { startIndex = 3; } break;
+                }
+                localUVs[0] = inputUV[2, (startIndex + 0) % 4];
+                localUVs[1] = inputUV[2, (startIndex + 1) % 4];
+                localUVs[2] = inputUV[2, (startIndex + 2) % 4];
+                localUVs[3] = inputUV[2, (startIndex + 3) % 4];
+
+                Vector3 lastOffset = BoardManager.SideToVector3Offset(last._side);
+
+
+                BuildQuadData(last._side,
+                                BoardManager.Instance.NodeRadius,
+                                -lastOffset,
+                                ref localVertices,
+                                ref localNormals,
+                                ref localTriangles);
+
+                for (int j = 0; j < 4; ++j)
+                {
+                    localVertices[j] += last.GetWorldPosition() + lastOffset * 0.1f;
+                }
+                for (int j = 0; j < 6; ++j)
+                {
+                    localTriangles[j] += 4 * (list.Count - 1);
+                }
+
+                vertices.AddRange(localVertices);
+                normals.AddRange(localNormals);
+                triangles.AddRange(localTriangles);
+                uvs.AddRange(localUVs);
             }
+            #endregion
+
 
             mesh.vertices = vertices.ToArray();
             mesh.normals = normals.ToArray();
             mesh.triangles = triangles.ToArray();
+            mesh.uv = uvs.ToArray();
 
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
 
             return mesh;
         }
-
     }
 }

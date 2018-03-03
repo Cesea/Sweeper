@@ -16,11 +16,11 @@ namespace Level
         }
 
         public static Vector2[,] _cursorUVs =
-        { 
-            { new Vector2(0.0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.0f, 1.0f), new Vector2(0.5f,1.0f) },
-            { new Vector2(0.5f, 0.5f), new Vector2(1.0f, 0.5f), new Vector2(0.5f, 1.0f), new Vector2(1.0f,1.0f) },
-            { new Vector2(0.0f, 0.0f), new Vector2(0.5f, 0.0f), new Vector2(0.0f, 0.5f), new Vector2(0.5f,0.5f) },
-            { new Vector2(0.5f, 0.0f), new Vector2(0.5f, 0.5f), new Vector2(1.0f, 0.5f), new Vector2(1.0f,0.0f) }
+        {
+            { new Vector2(0.0f, 0.5f), new Vector2(0.0f, 1.0f), new Vector2(0.5f, 1.0f), new Vector2(0.5f, 0.5f) },
+            { new Vector2(0.5f, 0.5f), new Vector2(0.5f, 1.0f), new Vector2(1.0f, 1.0f), new Vector2(1.0f, 0.5f) },
+            { new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.0f) },
+            { new Vector2(0.5f, 0.0f), new Vector2(0.5f, 0.5f), new Vector2(1.0f, 0.5f), new Vector2(1.0f, 0.0f) }
         };
 
         [HideInInspector]
