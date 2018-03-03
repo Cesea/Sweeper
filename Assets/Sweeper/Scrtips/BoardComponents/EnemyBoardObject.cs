@@ -5,16 +5,28 @@ using UnityEngine;
 [RequireComponent(typeof(BoardMovementManager))]
 public class EnemyBoardObject : BoardObject
 {
-    public PlayerBoardObject _playerObject;
+    public BoardHealth _health;
+    public BoardStamina _stamina;
 
-    protected BoardHealth _health;
+    protected AI.AIThinker _thinker;
+
+    public PlayerBoardObject _playerObject;
 
     protected override void Awake()
     {
         base.Awake();
-        _playerObject = GameObject.FindObjectOfType<PlayerBoardObject>();
         _health = GetComponent<BoardHealth>();
+        _stamina = GetComponent<BoardStamina>();
+        _thinker = GetComponent<AI.AIThinker>();
+
+        _playerObject = FindObjectOfType<PlayerBoardObject>();
     }
+
+    public virtual void Think()
+    {
+        _thinker.Think();
+    }
+
 
     public override bool CheckAdjacentCells()
     {

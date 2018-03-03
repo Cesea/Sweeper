@@ -66,6 +66,15 @@ public class BoardObject : MonoBehaviour
         _commandBuffer.Clear();
     }
 
+    public void DoCommand(Command command)
+    {
+        if (!_canReceiveCommand)
+        {
+            return;
+        }
+        command.Execute(gameObject);
+    }
+
     public virtual bool CheckMovement(NodeSideInfo sittingNodeInfo)
     {
         bool result = false;

@@ -9,6 +9,8 @@ namespace AI
     {
         public EnemyBoardObject _boardObject;
 
+        public PlayerBoardObject _player;
+
         //private IState _currentState;
         //private IState _prevState;
         private Stack<IState> _stateStack;
@@ -16,6 +18,7 @@ namespace AI
         private void Awake()
         {
             _boardObject = GetComponent<EnemyBoardObject>();
+            _player = FindObjectOfType<PlayerBoardObject>();
             _stateStack = new Stack<IState>();
         }
 
@@ -36,6 +39,12 @@ namespace AI
                 _stateStack.Peek().Update();
             }
         }
+
+        public void Think()
+        {
+
+        }
+
 
         public void ChangeState(IState newState)
         {

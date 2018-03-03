@@ -74,21 +74,21 @@ namespace Level
         private void Update()
         {
             //NOTE : Temp code
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                ChangeState(CursorState.Select);
-                Debug.Log("select");
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                ChangeState(CursorState.Move);
-                Debug.Log("move");
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                ChangeState(CursorState.Create);
-                Debug.Log("create");
-            }
+            //if (Input.GetKeyDown(KeyCode.Alpha1))
+            //{
+            //    ChangeState(CursorState.Select);
+            //    Debug.Log("select");
+            //}
+            //else if (Input.GetKeyDown(KeyCode.Alpha2))
+            //{
+            //    ChangeState(CursorState.Move);
+            //    Debug.Log("move");
+            //}
+            //else if (Input.GetKeyDown(KeyCode.Alpha3))
+            //{
+            //    ChangeState(CursorState.Create);
+            //    Debug.Log("create");
+            //}
 
             LocateCursor();
             switch (_state)
@@ -119,7 +119,8 @@ namespace Level
                 !Object.ReferenceEquals(_selectingInfo, null))
             {
                 GameObject sittingObject = _selectingInfo._sittingObject;
-                if (sittingObject != null)
+                if (sittingObject != null &&
+                    sittingObject.GetComponent<PlayerBoardObject>() != null)
                 {
                     ChangeState(CursorState.Move);
                 }
@@ -150,6 +151,7 @@ namespace Level
 
         private void MoveUpdate()
         {
+            #region Add selectingInfo to list
             if (_playerStamina.CurrentStamina > 0 && 
                 _selectingNodeChanged )
             {
@@ -162,15 +164,29 @@ namespace Level
                     }
                     else
                     {
-                        _selectedNodeInfoList.Add(_selectingInfo);
+                        if (_selectedNodeInfoList.Count < _playerStamina.CurrentStamina)
+                        {
+                            _selectedNodeInfoList.Add(_selectingInfo);
+                        }
                     }
                 }
                 else
                 {
-                    _selectedNodeInfoList.Add(_selectingInfo);
+                    if (_selectedNodeInfoList.Count < _playerStamina.CurrentStamina)
+                    {
+                        _selectedNodeInfoList.Add(_selectingInfo);
+                    }
                 }
-
                 BuildLineMesh();
+            }
+            #endregion
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                MoveCommand moveCommand = new MoveCommand(_selectedNodeInfoList[_selectedNodeInfoList.Count - 1]);
+                GameStateManager.Instance.Player.DoCommand(moveCommand);
+
+                ChangeState(CursorState.Select);
             }
         }
 

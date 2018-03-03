@@ -181,6 +181,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _commandBuffer: []
   _canReceiveCommand: 0
+  _health: {fileID: 0}
+  _stamina: {fileID: 0}
 --- !u!114 &114460425649309534
 MonoBehaviour:
   m_ObjectHideFlags: 1

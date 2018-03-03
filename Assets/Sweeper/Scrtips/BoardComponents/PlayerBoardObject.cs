@@ -5,22 +5,26 @@ using UnityEngine;
 [RequireComponent(typeof(BoardMovementManager))]
 public class PlayerBoardObject : BoardObject
 {
-    protected BoardHealth _health;
+    public BoardHealth _health;
+    public BoardStamina _stamina;
 
     private void OnEnable()
     {
         EventManager.Instance.AddListener<Events.RadialShutEvent>(ClearCommandBuffer);
+        EventManager.Instance.AddListener<Events.PlayerTurnEvent>(OnPlayerTurnEvent);
     }
 
     private void OnDisable()
     {
         EventManager.Instance.RemoveListener<Events.RadialShutEvent>(ClearCommandBuffer);
+        EventManager.Instance.RemoveListener<Events.PlayerTurnEvent>(OnPlayerTurnEvent);
     }
 
     protected override void Awake()
     {
         base.Awake();
         _health = GetComponent<BoardHealth>();
+        _stamina = GetComponent<BoardStamina>();
     }
 
     public override bool CheckAdjacentCells()
@@ -64,5 +68,9 @@ public class PlayerBoardObject : BoardObject
         return result;
     }
 
+    public void OnPlayerTurnEvent(Events.PlayerTurnEvent e)
+    {
+        _stamina.ResetStaminaToMax();
+    }
 
 }

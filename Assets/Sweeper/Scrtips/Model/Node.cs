@@ -105,7 +105,9 @@ public class Node
         if ((diff.x == 1 && diff.y == 0 && diff.z == 0) ||
             (diff.x == 0 && diff.y == 1 && diff.z == 0) ||
             (diff.x == 0 && diff.y == 0 && diff.z == 1) ||
+
             (diff.x == 0 && diff.y == 0 && diff.z == 0) ||
+
             (diff.x == 1 && diff.y == 1 && diff.z == 0) ||
             (diff.x == 0 && diff.y == 1 && diff.z == 1))
         {

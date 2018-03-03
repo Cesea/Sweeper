@@ -11,6 +11,8 @@ public class EnemyManager : SingletonBase<EnemyManager>
     [HideInInspector]
     public List<EnemyBoardObject> _enemies = new List<EnemyBoardObject>();
 
+    private bool _thinkFinished = false;
+
     private void Start()
     {
         
@@ -48,15 +50,22 @@ public class EnemyManager : SingletonBase<EnemyManager>
 
     public void OnEnemyTurnEvent(Events.EnemyTurnEvent e)
     {
+        foreach (var enemy in _enemies)
+        {
+            enemy._stamina.ResetStaminaToMax();
+        }
+
         StartCoroutine(EnemiesThinkAndAct());
-        GameStateManager.Instance.TurnChanged = true;
     }
 
     IEnumerator EnemiesThinkAndAct()
     {
         foreach (var e in _enemies)
         {
-            yield return null;
+            e.Think();
+            Debug.Log("thinking");
+            yield return new WaitForSecondsRealtime(1.0f);
         }
+        GameStateManager.Instance.TurnChanged = true;
     }
 }
