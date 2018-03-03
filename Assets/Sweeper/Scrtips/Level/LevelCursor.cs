@@ -46,11 +46,15 @@ namespace Level
         private Mesh _selectMesh;
         private Mesh _lineMesh;
 
+        private BoardStamina _playerStamina;
+
         private void Awake()
         {
             _meshRenderer = GetComponentInChildren<MeshRenderer>();
             _meshRenderer.material = _cursorMaterial;
             _meshFilter = GetComponentInChildren<MeshFilter>();
+
+            _playerStamina = GameStateManager.Instance.Player.GetComponent<BoardStamina>();
         }
 
         private void Start()
@@ -146,12 +150,13 @@ namespace Level
 
         private void MoveUpdate()
         {
-            if (_selectingNodeChanged )
+            if (_playerStamina.CurrentStamina > 0 && 
+                _selectingNodeChanged )
             {
                 if (_selectedNodeInfoList.Count >= 2 &&
                     Node.IsAdjacent(_selectedNodeInfoList[_selectedNodeInfoList.Count - 1]._node, _selectingInfo._node))
                 {
-                    if (_selectingInfo == _selectedNodeInfoList[_selectedNodeInfoList.Count - 2])
+                    if (Object.ReferenceEquals(_selectingInfo, _selectedNodeInfoList[_selectedNodeInfoList.Count - 2]))
                     {
                         _selectedNodeInfoList.RemoveAt(_selectedNodeInfoList.Count - 1);
                     }
