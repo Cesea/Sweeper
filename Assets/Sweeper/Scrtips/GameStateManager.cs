@@ -17,8 +17,6 @@ public class GameStateManager : SingletonBase<GameStateManager>
 
     public float _delayTime = 1.0f;
 
-    private List<GameObject> _exclamations;
-
     [SerializeField]
     private PlayerBoardObject _player;
     public PlayerBoardObject Player { get { return _player; } set { _player = value; } }
@@ -65,8 +63,6 @@ public class GameStateManager : SingletonBase<GameStateManager>
     {
         _boardManager = BoardManager.Instance;
         _enemyManager = EnemyManager.Instance;
-
-        _exclamations = new List<GameObject>();
 
         _cursorManager.gameObject.SetActive(false);
 

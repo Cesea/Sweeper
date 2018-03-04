@@ -246,8 +246,11 @@ public class BoardManager : SingletonBase<BoardManager>
             {
                 tmp.z -= 1;
             }
-
-            info = Instance.CurrentBoard.GetNodeInfoAt(tmp.x, tmp.y, tmp.z, NormalToSide(hitInfo.normal));
+            NodeSideInfo tmpInfo = Instance.CurrentBoard.GetNodeInfoAt(tmp.x, tmp.y, tmp.z, NormalToSide(hitInfo.normal));
+            if (!Object.ReferenceEquals(tmpInfo, null))
+            {
+                info = tmpInfo;
+            }
             result = true;
         }
         return result;

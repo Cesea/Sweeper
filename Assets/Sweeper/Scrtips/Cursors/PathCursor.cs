@@ -5,6 +5,7 @@ using UnityEngine;
 public class PathCursor : MonoBehaviour
 {
     private LineRenderer _lineRenderer;
+    private LineRenderer _tipLineRenderer;
 
     private NodeSideInfo _selectingInfo;
     private NodeSideInfo _prevSelectingInfo;
@@ -18,18 +19,20 @@ public class PathCursor : MonoBehaviour
     private void Awake()
     {
         _lineRenderer = GetComponent<LineRenderer>();
+        //_tipLineRenderer = GetComponentInChildren<LineRenderer>();
     }
 
     private void Start()
     {
-        BoardManager.Instance.CurrentBoard.GetNodeInfoAt(BoardManager.Instance.CurrentBoard.StartCellCoord, Side.Top);
-        BoardManager.Instance.CurrentBoard.GetNodeInfoAt(BoardManager.Instance.CurrentBoard.StartCellCoord, Side.Top);
-
         _playerStamina = GameStateManager.Instance.Player.GetComponent<BoardStamina>();
+
+        _selectingInfo = BoardManager.Instance.CurrentBoard.GetNodeInfoAt(BoardManager.Instance.CurrentBoard.StartCellCoord, Side.Top);
+        _prevSelectingInfo = BoardManager.Instance.CurrentBoard.GetNodeInfoAt(BoardManager.Instance.CurrentBoard.StartCellCoord, Side.Top);
     }
 
     private void Update()
     {
+        _selecingInfoChanged = false;
         LocateCursor();
 
         #region Add selectingInfo to list
@@ -60,15 +63,21 @@ public class PathCursor : MonoBehaviour
             }
 
             BuildLine();
-
         }
+
+        _prevSelectingInfo = _selectingInfo;
+
         #endregion
 
         if (Input.GetMouseButtonUp(0))
         {
             MoveCommand moveCommand = new MoveCommand(_selectedInfoList[_selectedInfoList.Count - 1]);
-
             GameStateManager.Instance.Player.DoCommand(moveCommand);
+
+            CursorManager.Instance.ChangeState(CursorManager.CursorState.Select);
+
+            _selectedInfoList.Clear();
+            _lineRenderer.positionCount = 0;
         }
     }
 
@@ -94,21 +103,46 @@ public class PathCursor : MonoBehaviour
 
     private void BuildLine()
     {
+        List<Vector3> positionList = new List<Vector3>(_selectedInfoList.Count);
         if (_selectedInfoList.Count > 0)
         {
-            //_lineMesh = MeshBuilder.BuildQuadsFromNodeInfoList(_selectedNodeInfoList, _cursorUVs, 0.3f);
-            //_meshFilter.mesh = _lineMesh;
+            Vector3 closestEdge = Vector3.zero;
+
+            Vector3 currentSideOffset = Vector3.zero;
+            Vector3 nextSideOffset = Vector3.zero;
+
+            NodeSideInfo current = null;
+            NodeSideInfo next = null;
+
+            if (_selectedInfoList.Count == 1)
+            {
+                current = _selectedInfoList[0];
+
+                currentSideOffset = BoardManager.SideToOffset(current._side).ToVector3() * 0.1f;
+                //positionList.Add(current.GetWorldPosition() + currentSideOffset);
+                //positionList.Add(current.GetWorldPosition() + currentSideOffset);
+            }
+            else
+            {
+                for (int i = 0; i < _selectedInfoList.Count - 1; ++i)
+                {
+                    current = _selectedInfoList[i];
+                    next = _selectedInfoList[i + 1];
+
+                    currentSideOffset = BoardManager.SideToOffset(current._side).ToVector3() * 0.1f;
+                    nextSideOffset = BoardManager.SideToOffset(next._side).ToVector3() * 0.1f;
+
+                    closestEdge = NodeSideInfo.GetClosestEdge(current, next);
+                    positionList.Add(current.GetWorldPosition() + currentSideOffset);
+                    positionList.Add(closestEdge + nextSideOffset);
+                }
+                current = _selectedInfoList[_selectedInfoList.Count - 1];
+                currentSideOffset = BoardManager.SideToOffset(current._side).ToVector3() * 0.1f;
+                positionList.Add(current.GetWorldPosition() + currentSideOffset);
+            }
+
+            _lineRenderer.positionCount = positionList.Count;
+            _lineRenderer.SetPositions(positionList.ToArray());
         }
     }
-
-    //private void BuildLineMesh()
-    //{
-    //    if (_selectedNodeInfoList.Count > 0)
-    //    {
-    //        _lineMesh = MeshBuilder.BuildQuadsFromNodeInfoList(_selectedNodeInfoList, _cursorUVs, 0.3f);
-    //        _meshFilter.mesh = _lineMesh;
-    //    }
-    //}
-
-
 }

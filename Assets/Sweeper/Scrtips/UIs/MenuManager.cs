@@ -105,18 +105,4 @@ public class MenuManager : SingletonBase<MenuManager>
         throw new MissingReferenceException("Prefab not found for type " + typeof(T));
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            if (LevelCreateMenu._opened)
-            {
-                LevelCreateMenu.Shut();
-            }
-            else
-            {
-                LevelCreateMenu.Show();
-            }
-        }
-    }
 }

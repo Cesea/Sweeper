@@ -26,8 +26,21 @@ namespace Level
 
         private float _yRotation = 0;
 
-        private void Start()
+        private void Update()
         {
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                if (LevelCreateMenu.Opened)
+                {
+                    LevelCreateMenu.Shut();
+                    _cursorManager.ChangeState(CursorManager.CursorState.Create);
+                }
+                else
+                {
+                    LevelCreateMenu.Show();
+                    _cursorManager.ChangeState(CursorManager.CursorState.Select);
+                }
+            }
         }
 
         private void OnEnable()

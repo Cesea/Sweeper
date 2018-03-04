@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CursorManager : MonoBehaviour
+using Foundation;
+
+public class CursorManager : SingletonBase<CursorManager>
 {
     public enum CursorState
     {
@@ -21,15 +23,12 @@ public class CursorManager : MonoBehaviour
 
     private CursorState _currentState = CursorState.Count;
 
-    private void Awake()
+    private void Start()
     {
         _createCursor.gameObject.SetActive(false);
         _pathCursor.gameObject.SetActive(false);
         _selectCursor.gameObject.SetActive(false);
-    }
 
-    private void Start()
-    {
         ChangeState(CursorState.Select);
     }
 
