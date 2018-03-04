@@ -14,6 +14,12 @@ public class BoardMovementManager : MonoBehaviour
 
     private BoardObject _boardObject;
 
+    private bool _followingDone = true;
+
+    public bool FollowingDone
+    {
+        get { return _followingDone; }
+    }
 
     private void Awake()
     {
@@ -24,10 +30,10 @@ public class BoardMovementManager : MonoBehaviour
     {
         if (!Object.ReferenceEquals(_sittingNodeInfo, null))
         {
-            _sittingNodeInfo._sittingObject = null;
+            _sittingNodeInfo.SittingObject = null;
         }
         _sittingNodeInfo = BoardManager.Instance.CurrentBoard.GetNodeInfoAt(x, y, z, side);
-        _sittingNodeInfo._sittingObject = gameObject;
+        _sittingNodeInfo.SittingObject = gameObject;
 
         transform.position = _sittingNodeInfo.GetWorldPosition();
         OnMovementDone(_sittingNodeInfo);
@@ -35,14 +41,14 @@ public class BoardMovementManager : MonoBehaviour
 
     public void OnMovementStart()
     {
-        _sittingNodeInfo._sittingObject = null;
+        _sittingNodeInfo.SittingObject = null;
         GameStateManager.Instance.RemoveExclamations();
     }
 
     public void OnMovementDone(NodeSideInfo info)
     {
         _sittingNodeInfo = info;
-        _sittingNodeInfo._sittingObject = gameObject;
+        _sittingNodeInfo.SittingObject = gameObject;
 
         _boardObject.UpdateNeighbourCells();
 
@@ -69,6 +75,7 @@ public class BoardMovementManager : MonoBehaviour
     {
         _targetIndex = 0;
         StopCoroutine("FollowPath");
+        _followingDone = true;
     }
 
     public void StartFindPath(NodeSideInfo target)
@@ -81,6 +88,8 @@ public class BoardMovementManager : MonoBehaviour
         _path = nodeInfos;
         if (success)
         {
+            _followingDone = false;
+
             StopFindPath();
             StartCoroutine("FollowPath");
         }
@@ -132,5 +141,7 @@ public class BoardMovementManager : MonoBehaviour
                 yield return null;
             }
         }
+
+        _followingDone = true;
     }
 }

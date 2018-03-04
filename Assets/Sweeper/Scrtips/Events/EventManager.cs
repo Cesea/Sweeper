@@ -87,7 +87,8 @@ public class EventManager : SingletonBase<EventManager>
     public void TriggerEvent (Events.GameEvent e)
     {
         EventDelegate del;
-        if (delegates.TryGetValue(e.GetType(), out del)) {
+        if (delegates.TryGetValue(e.GetType(), out del))
+        {
             del.Invoke(e);
 
             // remove listeners which should only be called once

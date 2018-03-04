@@ -5,12 +5,16 @@ using UnityEngine;
 [RequireComponent(typeof(BoardMovementManager))]
 public class EnemyBoardObject : BoardObject
 {
+    private static int LastID = 1;
+
     public BoardHealth _health;
     public BoardStamina _stamina;
 
     protected AI.AIThinker _thinker;
 
     public PlayerBoardObject _playerObject;
+
+    public int EnemyID { get; private set; }
 
     protected override void Awake()
     {
@@ -20,6 +24,8 @@ public class EnemyBoardObject : BoardObject
         _thinker = GetComponent<AI.AIThinker>();
 
         _playerObject = FindObjectOfType<PlayerBoardObject>();
+
+        EnemyID = LastID++;
     }
 
     public virtual void Think()

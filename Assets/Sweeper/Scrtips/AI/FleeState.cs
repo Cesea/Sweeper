@@ -7,11 +7,13 @@ namespace AI
 {
     public class FleeState : IState
     {
-        EnemyBoardObject _owner;
+        private EnemyBoardObject _owner;
+        private AIThinker _thinker;
 
         public void Enter(EnemyBoardObject owner)
         {
             _owner = owner;
+            _thinker = _owner.GetComponent<AIThinker>();
         }
 
         public void Exit()

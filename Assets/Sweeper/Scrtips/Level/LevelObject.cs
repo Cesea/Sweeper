@@ -6,14 +6,22 @@ namespace Level
 {
     public class LevelObject : MonoBehaviour
     {
-        public bool _isHazard = true;
-        public bool _isWalkable = true;
-        public bool _canInstallSide = false;
+
+        private bool _isHazard = true;
+        private bool _isWalkable = true;
+        private bool _canInstallSide = false;
+
+        public bool IsHazard { get; set; }
+        public bool IsWalkable { get; set; }
+        public bool CanInstallSide { get; set; }
 
         [HideInInspector]
-        public Node _sittingNode = null;
-        [HideInInspector]
-        public Side _installedSide;
+        private NodeSideInfo _sittingInfo = null;
+        public NodeSideInfo SittingInfo
+        {
+            get { return _sittingInfo; }
+            set { _sittingInfo = value; }
+        }
 
         [HideInInspector]
         public int _prefabIndex;
@@ -24,13 +32,13 @@ namespace Level
             result._isHazard = _isHazard;
             result._isWalkable = _isWalkable;
             result._prefabIndex = _prefabIndex;
-            result._installedSide = _installedSide;
 
-            if (_sittingNode != null)
+            if (!Object.ReferenceEquals(_sittingInfo, null))
             {
-                result._boardX = _sittingNode.X;
-                result._boardY = _sittingNode.Y;
-                result._boardZ = _sittingNode.Z;
+                result._installedSide = _sittingInfo._side;
+                result._boardX = _sittingInfo._node.X;
+                result._boardY = _sittingInfo._node.Y;
+                result._boardZ = _sittingInfo._node.Z;
 
             }
             return result;

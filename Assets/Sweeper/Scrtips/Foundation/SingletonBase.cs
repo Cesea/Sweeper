@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Foundation
 {
-    public class SingletonBase<T> : MonoBehaviour where T : SingletonBase<T>
+    public class SingletonBase<T> : MonoBehaviour where T : MonoBehaviour
     {
         protected static T _instance;
         public static T Instance
@@ -27,7 +27,7 @@ namespace Foundation
             //}
             //else
             //{
-                _instance = (T)this;
+                _instance = this as T;
             //}
         }
 

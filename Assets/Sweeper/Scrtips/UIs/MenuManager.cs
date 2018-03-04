@@ -107,9 +107,16 @@ public class MenuManager : SingletonBase<MenuManager>
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && _menuStack.Count > 0)
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
-            _menuStack.Peek().OnBackPressed();
+            if (LevelCreateMenu._opened)
+            {
+                LevelCreateMenu.Shut();
+            }
+            else
+            {
+                LevelCreateMenu.Show();
+            }
         }
     }
 }

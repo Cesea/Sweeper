@@ -162,9 +162,9 @@ public class Board
     {
         foreach (var info in _nodeSideInfos)
         {
-            if (info._installedObject != null)
+            if (info.InstalledObject != null)
             {
-                GameObject.Destroy(info._installedObject);
+                GameObject.Destroy(info.InstalledObject);
             }
         }
     }

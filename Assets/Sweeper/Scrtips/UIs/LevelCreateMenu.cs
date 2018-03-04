@@ -29,10 +29,13 @@ public class LevelCreateMenu : Menu<LevelCreateMenu>
             int localI = i;
             go.GetComponent<Button>().onClick.AddListener(() => Instance._levelCreator.SetSelectingIndex(localI));
         }
+
+        EventManager.Instance.TriggerEvent(new Events.LevelCreatorMenuEvent(true));
     }
 
     public static void Shut()
     {
+        EventManager.Instance.TriggerEvent(new Events.LevelCreatorMenuEvent(false));
         Close();
     }
 }

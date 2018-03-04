@@ -281,8 +281,50 @@ public class NodeSideInfo
     public bool IsHazard { get; set; }
     public bool IsPassable { get; set; }
 
-    public GameObject _sittingObject = null;
-    public GameObject _installedObject = null;
+    private GameObject _sittingObject = null;
+    public GameObject SittingObject
+    {
+        get
+        {
+            return _sittingObject;
+        }
+        set
+        {
+            if (value != null)
+            {
+                IsPassable = false;
+            }
+            else
+            {
+                IsPassable = true;
+            }
+        }
+    }
+
+    private GameObject _installedObject = null;
+    public GameObject InstalledObject
+    {
+        get
+        {
+            return _installedObject;
+        }
+        set
+        {
+            if (value != null)
+            {
+                Level.LevelObject levelObject = value.GetComponent<Level.LevelObject>();
+                IsPassable = levelObject.IsWalkable ? true : false;
+                IsHazard = levelObject.IsHazard ? true : false;
+                levelObject.SittingInfo = this;
+            }
+            else
+            {
+                IsPassable = true;
+                IsHazard = false;
+            }
+            _installedObject = value;
+        }
+    }
 
     public NodeSideInfo Parent;
 

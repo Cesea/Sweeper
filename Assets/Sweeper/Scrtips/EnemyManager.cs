@@ -21,11 +21,21 @@ public class EnemyManager : SingletonBase<EnemyManager>
     private void OnEnable()
     {
         EventManager.Instance.AddListener<Events.EnemyTurnEvent>(OnEnemyTurnEvent);
+
+        EventManager.Instance.AddListener<Events.EnemyIdleEvent>(OnEnemyIdleEvent);
+        EventManager.Instance.AddListener<Events.EnemyChaseEvent>(OnEnemyChaseEvent);
+        EventManager.Instance.AddListener<Events.EnemyFleeEvent>(OnEnemyFleeEvent);
+        EventManager.Instance.AddListener<Events.EnemyPatrolEvent>(OnEnemyPatrolEvent);
     }
 
     private void OnDisable()
     {
         EventManager.Instance.RemoveListener<Events.EnemyTurnEvent>(OnEnemyTurnEvent);
+
+        EventManager.Instance.RemoveListener<Events.EnemyIdleEvent>(OnEnemyIdleEvent);
+        EventManager.Instance.RemoveListener<Events.EnemyChaseEvent>(OnEnemyChaseEvent);
+        EventManager.Instance.RemoveListener<Events.EnemyFleeEvent>(OnEnemyFleeEvent);
+        EventManager.Instance.RemoveListener<Events.EnemyPatrolEvent>(OnEnemyPatrolEvent);
     }
 
     public bool SpawnEnemy(Vector3Int pos, Side side)
@@ -54,7 +64,6 @@ public class EnemyManager : SingletonBase<EnemyManager>
         {
             enemy._stamina.ResetStaminaToMax();
         }
-
         StartCoroutine(EnemiesThinkAndAct());
     }
 
@@ -63,9 +72,21 @@ public class EnemyManager : SingletonBase<EnemyManager>
         foreach (var e in _enemies)
         {
             e.Think();
-            Debug.Log("thinking");
             yield return new WaitForSecondsRealtime(1.0f);
         }
         GameStateManager.Instance.TurnChanged = true;
+    }
+
+    public void OnEnemyIdleEvent(Events.EnemyIdleEvent e)
+    {
+    }
+    public void OnEnemyChaseEvent(Events.EnemyChaseEvent e)
+    {
+    }
+    public void OnEnemyFleeEvent(Events.EnemyFleeEvent e)
+    {
+    }
+    public void OnEnemyPatrolEvent(Events.EnemyPatrolEvent e)
+    {
     }
 }

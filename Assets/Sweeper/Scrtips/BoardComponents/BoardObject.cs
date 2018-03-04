@@ -8,15 +8,15 @@ using Foundation;
 public class BoardObject : MonoBehaviour
 {
     protected BoardMovementManager _movementManager;
+    public BoardMovementManager MovementManager { get { return _movementManager; } }
 
     [HideInInspector]
     public List<Command> _commandBuffer = new List<Command>();
 
     protected NodeSideInfo[] _adjacentCells;
-    public NodeSideInfo[] AdjacentCells
-    {
-        get { return _adjacentCells; }
-    }
+    public NodeSideInfo[] AdjacentCells { get { return _adjacentCells; } }
+
+    public NodeSideInfo SittingNode { get { return _movementManager._sittingNodeInfo; } }
 
     [SerializeField]
     protected bool _canReceiveCommand = false; 

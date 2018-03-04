@@ -32,7 +32,7 @@ namespace AI
             ChangeState(newState);
         }
 
-        private void Update()
+        public void Think()
         {
             if (_stateStack.Count != 0)
             {
@@ -40,14 +40,10 @@ namespace AI
             }
         }
 
-        public void Think()
-        {
-
-        }
-
-
         public void ChangeState(IState newState)
         {
+            Debug.Log("State changed to " + newState.ToString());
+
             if (newState != null)
             {
                 //이전 상태가 없을때

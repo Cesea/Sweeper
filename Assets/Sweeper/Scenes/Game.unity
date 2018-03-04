@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -236,7 +236,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 439922854}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 374.5, y: 210.5, z: 0}
+  m_LocalPosition: {x: 376, y: 211.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1349563163}
@@ -341,12 +341,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 1354438154}
-  _buildCursor: {fileID: 2096161795}
+  _levelCursor: {fileID: 2096161795}
   _installObjectPrefabs:
   - {fileID: 1370135647862746, guid: 9bc58b373f143584486a02ef679ad757, type: 2}
   - {fileID: 1640418622757004, guid: 671716a9fd914574e9b7ba080473fb78, type: 2}
   - {fileID: 1121808584864342, guid: 92e2d2f2b801ba842bd422f0e0e806b8, type: 2}
-  _selectingIndex: 0
   _canBuild: 0
 --- !u!4 &632859037
 Transform:

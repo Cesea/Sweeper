@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using UnityEngine.EventSystems;
+
 using Utils;
 
 namespace Level
@@ -118,7 +120,7 @@ namespace Level
                 _leftMouseClockTimer.Tick(Time.deltaTime) &&
                 !Object.ReferenceEquals(_selectingInfo, null))
             {
-                GameObject sittingObject = _selectingInfo._sittingObject;
+                GameObject sittingObject = _selectingInfo.SittingObject;
                 if (sittingObject != null &&
                     sittingObject.GetComponent<PlayerBoardObject>() != null)
                 {
@@ -147,6 +149,21 @@ namespace Level
 
         private void CreateUpdate()
         {
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
+            if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftShift))
+            {
+                LevelCreator.Instance.DestroyObjectAtNode(_selectingInfo);
+                return;
+            }
+            if (Input.GetMouseButtonDown(0))
+            {
+                LevelCreator.Instance.InstallObjectAtNode(_selectingInfo, LevelCreator.Instance.SelectingIndex);
+                return;
+            }
+
         }
 
         private void MoveUpdate()
@@ -244,7 +261,7 @@ namespace Level
             }
         }
 
-        private void ChangeState(CursorState state)
+        public void ChangeState(CursorState state)
         {
             if (state == _state)
             {

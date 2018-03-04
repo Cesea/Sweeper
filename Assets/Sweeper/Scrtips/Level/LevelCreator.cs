@@ -12,15 +12,16 @@ namespace Level
     public class LevelCreator : SingletonBase<LevelCreator>
     {
         public BoardObject _player;
-        public LevelCursor _buildCursor;
+        public LevelCursor _levelCursor;
 
         private GameObject _previewObject;
 
         public List<GameObject> _installObjectPrefabs;
 
-        public int _selectingIndex = 0;
+        private int _selectingIndex = 0;
+        public int SelectingIndex { get { return _selectingIndex; } }
         private int _prevIndex = 0; 
-        
+
         public bool _canBuild = false;
 
         private float _yRotation = 0;
@@ -29,65 +30,29 @@ namespace Level
         {
         }
 
-        private void Update()
+        private void OnEnable()
         {
-            _canBuild = LevelCreateMenu._opened;
+            EventManager.Instance.AddListener<Events.LevelCreatorMenuEvent>(OnLevelCreatorMenuEvent);
+        }
 
-            if (!_canBuild)
-            {
-                if (Input.GetKeyDown(KeyCode.Tab))
-                {
-                    LevelCreateMenu.Show();
-                    RecreateObjectToInstall();
-                    return;
-                }
-            }
+        private void OnDisable()
+        {
+            EventManager.Instance.RemoveListener<Events.LevelCreatorMenuEvent>(OnLevelCreatorMenuEvent);
+        }
 
+        private void LateUpdate()
+        {
             if (_canBuild)
             {
-
-                HandleInput();
-
-                if (Input.GetKeyDown(KeyCode.Tab))
-                {
-                    LevelCreateMenu.Shut();
-                    GameObject.Destroy(_previewObject);
-                    return;
-                }
-
                 if (_selectingIndex != _prevIndex)
                 {
                     RecreateObjectToInstall();
                 }
-
                 MakeObjectToInstallFollowCursor();
-
                 _prevIndex = _selectingIndex;
             }
         }
 
-        private void HandleInput()
-        {
-            if (_canBuild)
-            {
-                if (EventSystem.current.IsPointerOverGameObject())
-                {
-                    return;
-                }
-
-                if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftShift))
-                {
-                    DestroyObjectAtNode(_buildCursor._selectingInfo);
-                    return;
-                }
-
-                if (Input.GetMouseButtonDown(0))
-                {
-                    InstallObjectAtNode(_buildCursor._selectingInfo, _selectingIndex);
-                    return;
-                }
-            }
-        }
 
         public void InstallObjectAtNode(NodeSideInfo info, int prefabIndex)
         {
@@ -97,7 +62,7 @@ namespace Level
             }
             if (!Object.ReferenceEquals(info, null))
             {
-                if (info._installedObject != null)
+                if (info.InstalledObject != null)
                 {
                     //설치하려는 자리에 이미 노드가 있다.... 어떻게 처리 할까??
                 }
@@ -108,17 +73,7 @@ namespace Level
                     GameObject go = Instantiate(_installObjectPrefabs[prefabIndex], info.GetWorldPosition(), rot);
                     LevelObject levelObject = go.GetComponent<LevelObject>();
                     levelObject._prefabIndex = prefabIndex;
-                    levelObject._sittingNode = info._node;
-                    levelObject._installedSide = info._side;
-                    if (levelObject._isHazard)
-                    {
-                        info.IsHazard = true;
-                    }
-                    if (!levelObject._isWalkable)
-                    {
-                        info.IsPassable = false;
-                    }
-                    info._installedObject = go;
+                    info.InstalledObject = go;
                 }
             }
         }
@@ -126,12 +81,10 @@ namespace Level
         public void DestroyObjectAtNode(NodeSideInfo info)
         {
             if (!Object.ReferenceEquals(info, null)&&
-                info._installedObject != null)
+                info.InstalledObject != null)
             {
                 //LevelObject levelObject = info._node.GetInstalledObjectAt(info._side).GetComponent<LevelObject>();
-
-                Destroy(info._installedObject);
-                info._installedObject = null;
+                Destroy(info.InstalledObject);
             }
         }
 
@@ -153,7 +106,7 @@ namespace Level
         {
             if (_previewObject != null)
             {
-                _previewObject.transform.position = _buildCursor.transform.position;
+                _previewObject.transform.position = _levelCursor.transform.position;
             }
         }
 
@@ -164,6 +117,22 @@ namespace Level
                 return;
             }
             _selectingIndex = i;
+        }
+
+        public void OnLevelCreatorMenuEvent(Events.LevelCreatorMenuEvent e)
+        {
+            if (e.Opened)
+            {
+                RecreateObjectToInstall();
+                _canBuild = true;
+                _levelCursor.ChangeState(LevelCursor.CursorState.Create);
+            }
+            else
+            {
+                GameObject.Destroy(_previewObject);
+                _canBuild = false;
+                _levelCursor.ChangeState(LevelCursor.CursorState.Select);
+            }
         }
     }
 }
