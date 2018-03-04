@@ -25,8 +25,6 @@ public class GameStateManager : SingletonBase<GameStateManager>
 
     public CameraController _cameraController;
 
-    public Level.LevelCursor _levelCursor;
-
     private bool _levelStarted = false;
     public bool LevelStarted { get { return _levelStarted; } set { _levelStarted = value; } }
     private bool _isGamePlaying = false;
@@ -48,6 +46,9 @@ public class GameStateManager : SingletonBase<GameStateManager>
     public UnityEvent PlayLevelEvent;
     public UnityEvent EndLevelEvent;
 
+    [SerializeField]
+    private CursorManager _cursorManager;
+    public CursorManager CursorManager { get { return _cursorManager; } }
 
     private void OnEnable()
     {
@@ -67,7 +68,7 @@ public class GameStateManager : SingletonBase<GameStateManager>
 
         _exclamations = new List<GameObject>();
 
-        _levelCursor.gameObject.SetActive(false);
+        _cursorManager.gameObject.SetActive(false);
 
         if (_exclamationPrefab != null &&
             _boardManager != null)
@@ -118,7 +119,7 @@ public class GameStateManager : SingletonBase<GameStateManager>
         _isGamePlaying = true;
         yield return new WaitForSeconds(_delayTime);
 
-        _levelCursor.gameObject.SetActive(true);
+        _cursorManager.gameObject.SetActive(true);
 
         if (PlayLevelEvent != null)
         {

@@ -63,7 +63,8 @@ namespace Events
     #region Enemy State Events
     public class EnemyChaseEvent : GameEvent
     {
-        public int _enemyID;
+        private int _enemyID;
+        public int EnemyID { get { return _enemyID; } }
         public EnemyChaseEvent(int id)
         {
             _enemyID = id;
@@ -71,7 +72,8 @@ namespace Events
     }
     public class EnemyFleeEvent : GameEvent
     {
-        public int _enemyID;
+        private int _enemyID;
+        public int EnemyID { get { return _enemyID; }  }
         public EnemyFleeEvent(int id)
         {
             _enemyID = id;
@@ -79,7 +81,8 @@ namespace Events
     }
     public class EnemyIdleEvent : GameEvent
     {
-        public int _enemyID;
+        private int _enemyID;
+        public int EnemyID { get { return _enemyID; } }
         public EnemyIdleEvent(int id)
         {
             _enemyID = id;
@@ -87,7 +90,8 @@ namespace Events
     }
     public class EnemyPatrolEvent : GameEvent
     {
-        public int _enemyID;
+        private int _enemyID;
+        public int EnemyID { get { return _enemyID; } }
         public EnemyPatrolEvent(int id)
         {
             _enemyID = id;

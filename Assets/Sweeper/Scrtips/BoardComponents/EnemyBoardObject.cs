@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(BoardMovementManager))]
 public class EnemyBoardObject : BoardObject
 {
-    private static int LastID = 1;
+    private static int LastID = 0;
 
     public BoardHealth _health;
     public BoardStamina _stamina;

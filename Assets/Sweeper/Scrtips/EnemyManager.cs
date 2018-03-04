@@ -84,6 +84,15 @@ public class EnemyManager : SingletonBase<EnemyManager>
     }
     public void OnEnemyChaseEvent(Events.EnemyChaseEvent e)
     {
+        EnemyBoardObject target = null;
+        foreach (var enemy in _enemies)
+        {
+            if (enemy.EnemyID == e.EnemyID)
+            {
+                target = enemy;
+            }
+        }
+        VisualEffectManager.Instance.SpawnExclamation(target);
     }
     public void OnEnemyFleeEvent(Events.EnemyFleeEvent e)
     {

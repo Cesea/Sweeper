@@ -12,7 +12,7 @@ namespace Level
     public class LevelCreator : SingletonBase<LevelCreator>
     {
         public BoardObject _player;
-        public LevelCursor _levelCursor;
+        public CursorManager _cursorManager;
 
         private GameObject _previewObject;
 
@@ -107,7 +107,7 @@ namespace Level
         {
             if (_previewObject != null)
             {
-                _previewObject.transform.position = _levelCursor.transform.position;
+                //_previewObject.transform.position = _levelCursor.transform.position;
             }
         }
 
@@ -126,13 +126,13 @@ namespace Level
             {
                 RecreateObjectToInstall();
                 _canBuild = true;
-                _levelCursor.ChangeState(LevelCursor.CursorState.Create);
+                //_levelCursor.ChangeState(LevelCursor.CursorState.Create);
             }
             else
             {
                 GameObject.Destroy(_previewObject);
                 _canBuild = false;
-                _levelCursor.ChangeState(LevelCursor.CursorState.Select);
+                //_levelCursor.ChangeState(LevelCursor.CursorState.Select);
             }
         }
     }

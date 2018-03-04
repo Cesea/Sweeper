@@ -19,7 +19,6 @@ public class VisualEffectManager : SingletonBase<VisualEffectManager>
         
     }
 
-
     public void SpawnExclamation(BoardObject boardObject)
     {
         GameObject go = Instantiate(_exclamationPrefab, boardObject.transform.position + Vector3.up, Quaternion.identity);
@@ -27,7 +26,6 @@ public class VisualEffectManager : SingletonBase<VisualEffectManager>
 
         GameObject.Destroy(go, 1.5f);
     }
-
 
     //public void RemoveExclamations()
     //{

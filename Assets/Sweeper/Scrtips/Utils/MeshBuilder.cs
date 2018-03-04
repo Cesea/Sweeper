@@ -189,61 +189,6 @@ namespace Utils
             }
         }
 
-         public static void BuildCornerLineQuadData(Vector3 v1, Vector3 v2, 
-             Side minSide, Side maxSide,
-            float lineWidth, int quadIndex, 
-            ref Vector3[] verties, ref Vector3[] normals, ref int[] triangles)
-        {
-            Vector3 diff = v2 - v1;
-            Side side = BoardManager.NormalToSide(diff);
-
-            bool counterClockWise = false;
-
-            Vector3 offsetDelta = Vector3.zero;
-            if ((minSide == Side.Top || minSide == Side.Bottom) &&
-                (maxSide == Side.Left || maxSide == Side.Right || maxSide == Side.Front | maxSide == Side.Back))
-            {
-
-            }
-
-            switch (side)
-            {
-                //case Side.Top: { offsetDelta = new Vector3(0.0f, ); }break;
-                //case Side.Bottom: {  offsetDelta = new Vector3(); }break;
-                case Side.Left: { offsetDelta = new Vector3(0.0f, 0.0f, -1.0f); counterClockWise = true; } break;
-                case Side.Right: { offsetDelta = new Vector3(0.0f, 0.0f, 1.0f); counterClockWise = true; } break;
-                case Side.Front: { offsetDelta = new Vector3(1.0f, 0.0f, 0.0f); } break;
-                case Side.Back: { offsetDelta = new Vector3(-1.0f, 0.0f, 0.0f); } break;
-            }
-
-            //offsetDelta *= lineWidth;
-            //v1 += quadNormal * 0.1f;
-            //v2 += quadNormal * 0.1f;
-
-            //verties[0] = v1 - offsetDelta;
-            //verties[1] = v2 - offsetDelta;
-            //verties[2] = v2 + offsetDelta;
-            //verties[3] = v1 + offsetDelta;
-
-            //normals[0] = quadNormal; normals[1] = quadNormal; normals[2] = quadNormal; normals[3] = quadNormal;
-
-            if (counterClockWise)
-            {
-                triangles[0] = 3; triangles[1] = 2; triangles[2] = 1;
-                triangles[3] = 3; triangles[4] = 1; triangles[5] = 0;
-            }
-            else
-            {
-                triangles[0] = 0; triangles[1] = 1; triangles[2] = 2;
-                triangles[3] = 0; triangles[4] = 2; triangles[5] = 3;
-            }
-
-            for (int j = 0; j < 6; ++j)
-            {
-                triangles[j] += quadIndex * 4;
-            }
-        }
-
         public static Mesh BuildQuadsFromNodeInfoList(List<NodeSideInfo> list,Vector2[,] inputUV, float lineWidth)
         {
             Mesh mesh = new Mesh();
