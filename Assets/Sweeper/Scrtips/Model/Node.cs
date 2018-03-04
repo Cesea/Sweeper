@@ -298,6 +298,7 @@ public class NodeSideInfo
             {
                 IsPassable = true;
             }
+            _sittingObject = value;
         }
     }
 
@@ -313,8 +314,8 @@ public class NodeSideInfo
             if (value != null)
             {
                 Level.LevelObject levelObject = value.GetComponent<Level.LevelObject>();
-                IsPassable = levelObject.IsWalkable ? true : false;
-                IsHazard = levelObject.IsHazard ? true : false;
+                IsPassable = levelObject.IsWalkable;
+                IsHazard = levelObject.IsHazard;
                 levelObject.SittingInfo = this;
             }
             else
@@ -346,12 +347,16 @@ public class NodeSideInfo
         _node = null;
         _side = Side.Count;
 
+        IsHazard = false;
+        IsPassable = true;
     }
 
     public NodeSideInfo(Node node, Side side)
     {
         _node = node;
         _side = side;
+        IsHazard = false;
+        IsPassable = true;
     }
 
     public Vector3 GetWorldPosition()

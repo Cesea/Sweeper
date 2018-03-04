@@ -36,11 +36,16 @@ namespace AI
         {
             if (_stateStack.Count != 0)
             {
-                _stateStack.Peek().Update();
+                _stateStack.Peek().CheckStatus();
             }
         }
 
-        public void ChangeState(IState newState)
+        public void DoAction()
+        {
+
+        }
+
+        public void ChangeState(IState newState, bool disposePrev = true)
         {
             Debug.Log("State changed to " + newState.ToString());
 
@@ -57,6 +62,10 @@ namespace AI
                 {
                     IState prevState = _stateStack.Peek();
                     prevState.Exit();
+                    if (disposePrev)
+                    {
+                        _stateStack.Pop();
+                    }
                     _stateStack.Push(newState);
                     newState.Enter(_boardObject);
                 }

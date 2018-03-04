@@ -85,6 +85,7 @@ namespace Level
             {
                 //LevelObject levelObject = info._node.GetInstalledObjectAt(info._side).GetComponent<LevelObject>();
                 Destroy(info.InstalledObject);
+                info.InstalledObject = null;
             }
         }
 

@@ -9,5 +9,7 @@ namespace AI
         void Enter(EnemyBoardObject owner);
         void Update();
         void Exit();
+
+        void CheckStatus();
     }
 }

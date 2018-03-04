@@ -11,10 +11,16 @@ public class EnemyBoardObject : BoardObject
     public BoardStamina _stamina;
 
     protected AI.AIThinker _thinker;
+    public AI.AIThinker Thinker { get { return _thinker; } }
 
     public PlayerBoardObject _playerObject;
 
     public int EnemyID { get; private set; }
+
+    public void NotifyPlayerPosition(NodeSideInfo playerSitting)
+    {
+        _thinker.Think();
+    }
 
     protected override void Awake()
     {
@@ -33,7 +39,6 @@ public class EnemyBoardObject : BoardObject
         _thinker.Think();
     }
 
-
     public override bool CheckAdjacentCells()
     {
         bool isHazardExist = false;
@@ -49,7 +54,7 @@ public class EnemyBoardObject : BoardObject
         }
         if (isHazardExist)
         {
-            GameStateManager.Instance.SpawnExclamation(transform);
+            VisualEffectManager.Instance.SpawnExclamation(this);
         }
         return isHazardExist;
     }

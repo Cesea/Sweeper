@@ -95,5 +95,15 @@ namespace Events
     }
     #endregion
 
+    public class PlayerPositionEvent : GameEvent
+    {
+        private NodeSideInfo _sittingInfo;
+        public NodeSideInfo SittingInfo { get { return _sittingInfo; } }
+        public PlayerPositionEvent(NodeSideInfo info)
+        {
+            _sittingInfo = info;
+        }
+    }
+
 }
 

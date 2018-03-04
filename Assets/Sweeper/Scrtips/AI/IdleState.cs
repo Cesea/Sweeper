@@ -27,6 +27,11 @@ namespace AI
 
         public void Update()
         {
+            Debug.Log("idle state updating");
+        }
+
+        public void CheckStatus()
+        {
             Vector3 playerPosition = _player.transform.position;
             Vector3 enemyPosition = _owner.transform.position;
 

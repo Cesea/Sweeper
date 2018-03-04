@@ -51,7 +51,10 @@ public class PathFinder : MonoBehaviour
 
                 foreach (var n in _boardManager.CurrentBoard.GetReachables(currentNodeInfo))
                 {
-                    if (!n._node.IsSolid || n._side == Side.Count ||closedSet.Contains(n))
+                    if ((!n._node.IsSolid) || 
+                        (!n.IsPassable) ||
+                        (n._side == Side.Count) ||
+                        (closedSet.Contains(n)) )
                     {
                         continue;
                     }

@@ -42,7 +42,6 @@ public class BoardMovementManager : MonoBehaviour
     public void OnMovementStart()
     {
         _sittingNodeInfo.SittingObject = null;
-        GameStateManager.Instance.RemoveExclamations();
     }
 
     public void OnMovementDone(NodeSideInfo info)
@@ -59,15 +58,18 @@ public class BoardMovementManager : MonoBehaviour
             return;
         }
 
+        foreach (var movement in _availableMovements)
+        {
+            movement.UpdateNodeSideInfo(_sittingNodeInfo);
+        }
+
         if (_boardObject.CheckAdjacentCells())
         {
             StopFindPath();
         }
 
-        foreach (var movement in _availableMovements)
-        {
-            movement.UpdateNodeSideInfo(_sittingNodeInfo);
-        }
+        _boardObject.OnMovementDone();
+
     }
 
 

@@ -28,16 +28,18 @@ namespace AI
 
         public void Update()
         {
-            Debug.Log("Chase State updating");
+        }
+
+        public void CheckStatus()
+        {
             Vector3 playerPosition = _player.transform.position;
             Vector3 enemyPosition = _owner.transform.position;
-
-            _owner.MovementManager.StartFindPath(_player.SittingNode);
 
             //Distance between Player is too far change to idle state
             if (Vector3.Distance( playerPosition, enemyPosition) > _seekDistance)
             {
                 _thinker.ChangeState(new IdleState());
+                EventManager.Instance.TriggerEvent(new Events.EnemyChaseEvent(_owner.EnemyID));
                 return;
             }
         }

@@ -6,14 +6,16 @@ namespace Level
 {
     public class LevelObject : MonoBehaviour
     {
-
+        [SerializeField]
         private bool _isHazard = true;
+        [SerializeField]
         private bool _isWalkable = true;
+        [SerializeField]
         private bool _canInstallSide = false;
 
-        public bool IsHazard { get; set; }
-        public bool IsWalkable { get; set; }
-        public bool CanInstallSide { get; set; }
+        public bool IsHazard { get { return _isHazard; } set { _isHazard = value; } }
+        public bool IsWalkable { get { return _isWalkable; } set { _isWalkable = value; } }
+        public bool CanInstallSide { get { return _canInstallSide; } set { _canInstallSide = value; } }
 
         [HideInInspector]
         private NodeSideInfo _sittingInfo = null;
@@ -31,6 +33,7 @@ namespace Level
             LevelObjectSaveData result = new LevelObjectSaveData();
             result._isHazard = _isHazard;
             result._isWalkable = _isWalkable;
+            result._canInstallSide = _canInstallSide;
             result._prefabIndex = _prefabIndex;
 
             if (!Object.ReferenceEquals(_sittingInfo, null))
@@ -56,5 +59,6 @@ namespace Level
         public Side _installedSide;
         public bool _isHazard = true;
         public bool _isWalkable = true;
+        public bool _canInstallSide = false;
     }
 }

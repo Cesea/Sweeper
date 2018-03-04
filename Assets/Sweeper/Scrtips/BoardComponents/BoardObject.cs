@@ -81,4 +81,8 @@ public class BoardObject : MonoBehaviour
         return result;
     }
 
+    public virtual void OnMovementDone()
+    {
+    }
+
 }

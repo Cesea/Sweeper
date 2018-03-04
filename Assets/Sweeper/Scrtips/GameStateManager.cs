@@ -200,7 +200,6 @@ public class GameStateManager : SingletonBase<GameStateManager>
     public void SetupNextBoard()
     {
         _boardManager.BuildNewBoard();
-        RemoveExclamations();
 
         _cameraController.transform.position = new Vector3(
             _boardManager.WorldSize.x / 2.0f,
@@ -218,26 +217,6 @@ public class GameStateManager : SingletonBase<GameStateManager>
     {
         _enemyManager.SpawnEnemy(3, 0, 3, Side.Top);
     }
-
-    public void SpawnExclamation(Transform playerTransform)
-    {
-        GameObject go = Instantiate(_exclamationPrefab, playerTransform.position + Vector3.up, Quaternion.identity);
-        go.transform.SetParent(transform);
-        _exclamations.Add(go);
-    }
-
-    public void RemoveExclamations()
-    {
-        if (_exclamations.Count > 0)
-        {
-            for (int i = _exclamations.Count - 1; i >= 0; --i)
-            {
-                Destroy(_exclamations[i]);
-            }
-            _exclamations.Clear();
-        }
-    }
-
 
     public void OnRadarSkillEvent(Events.RadarSkillEvent e)
     {

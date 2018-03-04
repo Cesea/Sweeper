@@ -42,7 +42,7 @@ public class PlayerBoardObject : BoardObject
         }
         if (isHazardExist)
         {
-            GameStateManager.Instance.SpawnExclamation(transform);
+            VisualEffectManager.Instance.SpawnExclamation(this);
         }
         return isHazardExist;
     }
@@ -66,6 +66,11 @@ public class PlayerBoardObject : BoardObject
             GameStateManager.Instance.LevelFinished = true;
         }
         return result;
+    }
+
+    public override void OnMovementDone()
+    {
+        EventManager.Instance.TriggerEvent(new Events.PlayerPositionEvent(SittingNode));
     }
 
     public void OnPlayerTurnEvent(Events.PlayerTurnEvent e)

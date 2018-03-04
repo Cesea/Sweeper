@@ -201,6 +201,7 @@ namespace Level
             if (Input.GetMouseButtonUp(0))
             {
                 MoveCommand moveCommand = new MoveCommand(_selectedNodeInfoList[_selectedNodeInfoList.Count - 1]);
+
                 GameStateManager.Instance.Player.DoCommand(moveCommand);
 
                 ChangeState(CursorState.Select);

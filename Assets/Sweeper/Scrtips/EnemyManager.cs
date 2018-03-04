@@ -26,6 +26,7 @@ public class EnemyManager : SingletonBase<EnemyManager>
         EventManager.Instance.AddListener<Events.EnemyChaseEvent>(OnEnemyChaseEvent);
         EventManager.Instance.AddListener<Events.EnemyFleeEvent>(OnEnemyFleeEvent);
         EventManager.Instance.AddListener<Events.EnemyPatrolEvent>(OnEnemyPatrolEvent);
+        EventManager.Instance.AddListener<Events.PlayerPositionEvent>(OnPlayerPositionEvent);
     }
 
     private void OnDisable()
@@ -36,6 +37,7 @@ public class EnemyManager : SingletonBase<EnemyManager>
         EventManager.Instance.RemoveListener<Events.EnemyChaseEvent>(OnEnemyChaseEvent);
         EventManager.Instance.RemoveListener<Events.EnemyFleeEvent>(OnEnemyFleeEvent);
         EventManager.Instance.RemoveListener<Events.EnemyPatrolEvent>(OnEnemyPatrolEvent);
+        EventManager.Instance.AddListener<Events.PlayerPositionEvent>(OnPlayerPositionEvent);
     }
 
     public bool SpawnEnemy(Vector3Int pos, Side side)
@@ -88,5 +90,13 @@ public class EnemyManager : SingletonBase<EnemyManager>
     }
     public void OnEnemyPatrolEvent(Events.EnemyPatrolEvent e)
     {
+    }
+
+    public void OnPlayerPositionEvent(Events.PlayerPositionEvent e)
+    {
+        foreach (var enemy in _enemies)
+        {
+            enemy.NotifyPlayerPosition(e.SittingInfo);
+        }
     }
 }
