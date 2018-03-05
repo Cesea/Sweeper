@@ -10,7 +10,7 @@ public class PathCursor : MonoBehaviour
     private NodeSideInfo _selectingInfo;
     private NodeSideInfo _prevSelectingInfo;
 
-    private bool _selecingInfoChanged = false;
+    private bool _selectingInfoChanged = false;
 
     private List<NodeSideInfo> _selectedInfoList = new List<NodeSideInfo>();
 
@@ -30,14 +30,26 @@ public class PathCursor : MonoBehaviour
         _prevSelectingInfo = BoardManager.Instance.CurrentBoard.GetNodeInfoAt(BoardManager.Instance.CurrentBoard.StartCellCoord, Side.Top);
     }
 
+    private void OnEnable()
+    {
+        Debug.Log("enabled");
+        LocateCursor();
+        if (_selectingInfoChanged)
+        {
+            _prevSelectingInfo = _selectingInfo;
+            _selectedInfoList.Add(_selectingInfo);
+            BuildLine();
+        }
+    }
+
     private void Update()
     {
-        _selecingInfoChanged = false;
+        _selectingInfoChanged = false;
         LocateCursor();
 
         #region Add selectingInfo to list
         if (_playerStamina.CurrentStamina > 0 &&
-            _selecingInfoChanged)
+            _selectingInfoChanged)
         {
             if (_selectedInfoList.Count >= 2 &&
                 Node.IsAdjacent(_selectedInfoList[_selectedInfoList.Count - 1]._node, _selectingInfo._node))
@@ -71,7 +83,7 @@ public class PathCursor : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0))
         {
-            MoveCommand moveCommand = new MoveCommand(_selectedInfoList[_selectedInfoList.Count - 1]);
+            MoveCommand moveCommand = new MoveCommand(_selectedInfoList);
             GameStateManager.Instance.Player.DoCommand(moveCommand);
 
             CursorManager.Instance.ChangeState(CursorManager.CursorState.Select);
@@ -96,14 +108,14 @@ public class PathCursor : MonoBehaviour
             rotation = BoardManager.SideToRotation(_selectingInfo._side);
             if (_selectingInfo != _prevSelectingInfo)
             {
-                _selecingInfoChanged = true;
+                _selectingInfoChanged = true;
             }
         }
     }
 
     private void BuildLine()
     {
-        List<Vector3> positionList = new List<Vector3>(_selectedInfoList.Count);
+        List<Vector3> positionList = new List<Vector3>(_selectedInfoList.Count * 2);
         if (_selectedInfoList.Count > 0)
         {
             Vector3 closestEdge = Vector3.zero;
@@ -119,8 +131,13 @@ public class PathCursor : MonoBehaviour
                 current = _selectedInfoList[0];
 
                 currentSideOffset = BoardManager.SideToOffset(current._side).ToVector3() * 0.1f;
-                //positionList.Add(current.GetWorldPosition() + currentSideOffset);
-                //positionList.Add(current.GetWorldPosition() + currentSideOffset);
+                Vector3 currentMouseNodePos = GameStateManager.Instance.MouseNodeSidePosition;
+
+                Vector3 diff = (currentMouseNodePos - currentSideOffset).normalized;
+                //float angle = Vector3.Angle(diff, Vector3.right);
+                //Debug.Log(angle);
+                positionList.Add(current.GetWorldPosition() + currentSideOffset);
+                positionList.Add(current.GetWorldPosition() + (BoardManager.SideToVector3Offset(Side.Right) * 0.5f) + currentSideOffset);
             }
             else
             {

@@ -29,23 +29,51 @@ public class RadialMenu : Menu<RadialMenu>
     [HideInInspector]
     public RectTransform _rectTransform;
 
+    private bool _commandBuildDone = false;
+    private bool _elementBuildDone = false;
+
     public static void Show(NodeSideInfo info)
     {
         Open();
-        Instance.CreateAndShowRadialMenu(info);
+        Instance.StartCoroutine(Instance.CreateAndShowRadialMenu(info));
     }
 
     public static void Shut()
     {
         EventManager.Instance.TriggerEvent(new Events.RadialShutEvent());
+        Instance._commandBuildDone = false;
+        Instance._elementBuildDone = false;
+
+        Instance._selectinFollowContainer.gameObject.SetActive(false);
+        Instance._background.gameObject.SetActive(false);
+
+        GameStateManager.Instance.Player.CommandBuffer.Clear();
         Close();
     }
 
-    private void CreateAndShowRadialMenu(NodeSideInfo info)
+    private void OnCommandBuildDone()
+    {
+        _commandBuildDone = true;
+    }
+    private void OnRadialElementBuildDone()
+    {
+        _elementBuildDone = true;
+
+        _selectinFollowContainer.gameObject.SetActive(true);
+        _background.gameObject.SetActive(true);
+    }
+
+    private IEnumerator CreateAndShowRadialMenu(NodeSideInfo info)
     {
         _rectTransform = _background.GetComponent<RectTransform>();
 
-        List<Command> commands = CommandBuilder.BuildCommands(GameStateManager.Instance.Player, info);
+        yield return StartCoroutine(CommandBuilder.BuildCommands(GameStateManager.Instance.Player, info, OnCommandBuildDone));
+        while (!_commandBuildDone)
+        {
+            yield return null;
+        }
+
+        List<Command> commands = GameStateManager.Instance.Player.CommandBuffer;
 
         _elementAngleGap = 360.0f / commands.Count;
 
@@ -80,6 +108,7 @@ public class RadialMenu : Menu<RadialMenu>
 
             _elements.Add(element);
         }
+        OnRadialElementBuildDone();
     }
 
     public void CallCommand(int i)
@@ -90,6 +119,7 @@ public class RadialMenu : Menu<RadialMenu>
     void Start ()
     {
         _pointerEventData = new PointerEventData(EventSystem.current);
+
 	}
 	
 	void Update ()
@@ -97,45 +127,28 @@ public class RadialMenu : Menu<RadialMenu>
         float rawAngle = Mathf.Atan2(Input.mousePosition.y - _rectTransform.position.y,
                                      Input.mousePosition.x - _rectTransform.position.x) * Mathf.Rad2Deg;
         _currentAngle = NormalizeAngle(rawAngle);
-
-        foreach (var e in _elements)
+        if (_commandBuildDone && _elementBuildDone)
         {
-            if (e.IsInAngle(_currentAngle))
+
+            foreach (var e in _elements)
             {
-                _selectingIndex = e._assignedIndex;
-                break;
+                if (e.IsInAngle(_currentAngle))
+                {
+                    _selectingIndex = e._assignedIndex;
+                    break;
+                }
             }
-        }
 
-        SelectButton(_selectingIndex);
-        //If we click or press a "submit" button (Button on joystick, enter, or spacebar), then we'll execut the OnClick() function for the button.
-        if (Input.GetMouseButtonDown(0) || Input.GetButtonDown("Submit"))
-        {
-            ExecuteEvents.Execute(_elements[_selectingIndex]._button.gameObject, _pointerEventData, ExecuteEvents.submitHandler);
-        }
+            SelectButton(_selectingIndex);
+            //If we click or press a "submit" button (Button on joystick, enter, or spacebar), then we'll execut the OnClick() function for the button.
+            if (Input.GetMouseButtonUp(0) || Input.GetButtonUp("Submit"))
+            {
+                ExecuteEvents.Execute(_elements[_selectingIndex]._button.gameObject, _pointerEventData, ExecuteEvents.submitHandler);
+            }
 
+        }
         _selectinFollowContainer.rotation = Quaternion.Euler(0, 0, rawAngle + 270.0f);
-	}
-
-    //public void SetElementsRotation()
-    //{
-    //    for (int i = 0; i < _elements.Count; ++i)
-    //    {
-    //        RadialMenuElement currentElement = _elements[i];
-    //        currentElement._assignedIndex = i;
-    //        currentElement._parent = this;
-    //        RectTransform trans = currentElement.GetComponent<RectTransform>();
-    //        trans.localRotation = Quaternion.Euler(0, 0, _elementAngleGap * i + _globalAngleOffset);
-    //        Button currentButton = currentElement._button;
-    //        Text currentText = currentElement._text;
-    //        currentButton.GetComponent<Image>().fillAmount = (1.0f / (_elements.Count));
-    //        float diffAngle = (_elementAngleGap * i + 180 + _elementAngleGap * 0.5f + _globalAngleOffset) * Mathf.Deg2Rad;
-    //        currentElement.SetAngles(NormalizeAngle(diffAngle * Mathf.Rad2Deg), _elementAngleGap);
-    //        Vector3 offset = new Vector3(Mathf.Cos(diffAngle), Mathf.Sin(diffAngle), 0) * (_rectTransform.rect.width + 30);
-    //        currentElement._text.GetComponent<RectTransform>().position = trans.position + offset;
-    //        currentElement._text.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0, 0, -(_elementAngleGap * i + _globalAngleOffset));
-    //    }
-    //}
+    }
 
     private void SelectButton(int i)
     {

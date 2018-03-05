@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Foundation;
 using UnityEngine;
 
 [RequireComponent(typeof(BoardMovementManager))]
@@ -76,6 +77,18 @@ public class PlayerBoardObject : BoardObject
     public void OnPlayerTurnEvent(Events.PlayerTurnEvent e)
     {
         _stamina.ResetStaminaToMax();
+    }
+
+    public override void DoCommand(Command command)
+    {
+        base.DoCommand(command);
+        EventManager.Instance.TriggerEvent(new Events.PlayerStaminaChanged(_stamina.CurrentStamina));
+    }
+
+    public override void DoCommand(int index)
+    {
+        base.DoCommand(index);
+        EventManager.Instance.TriggerEvent(new Events.PlayerStaminaChanged(_stamina.CurrentStamina));
     }
 
 }

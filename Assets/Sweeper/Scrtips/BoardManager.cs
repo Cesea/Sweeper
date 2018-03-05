@@ -219,6 +219,7 @@ public class BoardManager : SingletonBase<BoardManager>
         if (Instance.CurrentBoard.BoardObject.GetComponent<MeshCollider>().Raycast(camRay, out hitInfo, 1000.0f))
         {
             Vector3 roundedHitPos = hitInfo.point;
+            GameStateManager.Instance.MouseNodeSidePosition = hitInfo.point;
             if (Mathf.Abs(hitInfo.point.x - Mathf.RoundToInt(hitInfo.point.x)) < EPSILON)
             {
                 roundedHitPos.x = Mathf.RoundToInt(hitInfo.point.x);

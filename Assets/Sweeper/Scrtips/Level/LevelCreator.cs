@@ -13,6 +13,7 @@ namespace Level
     {
         public BoardObject _player;
         public CursorManager _cursorManager;
+        public LevelCreateCursor _createCursor;
 
         private GameObject _previewObject;
 
@@ -30,14 +31,14 @@ namespace Level
         {
             if (Input.GetKeyDown(KeyCode.Tab))
             {
-                if (LevelCreateMenu.Opened)
+                if (!LevelCreateMenu.Opened)
                 {
-                    LevelCreateMenu.Shut();
+                    LevelCreateMenu.Show();
                     _cursorManager.ChangeState(CursorManager.CursorState.Create);
                 }
                 else
                 {
-                    LevelCreateMenu.Show();
+                    LevelCreateMenu.Shut();
                     _cursorManager.ChangeState(CursorManager.CursorState.Select);
                 }
             }
@@ -67,8 +68,13 @@ namespace Level
         }
 
 
-        public void InstallObjectAtNode(NodeSideInfo info, int prefabIndex)
+        public void InstallObjectAtNode(NodeSideInfo info, int prefabIndex = -1)
         {
+            if (prefabIndex == -1)
+            {
+                prefabIndex = _selectingIndex;
+            }
+
             if (prefabIndex > _installObjectPrefabs.Count - 1)
             {
                 return;
@@ -120,7 +126,7 @@ namespace Level
         {
             if (_previewObject != null)
             {
-                //_previewObject.transform.position = _levelCursor.transform.position;
+                _previewObject.transform.position = _createCursor.transform.position;
             }
         }
 

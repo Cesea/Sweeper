@@ -11,7 +11,8 @@ public class BoardObject : MonoBehaviour
     public BoardMovementManager MovementManager { get { return _movementManager; } }
 
     [HideInInspector]
-    public List<Command> _commandBuffer = new List<Command>();
+    private List<Command> _commandBuffer = new List<Command>();
+    public List<Command> CommandBuffer { get { return _commandBuffer; } }
 
     protected NodeSideInfo[] _adjacentCells;
     public NodeSideInfo[] AdjacentCells { get { return _adjacentCells; } }
@@ -54,7 +55,7 @@ public class BoardObject : MonoBehaviour
         _commandBuffer.Clear();
     }
 
-    public void DoCommand(int index)
+    public virtual void DoCommand(int index)
     {
         if (!_canReceiveCommand && 
             index > _commandBuffer.Count - 1)
@@ -66,7 +67,7 @@ public class BoardObject : MonoBehaviour
         _commandBuffer.Clear();
     }
 
-    public void DoCommand(Command command)
+    public virtual void DoCommand(Command command)
     {
         if (!_canReceiveCommand)
         {

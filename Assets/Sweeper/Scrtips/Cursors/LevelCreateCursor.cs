@@ -18,6 +18,8 @@ public class LevelCreateCursor : MonoBehaviour
     private Timer _leftClickTimer;
     private Timer _rightClickTimer;
 
+    private bool _cursorInBoard;
+
     private void Awake()
     {
         _lineRenderer = GetComponent<LineRenderer>();
@@ -49,7 +51,8 @@ public class LevelCreateCursor : MonoBehaviour
         Quaternion rotation = transform.rotation;
         Vector3 worldPosition = transform.position;
 
-        if (BoardManager.GetNodeSideInfoAtMouse(ref _selectingInfo))
+        _cursorInBoard = BoardManager.GetNodeSideInfoAtMouse(ref _selectingInfo);
+        if(_cursorInBoard)
         {
             worldPosition = _selectingInfo.GetWorldPosition();
             //offset
@@ -64,7 +67,29 @@ public class LevelCreateCursor : MonoBehaviour
 
     private void HandleInput()
     {
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+        if (_cursorInBoard)
+        {
+            bool leftMouseClick = Input.GetMouseButtonDown(0);
+            bool shiftDown = Input.GetKey(KeyCode.LeftShift);
 
+            if (leftMouseClick && shiftDown &&
+                !Object.ReferenceEquals(_selectingInfo, null))
+            {
+                LevelCreator.Instance.DestroyObjectAtNode(_selectingInfo);
+                return;
+            }
+
+            if (leftMouseClick &&
+                !Object.ReferenceEquals(_selectingInfo, null))
+            {
+                LevelCreator.Instance.InstallObjectAtNode(_selectingInfo);
+                return;
+            }
+        }
     }
-
 }
+

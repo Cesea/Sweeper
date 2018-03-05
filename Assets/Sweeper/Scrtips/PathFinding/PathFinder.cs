@@ -15,16 +15,38 @@ public class PathFinder : MonoBehaviour
 
     public void StartFindPath(NodeSideInfo startNode, NodeSideInfo endNode)
     {
-        StartCoroutine(FindPath(startNode, endNode));
+        StartCoroutine(FindPathRoutine(startNode, endNode));
     }
 
-    IEnumerator FindPath(NodeSideInfo start, NodeSideInfo end)
+    public bool FindPathImmediate(NodeSideInfo startNode, NodeSideInfo endNode, ref NodeSideInfo[] outInfos)
     {
+        if (CalculatePath(startNode, endNode))
+        {
+            outInfos = RetracePath(startNode, endNode);
+            return true;
+        }
+        return false;
+    }
+
+    IEnumerator FindPathRoutine(NodeSideInfo start, NodeSideInfo end)
+    {
+        bool findSuccess = CalculatePath(start, end);
+        NodeSideInfo[] wayPoints = new NodeSideInfo[0];
+        {
+            yield return null;
+            if (findSuccess)
+            {
+                wayPoints = RetracePath(start, end);
+            }
+            _requestManager.FinishedProcessingPath(wayPoints, findSuccess);
+        }
+    }
+
+    private bool CalculatePath(NodeSideInfo start, NodeSideInfo end)
+    {
+        bool findSuccess = false;
         if (start._node.IsSolid && end._node.IsSolid)
         {
-            NodeSideInfo[] wayPoints = new NodeSideInfo[0];
-            bool findSuccess = false;
-
             List<NodeSideInfo> openSet = new List<NodeSideInfo>();
             HashSet<NodeSideInfo> closedSet = new HashSet<NodeSideInfo>();
 
@@ -51,10 +73,10 @@ public class PathFinder : MonoBehaviour
 
                 foreach (var n in _boardManager.CurrentBoard.GetReachables(currentNodeInfo))
                 {
-                    if ((!n._node.IsSolid) || 
+                    if ((!n._node.IsSolid) ||
                         (!n.IsPassable) ||
                         (n._side == Side.Count) ||
-                        (closedSet.Contains(n)) )
+                        (closedSet.Contains(n)))
                     {
                         continue;
                     }
@@ -78,13 +100,8 @@ public class PathFinder : MonoBehaviour
                     }
                 }
             }
-            yield return null;
-            if (findSuccess)
-            {
-                wayPoints = RetracePath(start, end);
-            }
-            _requestManager.FinishedProcessingPath(wayPoints, findSuccess);
         }
+        return findSuccess;
     }
 
     NodeSideInfo[] RetracePath(NodeSideInfo start, NodeSideInfo end)

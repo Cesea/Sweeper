@@ -8,6 +8,7 @@ namespace Foundation
     public class Command
     {
         protected int _cost;
+        public int Cost { get { return _cost; } }
 
         public virtual bool Execute(GameObject target)
         {

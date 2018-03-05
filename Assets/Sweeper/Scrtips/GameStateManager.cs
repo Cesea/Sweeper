@@ -23,6 +23,10 @@ public class GameStateManager : SingletonBase<GameStateManager>
 
     public CameraController _cameraController;
 
+    [SerializeField]
+    private CursorManager _cursorManager;
+    public CursorManager CursorManager { get { return _cursorManager; } }
+
     private bool _levelStarted = false;
     public bool LevelStarted { get { return _levelStarted; } set { _levelStarted = value; } }
     private bool _isGamePlaying = false;
@@ -38,15 +42,15 @@ public class GameStateManager : SingletonBase<GameStateManager>
     private bool _turnChanged;
     public bool TurnChanged { get { return _turnChanged; }  set { _turnChanged = value; } }
 
+
     //private bool _playerDied = false;
 
     public UnityEvent StartLevelEvent;
     public UnityEvent PlayLevelEvent;
     public UnityEvent EndLevelEvent;
 
-    [SerializeField]
-    private CursorManager _cursorManager;
-    public CursorManager CursorManager { get { return _cursorManager; } }
+    private Vector3 _mouseNodeSidePosition;
+    public Vector3 MouseNodeSidePosition { get { return _mouseNodeSidePosition; }  set { _mouseNodeSidePosition = value; } }
 
     private void OnEnable()
     {

@@ -6,6 +6,7 @@ using UnityEngine;
 public class BoardMovementManager : MonoBehaviour
 {
     private NodeSideInfo[] _path;
+    public NodeSideInfo[] Path { get { return _path; } }
     private int _targetIndex = 0;
 
     public List<BoardMoveBase> _availableMovements = new List<BoardMoveBase>();
@@ -80,9 +81,33 @@ public class BoardMovementManager : MonoBehaviour
         _followingDone = true;
     }
 
-    public void StartFindPath(NodeSideInfo target)
+    public void StartFindPath(NodeSideInfo target, bool followImmediatly = true)
     {
-        PathRequestManager.RequestPath(_sittingNodeInfo, target, OnPathFind);
+        if (followImmediatly)
+        {
+            PathRequestManager.RequestPath(_sittingNodeInfo, target, OnPathFind);
+        }
+        else
+        {
+            PathRequestManager.RequestPath(_sittingNodeInfo, target, OnPathSave);
+        }
+    }
+
+    public void GiveAndFollowPathData(NodeSideInfo[] nodeInfos)
+    {
+        _path = nodeInfos;
+        _followingDone = false;
+
+        StopFindPath();
+        StartCoroutine("FollowPath");
+    }
+
+    public void OnPathSave(NodeSideInfo[] nodeinfos, bool success)
+    {
+        if (success)
+        {
+            _path = nodeinfos;
+        }
     }
 
     public void OnPathFind(NodeSideInfo[] nodeInfos, bool success)

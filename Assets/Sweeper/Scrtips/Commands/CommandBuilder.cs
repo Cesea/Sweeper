@@ -4,19 +4,26 @@ using UnityEngine;
 
 using Foundation;
 
-public static class CommandBuilder 
+public class CommandBuilder 
 {
-    public static List<Command> BuildCommands(BoardObject subject, NodeSideInfo target)
-    {
-        List<Command> result = new List<Command>();
+    private static bool _pathDone = false;
+    private static List<NodeSideInfo> _paths = new List<NodeSideInfo>();
 
-        result.Add(new InspectCommand());
+    public static IEnumerator BuildCommands(BoardObject subject, NodeSideInfo target, System.Action OnDoneMethod)
+    {
+        List<Command> buffer = subject.CommandBuffer;
+        buffer.Add(new InspectCommand());
 
         BoardMovementManager movementManager = subject.GetComponent<BoardMovementManager>();
         Vector3Int deltaGridToPlayer = movementManager._sittingNodeInfo._node.BoardPosition - target._node.BoardPosition;
         if (movementManager != null)
         {
-            result.Add(new MoveCommand(target));
+            PathRequestManager.RequestPath(subject.SittingNode, target, OnPathFound);
+            while (!_pathDone)
+            {
+                yield return null;
+            }
+            buffer.Add(new MoveCommand(_paths));
         }
 
         if (deltaGridToPlayer.x >= -1 && deltaGridToPlayer.x <= 1 &&
@@ -24,10 +31,23 @@ public static class CommandBuilder
         {
             if (target.InstalledObject != null)
             {
-                result.Add(new InstallObjectCommand(target));
+                buffer.Add(new InstallObjectCommand(target));
             }
         }
-        subject._commandBuffer = result;
-        return result;
+
+        _pathDone = false;
+
+        OnDoneMethod();
+
+        yield return null;
+    }
+
+    public static void OnPathFound(NodeSideInfo[] path, bool success)
+    {
+        if (success)
+        {
+            _paths.AddRange(path);
+        }
+        _pathDone = true;
     }
 }
