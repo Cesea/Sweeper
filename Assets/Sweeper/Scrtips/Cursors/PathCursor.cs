@@ -2,19 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PathCursor : MonoBehaviour
+public class PathCursor : CursorBase
 {
     private LineRenderer _lineRenderer;
     private LineRenderer _tipLineRenderer;
 
-    private NodeSideInfo _selectingInfo;
-    private NodeSideInfo _prevSelectingInfo;
-
-    private bool _selectingInfoChanged = false;
-
     private List<NodeSideInfo> _selectedInfoList = new List<NodeSideInfo>();
 
     private BoardStamina _playerStamina;
+
+    CursorManager _manager;
 
     private void Awake()
     {
@@ -28,28 +25,33 @@ public class PathCursor : MonoBehaviour
 
         _selectingInfo = BoardManager.Instance.CurrentBoard.GetNodeInfoAt(BoardManager.Instance.CurrentBoard.StartCellCoord, Side.Top);
         _prevSelectingInfo = BoardManager.Instance.CurrentBoard.GetNodeInfoAt(BoardManager.Instance.CurrentBoard.StartCellCoord, Side.Top);
+
+        _manager = CursorManager.Instance;
     }
 
-    private void OnEnable()
+    public override void LocateCursor()
     {
-        Debug.Log("enabled");
-        LocateCursor();
-        if (_selectingInfoChanged)
+        Quaternion rotation = transform.rotation;
+        Vector3 worldPosition = transform.position;
+        transform.position = Vector3.zero;
+        transform.rotation = Quaternion.identity;
+    }
+
+    public override void HandleInput()
+    {
+        if (Input.GetMouseButtonUp(0))
         {
-            _prevSelectingInfo = _selectingInfo;
-            _selectedInfoList.Add(_selectingInfo);
-            BuildLine();
+            MoveCommand moveCommand = new MoveCommand(_selectedInfoList);
+            GameStateManager.Instance.Player.DoCommand(moveCommand);
+
+            _selectedInfoList.Clear();
+            _lineRenderer.positionCount = 0;
+
+            CursorManager.Instance.ChangeState(CursorManager.CursorState.Select);
         }
-    }
 
-    private void Update()
-    {
-        _selectingInfoChanged = false;
-        LocateCursor();
-
-        #region Add selectingInfo to list
         if (_playerStamina.CurrentStamina > 0 &&
-            _selectingInfoChanged)
+            _manager.SelectingInfoChanged)
         {
             if (_selectedInfoList.Count >= 2 &&
                 Node.IsAdjacent(_selectedInfoList[_selectedInfoList.Count - 1]._node, _selectingInfo._node))
@@ -73,43 +75,7 @@ public class PathCursor : MonoBehaviour
                     _selectedInfoList.Add(_selectingInfo);
                 }
             }
-
             BuildLine();
-        }
-
-        _prevSelectingInfo = _selectingInfo;
-
-        #endregion
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            MoveCommand moveCommand = new MoveCommand(_selectedInfoList);
-            GameStateManager.Instance.Player.DoCommand(moveCommand);
-
-            CursorManager.Instance.ChangeState(CursorManager.CursorState.Select);
-
-            _selectedInfoList.Clear();
-            _lineRenderer.positionCount = 0;
-        }
-    }
-
-    private void LocateCursor()
-    {
-        Quaternion rotation = transform.rotation;
-        Vector3 worldPosition = transform.position;
-
-        _prevSelectingInfo = _selectingInfo;
-
-        if (BoardManager.GetNodeSideInfoAtMouse(ref _selectingInfo))
-        {
-            worldPosition = _selectingInfo.GetWorldPosition();
-            //offset
-            worldPosition += BoardManager.SideToVector3Offset(_selectingInfo._side) * 0.1f;
-            rotation = BoardManager.SideToRotation(_selectingInfo._side);
-            if (_selectingInfo != _prevSelectingInfo)
-            {
-                _selectingInfoChanged = true;
-            }
         }
     }
 
@@ -134,8 +100,6 @@ public class PathCursor : MonoBehaviour
                 Vector3 currentMouseNodePos = GameStateManager.Instance.MouseNodeSidePosition;
 
                 Vector3 diff = (currentMouseNodePos - currentSideOffset).normalized;
-                //float angle = Vector3.Angle(diff, Vector3.right);
-                //Debug.Log(angle);
                 positionList.Add(current.GetWorldPosition() + currentSideOffset);
                 positionList.Add(current.GetWorldPosition() + (BoardManager.SideToVector3Offset(Side.Right) * 0.5f) + currentSideOffset);
             }

@@ -7,10 +7,9 @@ using UnityEngine.EventSystems;
 using Utils;
 using Level;
 
-public class LevelCreateCursor : MonoBehaviour
+public class LevelCreateCursor : CursorBase
 {
    private LineRenderer _lineRenderer;
-    private NodeSideInfo _selectingInfo;
 
     [SerializeField]
     private Material _material;
@@ -18,7 +17,7 @@ public class LevelCreateCursor : MonoBehaviour
     private Timer _leftClickTimer;
     private Timer _rightClickTimer;
 
-    private bool _cursorInBoard;
+    private CursorManager _manager;
 
     private void Awake()
     {
@@ -43,35 +42,34 @@ public class LevelCreateCursor : MonoBehaviour
         _lineRenderer.SetPositions(positions);
 
         _selectingInfo = BoardManager.Instance.CurrentBoard.GetNodeInfoAt(BoardManager.Instance.CurrentBoard.StartCellCoord, Side.Top);
+
+        _manager = CursorManager.Instance;
 	}
 	
-	private void Update ()
+    public override void LocateCursor()
     {
         //locate cursor
         Quaternion rotation = transform.rotation;
         Vector3 worldPosition = transform.position;
 
-        _cursorInBoard = BoardManager.GetNodeSideInfoAtMouse(ref _selectingInfo);
-        if(_cursorInBoard)
+        if (CursorManager.Instance.SelectionValid)
         {
             worldPosition = _selectingInfo.GetWorldPosition();
-            //offset
             worldPosition += BoardManager.SideToVector3Offset(_selectingInfo._side) * 0.1f;
             rotation = BoardManager.SideToRotation(_selectingInfo._side);
         }
         transform.position = worldPosition;
         transform.rotation = rotation;
+    }
 
-        HandleInput();
-	}
-
-    private void HandleInput()
+    public override void HandleInput()
     {
         if (EventSystem.current.IsPointerOverGameObject())
         {
             return;
         }
-        if (_cursorInBoard)
+
+        if (_manager.SelectionValid)
         {
             bool leftMouseClick = Input.GetMouseButtonDown(0);
             bool shiftDown = Input.GetKey(KeyCode.LeftShift);

@@ -21,6 +21,21 @@ public class CursorManager : SingletonBase<CursorManager>
     [SerializeField]
     private SelectCursor _selectCursor;
 
+    private CursorBase _currentCursor = null;
+
+
+    private NodeSideInfo _selectingInfo;
+    public NodeSideInfo SelectingInfo { get { return _selectingInfo; } set { _selectingInfo = value; } }
+
+    private NodeSideInfo _prevSelectingInfo;
+    public NodeSideInfo PrevSelectingInfo { get { return _prevSelectingInfo; } set { _prevSelectingInfo = value; } }
+
+    private bool _selectingInfoChanged = false;
+    public bool SelectingInfoChanged { get { return _selectingInfoChanged; } }
+
+    private bool _selectionValid = false;
+    public bool SelectionValid { get { return _selectionValid; } }
+
     private CursorState _currentState = CursorState.Count;
 
     private void Start()
@@ -34,7 +49,21 @@ public class CursorManager : SingletonBase<CursorManager>
 
     private void Update()
     {
-        
+        _selectingInfoChanged = false;
+        _prevSelectingInfo = _selectingInfo;
+
+        _selectionValid = BoardManager.GetNodeSideInfoAtMouse(ref _selectingInfo);
+        if(_selectionValid)
+        {
+            if (_selectingInfo != _prevSelectingInfo)
+            {
+                _selectingInfoChanged = true;
+            }
+        }
+
+        _currentCursor.UpdateSelectingInfos(_selectingInfo, _prevSelectingInfo);
+        _currentCursor.LocateCursor();
+        _currentCursor.HandleInput();
     }
 
     public void ChangeState(CursorState newState)
@@ -53,9 +82,24 @@ public class CursorManager : SingletonBase<CursorManager>
         _currentState = newState;
         switch (newState)
         {
-            case CursorState.Select: { _selectCursor.gameObject.SetActive(true); } break;
-            case CursorState.Move: { _pathCursor.gameObject.SetActive(true); } break;
-            case CursorState.Create: { _createCursor.gameObject.SetActive(true); } break;
+            case CursorState.Select:
+                {
+                    _selectCursor.gameObject.SetActive(true);
+                    _currentCursor = _selectCursor;
+                }
+                break;
+            case CursorState.Move:
+                {
+                    _pathCursor.gameObject.SetActive(true);
+                    _currentCursor = _pathCursor;
+                }
+                break;
+            case CursorState.Create:
+                {
+                    _createCursor.gameObject.SetActive(true);
+                    _currentCursor = _createCursor;
+                }
+                break;
         }
     }
 

@@ -4,16 +4,17 @@ using UnityEngine;
 
 using Utils;
 
-public class SelectCursor : MonoBehaviour
+public class SelectCursor : CursorBase
 {
     private LineRenderer _lineRenderer;
-    private NodeSideInfo _selectingInfo;
 
     [SerializeField]
     private Material _material;
 
     private Timer _leftClickTimer;
     private Timer _rightClickTimer;
+
+    private CursorManager _manager;
 
     private void Awake()
     {
@@ -38,28 +39,23 @@ public class SelectCursor : MonoBehaviour
         _lineRenderer.SetPositions(positions);
 
         _selectingInfo = BoardManager.Instance.CurrentBoard.GetNodeInfoAt(BoardManager.Instance.CurrentBoard.StartCellCoord, Side.Top);
+
+        _manager = CursorManager.Instance;
 	}
 	
-	private void Update ()
+    public override void LocateCursor()
     {
-        //locate cursor
-        Quaternion rotation = transform.rotation;
-        Vector3 worldPosition = transform.position;
-
-        if (BoardManager.GetNodeSideInfoAtMouse(ref _selectingInfo))
+        if (_manager.SelectionValid)
         {
-            worldPosition = _selectingInfo.GetWorldPosition();
-            //offset
+            Vector3 worldPosition = _selectingInfo.GetWorldPosition();
             worldPosition += BoardManager.SideToVector3Offset(_selectingInfo._side) * 0.1f;
-            rotation = BoardManager.SideToRotation(_selectingInfo._side);
+            Quaternion rotation = BoardManager.SideToRotation(_selectingInfo._side);
+            transform.position = worldPosition;
+            transform.rotation = rotation;
         }
-        transform.position = worldPosition;
-        transform.rotation = rotation;
+    }
 
-        HandleInput();
-	}
-
-    private void HandleInput()
+    public override void HandleInput()
     {
         bool leftClicked = Input.GetMouseButton(0);
         bool rightClicked = Input.GetMouseButton(1);
