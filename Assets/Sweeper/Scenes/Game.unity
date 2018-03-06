@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -156,7 +156,7 @@ Transform:
   - {fileID: 1316904492}
   - {fileID: 1967748393}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &135172844
 Prefab:
@@ -195,7 +195,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4788323994552550, guid: 6b8eb76aa715c2b4b9fc9f1eb6f241de, type: 2}
       propertyPath: m_RootOrder
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 114091638414195652, guid: 6b8eb76aa715c2b4b9fc9f1eb6f241de,
         type: 2}
@@ -246,7 +246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d89a4b036f048144ca8a8ea9181b6451, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _material: {fileID: 2100000, guid: c4764e2ff07841142b31086db1502165, type: 2}
+  _material: {fileID: 0}
 --- !u!120 &373997969
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -417,7 +417,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 439922854}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 376, y: 211.5, z: 0}
+  m_LocalPosition: {x: 374.5, y: 210.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1349563163}
@@ -522,8 +522,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 1354438154}
-  _cursorManager: {fileID: 26827435}
-  _createCursor: {fileID: 373997968}
+  _cursorManager: {fileID: 0}
+  _createCursor: {fileID: 0}
   _installObjectPrefabs:
   - {fileID: 1370135647862746, guid: 9bc58b373f143584486a02ef679ad757, type: 2}
   - {fileID: 1640418622757004, guid: 671716a9fd914574e9b7ba080473fb78, type: 2}

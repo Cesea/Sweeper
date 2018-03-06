@@ -28,8 +28,8 @@ namespace Level
         public Vector3 Offset { get { return _offset; }  set { _offset = value; } }
 
 
-        private float _rotation;
-        public float Rotation { get { return _rotation; }  set { _rotation = value; } }
+        private Quaternion _rotation;
+        public Quaternion Rotation { get { return _rotation; }  set { _rotation = value; } }
 
         [HideInInspector]
         public int _prefabIndex;

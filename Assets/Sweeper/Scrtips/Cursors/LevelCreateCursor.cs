@@ -9,7 +9,7 @@ using Level;
 
 public class LevelCreateCursor : CursorBase
 {
-   private LineRenderer _lineRenderer;
+    private LineRenderer _lineRenderer;
 
     [SerializeField]
     private Material _material;
@@ -18,6 +18,16 @@ public class LevelCreateCursor : CursorBase
     private Timer _rightClickTimer;
 
     private CursorManager _manager;
+
+    private Vector3 _createOffset;
+    private Quaternion _createRotation;
+
+    private bool _positioning =false;
+    private Vector3 _horizontalDeltaAxis = Vector3.zero;
+    private Vector3 _verticalDeltaAxis = Vector3.zero;
+
+    private Vector3 _prevMousePosition = Vector3.zero ;
+    private Vector3 _mousePosition = Vector3.zero;
 
     private void Awake()
     {
@@ -69,11 +79,15 @@ public class LevelCreateCursor : CursorBase
             return;
         }
 
+        bool leftMouseClick = Input.GetMouseButtonDown(0);
+        bool leftMouseUp = Input.GetMouseButtonUp(0);
+        bool shiftDown = Input.GetKey(KeyCode.LeftShift);
+
+        _prevMousePosition = _mousePosition;
+        _mousePosition = Input.mousePosition;
+
         if (_manager.SelectionValid)
         {
-            bool leftMouseClick = Input.GetMouseButtonDown(0);
-            bool shiftDown = Input.GetKey(KeyCode.LeftShift);
-
             if (leftMouseClick && shiftDown &&
                 !Object.ReferenceEquals(_selectingInfo, null))
             {
@@ -84,8 +98,47 @@ public class LevelCreateCursor : CursorBase
             if (leftMouseClick &&
                 !Object.ReferenceEquals(_selectingInfo, null))
             {
-                LevelCreator.Instance.InstallObjectAtNode(_selectingInfo);
+                switch (_selectingInfo._side)
+                {
+                    case Side.Back:
+                    case Side.Front:
+                        {
+                            _horizontalDeltaAxis = new Vector3(1.0f, 0.0f, 0.0f);
+                            _verticalDeltaAxis = new Vector3(0.0f, 1.0f, 0.0f);
+                        } break;
+                    case Side.Left:
+                    case Side.Right:
+                        {
+                            _horizontalDeltaAxis = new Vector3(0.0f, 0.0f, 1.0f);
+                            _verticalDeltaAxis = new Vector3(0.0f, 1.0f, 0.0f);
+                        } break;
+                    case Side.Top:
+                    case Side.Bottom:
+                        {
+                            _horizontalDeltaAxis = new Vector3(1.0f, 0.0f, 0.0f);
+                            _verticalDeltaAxis = new Vector3(0.0f, 0.0f, 1.0f);
+                        } break;
+                }
+                _positioning = true;
+                //LevelCreator.Instance.InstallObjectAtNode(_selectingInfo);
                 return;
+            }
+        }
+
+        if (_positioning)
+        {
+            if (leftMouseUp)
+            {
+                _positioning = false;
+                //LevelCreator.Instance.InstallObjectAtNode(_selectingInfo, _)
+                return;
+            }
+
+            //float screenToWorldScale = 0.01f;
+            Vector3 deltaMousePosition = _mousePosition - _prevMousePosition;
+            if (deltaMousePosition.sqrMagnitude > 3.0f)
+            {
+                Debug.Log(deltaMousePosition);
             }
         }
     }
