@@ -156,7 +156,7 @@ Transform:
   - {fileID: 1316904492}
   - {fileID: 1967748393}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &135172844
 Prefab:
@@ -195,7 +195,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4788323994552550, guid: 6b8eb76aa715c2b4b9fc9f1eb6f241de, type: 2}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 114091638414195652, guid: 6b8eb76aa715c2b4b9fc9f1eb6f241de,
         type: 2}
@@ -1511,7 +1511,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bc6e3ca7f3bbb544a0f8afe91e0c087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _material: {fileID: 2100000, guid: 61ab23c0dc812f54aa23dc11440e5fa1, type: 2}
+  _floorMaterial: {fileID: 2100000, guid: 79a8325747027a54888345000e0626f7, type: 2}
+  _stoneShortPrefab: {fileID: 1934823910999924, guid: fc3350f5f03551742a4ad9a89df76946,
+    type: 2}
+  _stoneTallPrefab: {fileID: 1722695767376394, guid: 6c82cf2474eca3d4f814c487dc4e64ad,
+    type: 2}
   WorldSize: {x: 10, y: 4, z: 10}
   NodeRadius: 0.5
 --- !u!114 &1933234233

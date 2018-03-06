@@ -130,33 +130,33 @@ public class Node
         _x = x;
         _y = y;
         _z = z;
-        _type = type;
+        Type = type;
         WorldPosition = worldPos;
         _parent = parent;
         _owner = owner;
     }
 
-    public void BuildMesh()
+    public void BuildMesh(GameObject prarentObject)
     {
         if (!IsSolid)
         {
             return;
         }
         if (!HasSolidNeighbour((int)WorldPosition.x, (int)WorldPosition.y - 1, (int)WorldPosition.z))
-            BuildQuad(Side.Bottom);
+            BuildQuad(Side.Bottom, prarentObject);
         if (!HasSolidNeighbour((int)WorldPosition.x, (int)WorldPosition.y + 1, (int)WorldPosition.z))
-            BuildQuad(Side.Top);
+            BuildQuad(Side.Top, prarentObject);
         if (!HasSolidNeighbour((int)WorldPosition.x- 1, (int)WorldPosition.y, (int)WorldPosition.z))
-            BuildQuad(Side.Left);
+            BuildQuad(Side.Left, prarentObject);
         if (!HasSolidNeighbour((int)WorldPosition.x + 1, (int)WorldPosition.y, (int)WorldPosition.z))
-            BuildQuad(Side.Right);
+            BuildQuad(Side.Right, prarentObject);
         if (!HasSolidNeighbour((int)WorldPosition.x, (int)WorldPosition.y, (int)WorldPosition.z + 1))
-            BuildQuad(Side.Front);
+            BuildQuad(Side.Front, prarentObject);
         if (!HasSolidNeighbour((int)WorldPosition.x, (int)WorldPosition.y, (int)WorldPosition.z - 1))
-            BuildQuad(Side.Back);
+            BuildQuad(Side.Back, prarentObject);
     }
 
-    private void BuildQuad(Side side)
+    private void BuildQuad(Side side, GameObject parent)
     {
         Mesh mesh = Utils.MeshBuilder.BuildQuad(side, BoardManager.Instance.NodeRadius, Vector3.zero);
 
@@ -198,7 +198,7 @@ public class Node
 
         GameObject go = new GameObject(side.ToString());
         go.transform.position = WorldPosition;
-        go.transform.SetParent(_parent.transform);
+        go.transform.SetParent(parent.transform);
 
         MeshFilter filter = go.AddComponent<MeshFilter>();
         filter.mesh = mesh;

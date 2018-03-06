@@ -24,7 +24,8 @@ public class Board
 
     private float _nodeDiameter;
 
-    public Node[] Nodes;
+    private Node[] _nodes;
+    public Node[] Nodes { get { return _nodes; } set{ _nodes = value; } }
 
     private NodeSideInfo[,] _nodeSideInfos;
 
@@ -36,14 +37,10 @@ public class Board
 
     public Vector3 WorldStartPos;
 
-    public GameObject BoardObject;
+    public GameObject CollisionObject;
 
-
-    private Material _material;
-
-    public Board(Vector3 boardWorldPos, Vector3 worldSize, float nodeRadius, Material material)
+    public Board(Vector3 boardWorldPos, Vector3 worldSize, float nodeRadius)
     {
-        _material = material;
         WorldStartPos = boardWorldPos;
         NodeRadius = nodeRadius;
 
@@ -53,15 +50,15 @@ public class Board
         YCount = Mathf.RoundToInt(worldSize.y / _nodeDiameter);
         ZCount = Mathf.RoundToInt(worldSize.z / _nodeDiameter);
 
-        BoardObject = new GameObject();
-        BoardObject.transform.position = boardWorldPos;
-        BuildNodes();
+        CollisionObject = new GameObject();
+        CollisionObject.transform.position = boardWorldPos;
+        //BuildNodes();
     }
 
     public void BuildNodes()
     {
         //Node Building
-        Nodes = new Node[TotalCount];
+        _nodes = new Node[TotalCount];
 
         for (int z = 0; z < ZCount; ++z)
         {
@@ -75,7 +72,7 @@ public class Board
                         y * _nodeDiameter + NodeRadius,
                         z * _nodeDiameter + NodeRadius );
 
-                    Nodes[index] = new Node(x, y, z, worldPos, Node.NodeType.Empty, BoardObject, this);
+                    Nodes[index] = new Node(x, y, z, worldPos, Node.NodeType.Empty, CollisionObject, this);
 
                     if (y == 0)
                     {
@@ -135,16 +132,17 @@ public class Board
             {
                 for (int x = 0; x < XCount; ++x)
                 {
-                    Nodes[Index3D(x, y, z)].BuildMesh();
+                    Nodes[Index3D(x, y, z)].BuildMesh(CollisionObject);
                 }
             }
         }
-        CombineQuads();
 
-        MeshCollider collider = BoardObject.AddComponent<MeshCollider>();
-        collider.sharedMesh = BoardObject.GetComponent<MeshFilter>().mesh;
+        Utils.MeshBuilder.CombineQuad(CollisionObject);
 
-        BoardObject.AddComponent<Rigidbody>().isKinematic = true;
+        MeshCollider collider = CollisionObject.AddComponent<MeshCollider>();
+        collider.sharedMesh = CollisionObject.GetComponent<MeshFilter>().mesh;
+
+        CollisionObject.AddComponent<Rigidbody>().isKinematic = true;
     }
 
     public bool CanMoveTo(int x, int y, int z)
@@ -205,31 +203,6 @@ public class Board
     public int Index3D(int x, int y, int z)
     {
         return x + (XCount * z) + (XCount * ZCount * y);
-    }
-
-    private void CombineQuads()
-    {
-        MeshFilter[] filters = BoardObject.GetComponentsInChildren<MeshFilter>();
-        CombineInstance[] combines = new CombineInstance[filters.Length];
-
-        for (int i = 0; i < filters.Length; ++i)
-        {
-            combines[i].mesh = filters[i].sharedMesh;
-            combines[i].transform = filters[i].transform.localToWorldMatrix;
-        }
-
-        MeshFilter filter = BoardObject.AddComponent<MeshFilter>();
-        filter.mesh = new Mesh();
-
-        filter.mesh.CombineMeshes(combines);
-
-        MeshRenderer renderer = BoardObject.AddComponent<MeshRenderer>();
-        renderer.material = _material;
-
-        foreach (Transform q in BoardObject.transform)
-        {
-            GameObject.Destroy(q.gameObject);
-        }
     }
 
     public Node GetNodeAt(Vector3Int v)

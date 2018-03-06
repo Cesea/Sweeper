@@ -13,6 +13,8 @@ public class LevelCreateMenu : Menu<LevelCreateMenu>
     public GameObject _buttonPanel;
     public GameObject _buttonPrefab;
 
+    public Text _offsetText;
+    public Text _rotationText;
 
     public static void Show()
     {

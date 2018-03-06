@@ -67,6 +67,19 @@ namespace Level
             }
         }
 
+        //레벨을 위함이 아니다...
+        public GameObject CreateObjectAtNode(NodeSideInfo info, GameObject prefab)
+        {
+            if (!Object.ReferenceEquals(info, null))
+            {
+                //오브젝트를 설치하고 노드의 속성을 업데이트 한다.
+                Quaternion rot = Quaternion.Euler(0, _yRotation, 0);
+                GameObject go = Instantiate(prefab, info.GetWorldPosition(), rot);
+                return go;
+            }
+            return null;
+        }
+
 
         public void InstallObjectAtNode(NodeSideInfo info, int prefabIndex = -1)
         {

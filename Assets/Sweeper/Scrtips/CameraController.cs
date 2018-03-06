@@ -56,12 +56,12 @@ public class CameraController : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Q))
             {
-                RotateCamera(-_rotateAngleGap);
+                RotateCamera(_rotateAngleGap);
                 StartCoroutine(LocateAndRotateRoutine(_targetRotation, target));
             }
             else if (Input.GetKeyDown(KeyCode.E))
             {
-                RotateCamera(_rotateAngleGap);
+                RotateCamera(-_rotateAngleGap);
                 StartCoroutine(LocateAndRotateRoutine(_targetRotation, target));
             }
         }

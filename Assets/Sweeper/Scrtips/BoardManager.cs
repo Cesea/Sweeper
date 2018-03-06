@@ -6,8 +6,12 @@ using Foundation;
 
 public class BoardManager : SingletonBase<BoardManager>
 {
-    [Header("Material")]
-    public Material _material;
+    [Header("Floor Material")]
+    [SerializeField]
+    private Material _floorMaterial;
+    [Header("Floor Objects")]
+    public GameObject _stoneShortPrefab;
+    public GameObject _stoneTallPrefab;
 
     [Header("Board Size")]
 
@@ -21,7 +25,7 @@ public class BoardManager : SingletonBase<BoardManager>
     private Board _currentBoard;
     public Board CurrentBoard { get { return _currentBoard; } }
 
-    private List<GameObject> _instantiatedCubes = new List<GameObject>();
+    private List<GameObject> _boardVisualObjects = new List<GameObject>();
 
     static float EPSILON = 0.001f;
 
@@ -54,7 +58,8 @@ public class BoardManager : SingletonBase<BoardManager>
         ZCount = Mathf.RoundToInt(WorldSize.z / (NodeRadius * 2.0f));
 
         BuildBoard();
-        BuildBoardMesh();
+        BuildBoardCollisionMesh();
+        BuildBoardVisualMesh();
     }
 
     private void BuildBoard()
@@ -62,15 +67,83 @@ public class BoardManager : SingletonBase<BoardManager>
         if (_currentBoard != null)
         {
             _currentBoard.DestoryAllLevelObjects();
-            GameObject.Destroy(_currentBoard.BoardObject);
+            GameObject.Destroy(_currentBoard.CollisionObject);
         }
-        _currentBoard = new Board(transform.position, WorldSize, NodeRadius, _material);
+        _currentBoard = new Board(transform.position, WorldSize, NodeRadius);
+        _currentBoard.BuildNodes();
     }
 
-
-    private void BuildBoardMesh()
+    private void BuildBoardCollisionMesh()
     {
         _currentBoard.BuildMesh();
+    }
+
+    private void BuildBoardVisualMesh()
+    {
+        Node[] nodeDatas = CurrentBoard.Nodes;
+        Node[] visualNodes = new Node[XCount * YCount * ZCount];
+        Board visualBoard = new Board(transform.position, WorldSize, NodeRadius);
+
+        visualBoard.Nodes = visualNodes;
+
+        GameObject floorObject = new GameObject("Floor");
+        //Get Data from original nodes
+        for (int z = 0; z < ZCount; ++z)
+        {
+            for (int y = 0; y < YCount; ++y)
+            {
+                for (int x = 0; x < XCount; ++x)
+                {
+                    Node currentData = nodeDatas[Index3D(x, y, z)];
+                    Node.NodeType type = (y == 0) ? Node.NodeType.Normal : Node.NodeType.Empty;
+                    visualNodes[Index3D(x, y, z)] = new Node(x, y, z, currentData.WorldPosition, type, floorObject, visualBoard);
+                }
+            }
+        }
+
+        for (int z = 0; z < ZCount; ++z)
+        {
+            for (int x = 0; x < XCount; ++x)
+            {
+                visualNodes[Index3D(x, 0, z)].BuildMesh(floorObject);
+            }
+        }
+        Utils.MeshBuilder.CombineQuad(floorObject);
+        MeshRenderer renderer = floorObject.AddComponent<MeshRenderer>();
+        renderer.material = _floorMaterial;
+
+        _boardVisualObjects.Add(floorObject);
+
+        //Build upper floor
+        List<Node> upperNodeList = new List<Node>();
+        for (int z = 0; z < ZCount; ++z)
+        {
+            for (int x = 0; x < XCount; ++x)
+            {
+                for (int y = 1; y < YCount; ++y)
+                {
+                    if (nodeDatas[Index3D(x, y, z)].IsSolid)
+                    {
+                        upperNodeList.Add(nodeDatas[Index3D(x, y, z)]);
+                    }
+                }
+                if (upperNodeList.Count == 1)
+                {
+                    _boardVisualObjects.Add(
+                        Level.LevelCreator.Instance.CreateObjectAtNode(
+                        CurrentBoard.GetNodeInfoAt(x, 0, z, Side.Top), _stoneShortPrefab));
+                }
+                else if (upperNodeList.Count == 2)
+                {
+                    _boardVisualObjects.Add(
+                        Level.LevelCreator.Instance.CreateObjectAtNode(
+                        CurrentBoard.GetNodeInfoAt(x, 0, z, Side.Top), _stoneTallPrefab));
+                }
+                upperNodeList.Clear();
+            }
+        }
+
+
     }
 
     #region Utils
@@ -216,7 +289,7 @@ public class BoardManager : SingletonBase<BoardManager>
         bool result = false;
         Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hitInfo;
-        if (Instance.CurrentBoard.BoardObject.GetComponent<MeshCollider>().Raycast(camRay, out hitInfo, 1000.0f))
+        if (Instance.CurrentBoard.CollisionObject.GetComponent<MeshCollider>().Raycast(camRay, out hitInfo, 1000.0f))
         {
             Vector3 roundedHitPos = hitInfo.point;
             GameStateManager.Instance.MouseNodeSidePosition = hitInfo.point;

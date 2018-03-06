@@ -291,5 +291,29 @@ namespace Utils
 
             return mesh;
         }
+
+        public static void CombineQuad(GameObject parentObject)
+        {
+            MeshFilter[] filters = parentObject.GetComponentsInChildren<MeshFilter>();
+            CombineInstance[] combines = new CombineInstance[filters.Length];
+
+            for (int i = 0; i < filters.Length; ++i)
+            {
+                combines[i].mesh = filters[i].sharedMesh;
+                combines[i].transform = filters[i].transform.localToWorldMatrix;
+            }
+
+            MeshFilter filter = parentObject.AddComponent<MeshFilter>();
+            filter.mesh = new Mesh();
+
+            filter.mesh.CombineMeshes(combines);
+
+            foreach (Transform q in parentObject.transform)
+            {
+                GameObject.Destroy(q.gameObject);
+            }
+        }
+
     }
+
 }
