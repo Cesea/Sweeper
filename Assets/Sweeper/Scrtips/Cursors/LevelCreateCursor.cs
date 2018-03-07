@@ -90,10 +90,6 @@ public class LevelCreateCursor : CursorBase
 
     public override void LocateCursor()
     {
-        if (_selectingIndex != _prevIndex)
-        {
-            RecreateObjectToInstall();
-        }
         _prevIndex = _selectingIndex;
         if (_positioning)
         {
@@ -225,7 +221,7 @@ public class LevelCreateCursor : CursorBase
     {
         if (_previewObject != null)
         {
-            Destroy(_previewObject);
+            Destroy(_previewObject.gameObject);
             _previewObject = null;
         }
 
