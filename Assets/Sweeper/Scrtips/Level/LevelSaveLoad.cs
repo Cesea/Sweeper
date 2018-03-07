@@ -83,7 +83,7 @@ namespace Level
             foreach (var l in data._levelObjectDatas)
             {
                 NodeSideInfo info = BoardManager.Instance.CurrentBoard.GetNodeInfoAt(l._boardX, l._boardY, l._boardZ, l._installedSide);
-                LevelCreator.Instance.InstallObjectAtNode(info, l._prefabIndex);
+                LevelCreator.Instance.InstallObjectAtNode(info, l._prefabIndex, l._offset, l._rotation);
             }
         }
 

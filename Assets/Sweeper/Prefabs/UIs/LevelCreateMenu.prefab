@@ -161,6 +161,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _destroyWhenClosed: 1
   _disableMenuUnderneath: 1
+  _levelCreateCursor: {fileID: 0}
   _buttonPanel: {fileID: 1709530288716346}
   _buttonPrefab: {fileID: 1087298694618288, guid: c20bc62c465047a4f8c1c384b339da0f,
     type: 2}

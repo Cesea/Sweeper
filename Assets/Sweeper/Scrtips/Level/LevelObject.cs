@@ -42,9 +42,7 @@ namespace Level
             result._canInstallSide = _canInstallSide;
             result._prefabIndex = _prefabIndex;
 
-            result._offsetX = Offset.x;
-            result._offsetY = Offset.y;
-            result._offsetZ = Offset.z;
+            result._offset = Offset;
             result._rotation = Rotation;
 
             if (!Object.ReferenceEquals(_sittingInfo, null))
@@ -53,7 +51,6 @@ namespace Level
                 result._boardX = _sittingInfo._node.X;
                 result._boardY = _sittingInfo._node.Y;
                 result._boardZ = _sittingInfo._node.Z;
-
             }
             return result;
         }
@@ -67,10 +64,7 @@ namespace Level
         public int _boardY;
         public int _boardZ;
 
-        public float _offsetX;
-        public float _offsetY;
-        public float _offsetZ;
-
+        public Vector3 _offset;
         public Quaternion _rotation;
 
         public Side _installedSide;

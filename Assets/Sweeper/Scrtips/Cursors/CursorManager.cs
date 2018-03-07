@@ -16,10 +16,15 @@ public class CursorManager : SingletonBase<CursorManager>
 
     [SerializeField]
     private LevelCreateCursor _createCursor;
+    public LevelCreateCursor CreateCursor { get { return _createCursor; } }
+
     [SerializeField]
     private PathCursor _pathCursor;
+    public PathCursor PathCursor { get { return _pathCursor; } }
+
     [SerializeField]
     private SelectCursor _selectCursor;
+    public SelectCursor SelectCursor { get { return _selectCursor; } }
 
     private CursorBase _currentCursor = null;
 
@@ -35,6 +40,7 @@ public class CursorManager : SingletonBase<CursorManager>
 
     private bool _selectionValid = false;
     public bool SelectionValid { get { return _selectionValid; } }
+
 
     private CursorState _currentState = CursorState.Count;
 
@@ -74,9 +80,9 @@ public class CursorManager : SingletonBase<CursorManager>
         }
         switch (_currentState)
         {
-            case CursorState.Select: { _selectCursor.gameObject.SetActive(false); } break;
-            case CursorState.Move: { _pathCursor.gameObject.SetActive(false); } break;
-            case CursorState.Create: { _createCursor.gameObject.SetActive(false); } break;
+            case CursorState.Select: { _selectCursor.gameObject.SetActive(false);  } break;
+            case CursorState.Move: { _pathCursor.gameObject.SetActive(false);  } break;
+            case CursorState.Create: { _createCursor.gameObject.SetActive(false);  } break;
         }
 
         _currentState = newState;

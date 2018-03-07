@@ -123,8 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f4a60d2d1883a64ca0caf33c1f7242d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsHazard: 1
-  IsWalkable: 1
-  CanInstallVertical: 0
-  InstalledSide: 0
-  PrefabIndex: 0
+  _isHazard: 1
+  _isWalkable: 1
+  _canInstallSide: 0
+  _prefabIndex: 0

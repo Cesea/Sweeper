@@ -15,17 +15,9 @@ namespace Level
         public CursorManager _cursorManager;
         public LevelCreateCursor _createCursor;
 
-        private GameObject _previewObject;
-
-        public List<GameObject> _installObjectPrefabs;
-
-        private int _selectingIndex = 0;
-        public int SelectingIndex { get { return _selectingIndex; } }
-        private int _prevIndex = 0; 
-
-        public bool _canBuild = false;
-
-        private float _yRotation = 0;
+        [SerializeField]
+        private List<GameObject> _installPrefabList;
+        public List<GameObject> InstallPrefabList { get { return _installPrefabList; } }
 
         private void Update()
         {
@@ -44,54 +36,25 @@ namespace Level
             }
         }
 
-        private void OnEnable()
-        {
-            EventManager.Instance.AddListener<Events.LevelCreatorMenuEvent>(OnLevelCreatorMenuEvent);
-        }
-
-        private void OnDisable()
-        {
-            EventManager.Instance.RemoveListener<Events.LevelCreatorMenuEvent>(OnLevelCreatorMenuEvent);
-        }
-
-        private void LateUpdate()
-        {
-            if (_canBuild)
-            {
-                if (_selectingIndex != _prevIndex)
-                {
-                    RecreateObjectToInstall();
-                }
-                MakeObjectToInstallFollowCursor();
-                _prevIndex = _selectingIndex;
-            }
-        }
-
         //레벨을 위함이 아니다...
-        public GameObject CreateObjectAtNode(NodeSideInfo info, GameObject prefab)
+        public GameObject CreateObjectAtNode(NodeSideInfo info, GameObject prefab, Vector3 offset, Quaternion rotation)
         {
             if (!Object.ReferenceEquals(info, null))
             {
                 //오브젝트를 설치하고 노드의 속성을 업데이트 한다.
-                Quaternion rot = Quaternion.Euler(0, _yRotation, 0);
-                GameObject go = Instantiate(prefab, info.GetWorldPosition(), rot);
+                GameObject go = Instantiate(prefab, info.GetWorldPosition() + offset, rotation);
                 return go;
             }
             return null;
         }
 
-
-        public void InstallObjectAtNode(NodeSideInfo info, int prefabIndex = -1)
+        public void InstallObjectAtNode(NodeSideInfo info, int prefabIndex, Vector3 offset, Quaternion rotation)
         {
-            if (prefabIndex == -1)
-            {
-                prefabIndex = _selectingIndex;
-            }
-
-            if (prefabIndex > _installObjectPrefabs.Count - 1)
+            if (prefabIndex > _installPrefabList.Count)
             {
                 return;
             }
+
             if (!Object.ReferenceEquals(info, null))
             {
                 if (info.InstalledObject != null)
@@ -101,9 +64,10 @@ namespace Level
                 else
                 {
                     //오브젝트를 설치하고 노드의 속성을 업데이트 한다.
-                    Quaternion rot = Quaternion.Euler(0, _yRotation, 0);
-                    GameObject go = Instantiate(_installObjectPrefabs[prefabIndex], info.GetWorldPosition(), rot);
+                    GameObject go = Instantiate(_installPrefabList[prefabIndex], info.GetWorldPosition() + offset, rotation);
                     LevelObject levelObject = go.GetComponent<LevelObject>();
+                    levelObject.Offset = offset;
+                    levelObject.Rotation = rotation;
                     levelObject._prefabIndex = prefabIndex;
                     info.InstalledObject = go;
                 }
@@ -121,51 +85,5 @@ namespace Level
             }
         }
 
-        private void RecreateObjectToInstall()
-        {
-            if (_previewObject != null)
-            {
-                Destroy(_previewObject);
-                _previewObject = null;
-            }
-
-            if (_previewObject == null)
-            {
-                _previewObject = Instantiate(_installObjectPrefabs[_selectingIndex]);
-            }
-        }
-
-        private void MakeObjectToInstallFollowCursor()
-        {
-            if (_previewObject != null)
-            {
-                _previewObject.transform.position = _createCursor.transform.position;
-            }
-        }
-
-        public void SetSelectingIndex(int i)
-        {
-            if (i >= _installObjectPrefabs.Count)
-            {
-                return;
-            }
-            _selectingIndex = i;
-        }
-
-        public void OnLevelCreatorMenuEvent(Events.LevelCreatorMenuEvent e)
-        {
-            if (e.Opened)
-            {
-                RecreateObjectToInstall();
-                _canBuild = true;
-                //_levelCursor.ChangeState(LevelCursor.CursorState.Create);
-            }
-            else
-            {
-                GameObject.Destroy(_previewObject);
-                _canBuild = false;
-                //_levelCursor.ChangeState(LevelCursor.CursorState.Select);
-            }
-        }
     }
 }

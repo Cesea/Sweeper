@@ -129,15 +129,15 @@ public class BoardManager : SingletonBase<BoardManager>
                 }
                 if (upperNodeList.Count == 1)
                 {
-                    _boardVisualObjects.Add(
-                        Level.LevelCreator.Instance.CreateObjectAtNode(
-                        CurrentBoard.GetNodeInfoAt(x, 0, z, Side.Top), _stoneShortPrefab));
+                    GameObject go = Level.LevelCreator.Instance.CreateObjectAtNode(
+                        CurrentBoard.GetNodeInfoAt(x, 0, z, Side.Top), _stoneShortPrefab, Vector3.zero, Quaternion.identity);
+                    _boardVisualObjects.Add(go);
                 }
                 else if (upperNodeList.Count == 2)
                 {
-                    _boardVisualObjects.Add(
-                        Level.LevelCreator.Instance.CreateObjectAtNode(
-                        CurrentBoard.GetNodeInfoAt(x, 0, z, Side.Top), _stoneTallPrefab));
+                    GameObject go = Level.LevelCreator.Instance.CreateObjectAtNode(CurrentBoard.GetNodeInfoAt(x, 0, z, Side.Top),
+                        _stoneTallPrefab, Vector3.zero, Quaternion.identity);
+                    _boardVisualObjects.Add(go);
                 }
                 upperNodeList.Clear();
             }
@@ -284,6 +284,21 @@ public class BoardManager : SingletonBase<BoardManager>
         return result;
     }
 
+    public static bool IsSideHorizontal(Side side)
+    {
+        if (side == Side.Back ||
+                side == Side.Front ||
+                side == Side.Left ||
+                side == Side.Right)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public static bool GetNodeSideInfoAtMouse(ref NodeSideInfo info)
     {
         bool result = false;
@@ -324,12 +339,13 @@ public class BoardManager : SingletonBase<BoardManager>
             if (!Object.ReferenceEquals(tmpInfo, null))
             {
                 info = tmpInfo;
+                result = true;
             }
-            result = true;
+            else
+            {
+            }
         }
         return result;
     }
-
     #endregion
-
 }

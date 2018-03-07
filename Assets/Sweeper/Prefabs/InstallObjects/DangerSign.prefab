@@ -144,7 +144,4 @@ MonoBehaviour:
   _isHazard: 1
   _isWalkable: 1
   _canInstallSide: 1
-  _sittingNode:
-    WorldPosition: {x: 0, y: 0, z: 0}
-  _installedSide: 0
   _prefabIndex: 0
