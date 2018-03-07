@@ -8,7 +8,12 @@ namespace Utils
     [System.Serializable]
     public class Timer
     {
-        public float TargetTime { get; set; }
+        private float _targetTime;
+        public float TargetTime {
+            get { return _targetTime; }
+            set { _targetTime = value; Reset(); }
+        }
+
         private float _currentTime = 0.0f;
 
         public float Percent
@@ -18,7 +23,7 @@ namespace Utils
 
         public Timer(float targetTime)
         {
-            TargetTime = targetTime;
+            _targetTime = targetTime;
         }
 
         public bool Tick(float deltaTime)

@@ -107,6 +107,8 @@ public class CursorManager : SingletonBase<CursorManager>
                 }
                 break;
         }
+        _currentCursor.UpdateSelectingInfos(_selectingInfo, _prevSelectingInfo);
+        _currentCursor.OnCursorEnabled();
     }
 
 }

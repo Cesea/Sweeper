@@ -26,10 +26,15 @@ public class CommandBuilder
             buffer.Add(new MoveCommand(_paths));
         }
 
-        if (deltaGridToPlayer.x >= -1 && deltaGridToPlayer.x <= 1 &&
-           deltaGridToPlayer.y >= -1 && deltaGridToPlayer.y <= 1 )
+        if (Mathf.Abs(deltaGridToPlayer.x) == 1 && deltaGridToPlayer.y == 0 && deltaGridToPlayer.z == 0 ||
+           deltaGridToPlayer.x == 0 && Mathf.Abs(deltaGridToPlayer.y) == 0 && deltaGridToPlayer.z == 0 ||
+           deltaGridToPlayer.x == 0 && deltaGridToPlayer.y == 0 && Mathf.Abs(deltaGridToPlayer.z) == 0)
         {
             if (target.InstalledObject != null)
+            {
+                buffer.Add(new DestroyObjectCommand(target));
+            }
+            else
             {
                 buffer.Add(new InstallObjectCommand(target));
             }

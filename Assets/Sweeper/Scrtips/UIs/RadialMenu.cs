@@ -40,15 +40,7 @@ public class RadialMenu : Menu<RadialMenu>
 
     public static void Shut()
     {
-        EventManager.Instance.TriggerEvent(new Events.RadialShutEvent());
-        Instance._commandBuildDone = false;
-        Instance._elementBuildDone = false;
-
-        Instance._selectinFollowContainer.gameObject.SetActive(false);
-        Instance._background.gameObject.SetActive(false);
-
-        GameStateManager.Instance.Player.CommandBuffer.Clear();
-        Close();
+        Instance.StartCoroutine(Instance.CloseRoutine());
     }
 
     private void OnCommandBuildDone()
@@ -88,7 +80,8 @@ public class RadialMenu : Menu<RadialMenu>
             element._parent = this;
 
             RectTransform rectTrans = element.GetComponent<RectTransform>();
-            rectTrans.localRotation = Quaternion.Euler(0, 0, -_elementAngleGap * i + _globalAngleOffset);
+            element.RotateTo(-_elementAngleGap * i + _globalAngleOffset, 0.3f * i);
+            //rectTrans.localRotation = Quaternion.Euler(0, 0, -_elementAngleGap * i + _globalAngleOffset);
 
             Button currentButton = element._button;
             currentButton.GetComponent<Image>().fillAmount = (1.0f / (commands.Count));
@@ -99,6 +92,7 @@ public class RadialMenu : Menu<RadialMenu>
             float diffAngle = (270.0f - _elementAngleGap * i + _globalAngleOffset - (_elementAngleGap * 0.5f)) * Mathf.Deg2Rad;
             element.SetAngles(NormalizeAngle(diffAngle * Mathf.Rad2Deg), _elementAngleGap);
 
+            diffAngle = (270.0f  - _elementAngleGap / 2.0f) * Mathf.Deg2Rad;
             Vector3 offset = new Vector3(Mathf.Cos(diffAngle), Mathf.Sin(diffAngle), 0) * _rectTransform.rect.size.x * 0.4f;
             currentText.GetComponent<RectTransform>().position = _rectTransform.position + offset;
             currentText.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0, 0, (_elementAngleGap * i + _globalAngleOffset));
@@ -164,7 +158,6 @@ public class RadialMenu : Menu<RadialMenu>
         _prevSelectingIndex = i;
     } 
 
-
     public float NormalizeAngle(float angle)
     {
         if (angle > 360.0f)
@@ -178,4 +171,23 @@ public class RadialMenu : Menu<RadialMenu>
         return angle;
     }
 
+    public IEnumerator CloseRoutine()
+    {
+        for (int i = 0; i < _elements.Count; ++i)
+        {
+            _elements[i].RotateTo(0.0f, 0.3f * i);
+        }
+        yield return new WaitForSeconds(0.3f * _elements.Count);
+
+        EventManager.Instance.TriggerEvent(new Events.RadialShutEvent());
+        Instance._commandBuildDone = false;
+        Instance._elementBuildDone = false;
+
+        Instance._selectinFollowContainer.gameObject.SetActive(false);
+        Instance._background.gameObject.SetActive(false);
+
+        GameStateManager.Instance.Player.CommandBuffer.Clear();
+        Close();
+        yield return null;
+    }
 }

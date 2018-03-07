@@ -73,7 +73,6 @@ public class LevelCreateCursor : CursorBase
 
         _selectingInfo = BoardManager.Instance.CurrentBoard.GetNodeInfoAt(BoardManager.Instance.CurrentBoard.StartCellCoord, Side.Top);
 
-
         EventManager.Instance.AddListener<Events.LevelCreatorMenuEvent>(OnLevelCreatorMenuEvent);
 	}
 
@@ -81,6 +80,14 @@ public class LevelCreateCursor : CursorBase
     {
         _manager = CursorManager.Instance;
         _installPrefabList = LevelCreator.Instance.InstallPrefabList;
+    }
+
+    private void OnDisable()
+    {
+        if (_previewObject != null)
+        {
+            Destroy(_previewObject.gameObject);
+        }
     }
 
     private void OnDestroy()

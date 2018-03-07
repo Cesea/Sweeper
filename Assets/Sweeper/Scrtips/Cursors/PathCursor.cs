@@ -11,6 +11,8 @@ public class PathCursor : CursorBase
 
     private BoardStamina _playerStamina;
 
+    private bool _buildFirstSegment;
+
     CursorManager _manager;
 
     private void Awake()
@@ -35,6 +37,18 @@ public class PathCursor : CursorBase
         Vector3 worldPosition = transform.position;
         transform.position = Vector3.zero;
         transform.rotation = Quaternion.identity;
+    }
+
+    public override void OnCursorEnabled()
+    {
+        //Vector3 diff = (GameStateManager.Instance.MouseNodeSidePosition - _selectingInfo.GetWorldPosition()).normalized;
+        //Vector3.Angle();
+        _selectedInfoList.Add(_selectingInfo);
+        _selectedInfoList.Add(
+                                BoardManager.Instance.CurrentBoard.GetNodeInfoAt(
+                                    _selectingInfo._node.BoardPosition + new Vector3Int(1, 0, 0), 
+                                    _selectingInfo._side));
+        BuildLine();
     }
 
     public override void HandleInput()

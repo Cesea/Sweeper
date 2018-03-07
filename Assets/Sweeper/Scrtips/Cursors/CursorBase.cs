@@ -15,6 +15,10 @@ public class CursorBase : MonoBehaviour
     {
     }
 
+    public virtual void OnCursorEnabled()
+    {
+    }
+
     public virtual void UpdateSelectingInfos(NodeSideInfo selecting, NodeSideInfo prev)
     {
         _selectingInfo = selecting;
