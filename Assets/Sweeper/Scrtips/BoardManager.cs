@@ -6,12 +6,14 @@ using Foundation;
 
 public class BoardManager : SingletonBase<BoardManager>
 {
-    [Header("Floor Material")]
-    [SerializeField]
-    private Material _floorMaterial;
     [Header("Floor Objects")]
     public GameObject _stoneShortPrefab;
     public GameObject _stoneTallPrefab;
+
+    [Header("Visual Objects")]
+    public GameObject _floorPrefab;
+    public GameObject _wallPrefab;
+    public GameObject _ceilingPrefab;
 
     [Header("Board Size")]
 
@@ -101,16 +103,71 @@ public class BoardManager : SingletonBase<BoardManager>
             }
         }
 
+        for (int z = 0; z < ZCount;  z += 2)
+        {
+            for (int x = 0; x < XCount; x += 2)
+            {
+                Vector3 position = new Vector3(x, 1, z);
+                GameObject floor = Instantiate(_floorPrefab, position, Quaternion.identity);
+                _boardVisualObjects.Add(floor);
+            }
+        }
+
         for (int z = 0; z < ZCount; ++z)
         {
             for (int x = 0; x < XCount; ++x)
             {
-                visualNodes[Index3D(x, 0, z)].BuildMesh(floorObject);
+                if (z % 2 == 0)
+                {
+                    Vector3 position = new Vector3(x, 1, z);
+                    float rotationAngle = 0.0f;
+                    bool build = false;
+                    if (x == 0)
+                    {
+                        rotationAngle = -90.0f;
+                        build = true;
+                    }
+
+                    if (x == XCount - 2)
+                    {
+                        rotationAngle = 90.0f;
+                        position.x += 2;
+                        position.z += 2;
+                        build = true;
+                    }
+                    if (build)
+                    {
+                        GameObject wall = Instantiate(_wallPrefab, position, Quaternion.Euler(0, rotationAngle, 0));
+                        _boardVisualObjects.Add(wall);
+                    }
+                }
+
+                if (x % 2 == 0)
+                {
+                    Vector3 position = new Vector3(x, 1, z);
+                    float rotationAngle = 0.0f;
+                    bool build = false;
+                    if (z == 0)
+                    {
+                        position.x += 2;
+                        rotationAngle = -180.0f;
+                        build = true;
+                    }
+
+                    if (z == ZCount - 2)
+                    {
+                        position.z += 2;
+                        build = true;
+                    }
+                    if (build)
+                    {
+                        GameObject wall = Instantiate(_wallPrefab, position, Quaternion.Euler(0, rotationAngle, 0));
+                        _boardVisualObjects.Add(wall);
+                    }
+                }
             }
         }
-        Utils.MeshBuilder.CombineQuad(floorObject);
-        MeshRenderer renderer = floorObject.AddComponent<MeshRenderer>();
-        renderer.material = _floorMaterial;
+
 
         _boardVisualObjects.Add(floorObject);
 
@@ -142,7 +199,6 @@ public class BoardManager : SingletonBase<BoardManager>
                 upperNodeList.Clear();
             }
         }
-
 
     }
 
