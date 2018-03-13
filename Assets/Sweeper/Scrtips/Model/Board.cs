@@ -84,12 +84,12 @@ public class Board
 
         Nodes[Index3D(0, 1, 1)].Type = Node.NodeType.Normal;
         Nodes[Index3D(0, 1, 2)].Type = Node.NodeType.Normal;
-        Nodes[Index3D(0, 2, 2)].Type = Node.NodeType.Normal;
+        //Nodes[Index3D(0, 2, 2)].Type = Node.NodeType.Normal;
 
 
         Nodes[Index3D(6, 1, 4)].Type = Node.NodeType.Normal;
         Nodes[Index3D(6, 1, 5)].Type = Node.NodeType.Normal;
-        Nodes[Index3D(6, 2, 5)].Type = Node.NodeType.Normal;
+        //Nodes[Index3D(6, 2, 5)].Type = Node.NodeType.Normal;
         Nodes[Index3D(6, 1, 6)].Type = Node.NodeType.Normal;
 
         StartCellCoord = new Vector3Int(0, 0, 0);
