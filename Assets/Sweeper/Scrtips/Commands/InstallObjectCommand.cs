@@ -4,6 +4,38 @@ using UnityEngine;
 
 using Foundation;
 
+//public class SkillCommand : Command
+//{
+//    private int _skillIndex = -1;
+
+//    public SkillCommand(int index, Vector3 pos  )
+//    {
+//    }
+
+//    public override bool Execute(GameObject target)
+//    {
+//    }
+//}
+//public class System
+//{
+//    public virtual void Exeucte(Command command)
+//    {
+
+//    }
+//}
+
+//public class SkillSystem : System
+//{
+//    Skill[]  _skills = new 
+
+//    public override void Exeucte(Command command)
+//    {
+//        SkillCommand castedCommand = command as SkillCommand;
+//        castedCommand.
+//    }
+
+//}
+
 [System.Serializable]
 public class InstallObjectCommand : Command
 {
